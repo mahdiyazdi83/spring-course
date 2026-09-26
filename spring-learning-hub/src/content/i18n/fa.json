@@ -1,0 +1,17 @@
+{
+  "skipLink.label": "رفتن به محتوای اصلی",
+  "404.text": "صفحه پیدا نشد. نشانی را بررسی کنید یا به صفحهٔ اصلی برگردید.",
+  "heading.anchorLabel": "بخش «{{title}}»",
+  "expressiveCode.copyButtonTooltip": "کپی کد",
+  "expressiveCode.copyButtonCopied": "کپی شد!",
+  "pagefind.clear_search": "پاک‌کردن",
+  "pagefind.load_more": "نتیجه‌های بیشتر",
+  "pagefind.search_label": "جست‌وجو در دانش‌نامه",
+  "pagefind.filters_label": "فیلتر نتیجه‌ها",
+  "pagefind.zero_results": "برای «[SEARCH_TERM]» نتیجه‌ای پیدا نشد",
+  "pagefind.many_results": "[COUNT] نتیجه برای «[SEARCH_TERM]»",
+  "pagefind.one_result": "[COUNT] نتیجه برای «[SEARCH_TERM]»",
+  "pagefind.alt_search": "برای «[SEARCH_TERM]» نتیجه‌ای نبود؛ نتیجه‌های «[DIFFERENT_TERM]» نمایش داده می‌شوند",
+  "pagefind.search_suggestion": "برای «[SEARCH_TERM]» نتیجه‌ای نبود. عبارت دیگری را امتحان کنید",
+  "pagefind.searching": "در حال جست‌وجوی «[SEARCH_TERM]»…"
+}

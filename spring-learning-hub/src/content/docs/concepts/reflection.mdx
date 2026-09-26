@@ -1,0 +1,80 @@
+---
+title: 'Reflection — بررسی ساختار کلاس'
+description: آشنایی با بررسی اعضای کلاس در Java و تفاوت آن با تزریق وابستگی.
+sidebar:
+  label: Reflection
+kb:
+  type: concept
+  id: reflection
+  status: draft
+  demo: true
+  createdAt: '2026-09-26'
+  updatedAt: '2026-09-26'
+  sources:
+    gpt:
+      references:
+        - https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/Class.html
+  prerequisites: []
+  relatedConcepts: [dependency-injection]
+  changes:
+    - date: '2026-09-26'
+      type: initial
+      summary: افزودن مرجع نمایشیِ مستند برای بررسی جست‌وجو و پیوندهای مفهومی.
+---
+
+import SourceBlock from '../../../components/source/SourceBlock.astro';
+import ConceptAppearances from '../../../components/documentation/ConceptAppearances.astro';
+import PrerequisiteList from '../../../components/documentation/PrerequisiteList.astro';
+import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+
+این صفحهٔ نمایشی توسط GPT و با کمک مرجع رسمی نوشته شده؛ هنوز جمع‌بندی محتوای واقعی دوره نیست.
+
+## Reflection چیست؟ [#overview]
+
+<SourceBlock id="reflection-overview" source="gpt">
+
+Reflection امکان بررسی اطلاعات نوع‌ها و اعضای آن‌ها را در زمان اجرا می‌دهد. برای نمونه، با یک شیء از نوع `Class` می‌توان اطلاعات متدهای تعریف‌شده روی همان کلاس را خواند.
+
+</SourceBlock>
+
+## یک مثال کوچک در Java [#java-example]
+
+<SourceBlock id="reflection-java-example" source="gpt">
+
+این نمونهٔ مستقل توسط GPT نوشته شده است:
+
+```java title="InspectMethods.java · GPT Example"
+import java.lang.reflect.Method;
+
+class InspectMethods {
+    public static void main(String[] args) {
+        for (Method method : String.class.getDeclaredMethods()) {
+            System.out.println(method.getName());
+        }
+    }
+}
+```
+
+`getDeclaredMethods()` اعضای تعریف‌شده روی همان کلاس را برمی‌گرداند؛ با فهرست همهٔ متدهای public به‌ارث‌رسیده یکی نیست.
+
+</SourceBlock>
+
+## مرز مفهوم [#pitfalls]
+
+<SourceBlock id="reflection-pitfalls" source="gpt">
+
+دیدن اطلاعات یک سازنده یا متد، به معنی ساختن وابستگی یا اجرای خودکار آن نیست. Reflection ابزار بررسی ساختار است؛ [Dependency Injection](/concepts/dependency-injection/) دربارهٔ نحوهٔ دریافت همکارهای یک شیء صحبت می‌کند.
+
+</SourceBlock>
+
+## مرجع توضیح [#references]
+
+- [Java API — Class](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/Class.html)
+
+## این مفهوم کجا مطرح شده؟ [#appearances]
+
+<ConceptAppearances />
+
+## تاریخچهٔ تغییرات [#changelog]
+
+<ChangeLog />

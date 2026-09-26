@@ -1,0 +1,14 @@
+---
+interface Props {
+  title: string;
+  kind?: 'note' | 'tip' | 'caution';
+}
+const { title, kind = 'note' } = Astro.props;
+---
+
+<aside class="kb-reading-note" data-kind={kind} aria-label={title}>
+  <p class="kb-note-title">{title}</p>
+  <div>
+    <slot />
+  </div>
+</aside>

@@ -1,0 +1,90 @@
+---
+import { getCollection } from 'astro:content';
+import { documentHref, persianNumber } from '../../utils/content-presentation.ts';
+import { conceptAppearances } from '../../utils/knowledge-graph.ts';
+import HubIcon from '../common/HubIcon.astro';
+const entries = (await getCollection('docs')).map(({ id, data }) => ({
+  route: documentHref(id),
+  title: data.title,
+  description: data.description,
+  knowledge: data.kb,
+  draft: data.draft,
+}));
+const concepts = entries.filter((entry) => !entry.draft && entry.knowledge.type === 'concept');
+---
+
+<concept-explorer>
+  <div class="kb-explorer-toolbar">
+    <label for="concept-query">
+      <HubIcon name="concept" />
+      <span class="sr-only">پیدا کردن مفهوم در فهرست</span>
+      <input id="concept-query" type="search" placeholder="نام فارسی یا انگلیسی مفهوم…" disabled />
+    </label>
+    <p class="kb-caption" role="status" aria-live="polite" data-concept-count>
+      {persianNumber(concepts.length)} مفهوم
+    </p>
+  </div>
+  <ul class="kb-concept-grid">
+    {concepts.map((entry) => {
+      if (entry.knowledge.type !== 'concept') return null;
+      const count = conceptAppearances(entries, entry.knowledge).length;
+      return (
+        <li data-concept-card data-search-text={entry.title + ' ' + (entry.description ?? '')}>
+          <div class="kb-path-card-top">
+            <span class="kb-icon-tile">
+              <HubIcon name="concept" />
+            </span>
+            <span class="kb-caption">{entry.knowledge.demo ? 'مرجع نمایشی' : 'مرجع مفهوم'}</span>
+          </div>
+          <h2>
+            <a href={entry.route} dir="auto">
+              {entry.title}
+            </a>
+          </h2>
+          <p>{entry.description}</p>
+          <div class="kb-card-bottom">
+            <span>{count ? `در ${persianNumber(count)} جلسه` : 'مطالعهٔ مستقل'}</span>
+            <a href={entry.route} aria-label={`مطالعهٔ ${entry.title}`}>
+              <HubIcon name="arrow" />
+            </a>
+          </div>
+        </li>
+      );
+    })}
+  </ul>
+  <p class="kb-empty-note" data-concept-empty hidden>
+    مفهومی با این عبارت پیدا نشد. عبارت کوتاه‌تری بنویسید یا ورودی را پاک کنید.
+  </p>
+</concept-explorer>
+<script>
+  class ConceptExplorer extends HTMLElement {
+    #events?: AbortController;
+    connectedCallback() {
+      this.#events?.abort();
+      this.#events = new AbortController();
+      const input = this.querySelector<HTMLInputElement>('input');
+      const count = this.querySelector<HTMLElement>('[data-concept-count]');
+      const empty = this.querySelector<HTMLElement>('[data-concept-empty]');
+      const cards = [...this.querySelectorAll<HTMLElement>('[data-concept-card]')];
+      if (!input || !count || !empty) return;
+      input.disabled = false;
+      const filter = () => {
+        const term = input.value.trim().toLocaleLowerCase();
+        let matches = 0;
+        cards.forEach((card) => {
+          card.hidden = !card.dataset.searchText?.toLocaleLowerCase().includes(term);
+          if (!card.hidden) matches++;
+        });
+        count.textContent = `${new Intl.NumberFormat('fa-IR').format(matches)} مفهوم`;
+        empty.hidden = matches > 0;
+      };
+      input.addEventListener('input', filter, { signal: this.#events.signal });
+      filter();
+    }
+    disconnectedCallback() {
+      this.#events?.abort();
+    }
+  }
+  if (!customElements.get('concept-explorer'))
+    customElements.define('concept-explorer', ConceptExplorer);
+</script>

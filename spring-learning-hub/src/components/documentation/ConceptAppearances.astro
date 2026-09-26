@@ -1,0 +1,38 @@
+---
+import { getCollection } from 'astro:content';
+import { documentHref } from '../../utils/content-presentation.ts';
+import { conceptAppearances, contentLabel, relationLabels } from '../../utils/knowledge-graph.ts';
+const kb = Astro.locals.starlightRoute.entry.data.kb;
+if (kb.type !== 'concept') throw new Error('ConceptAppearances requires a concept page.');
+const entries = (await getCollection('docs')).map(({ id, data }) => ({
+  route: documentHref(id),
+  title: data.title,
+  knowledge: data.kb,
+  draft: data.draft,
+}));
+const appearances = conceptAppearances(entries, kb);
+---
+
+{appearances.length ? (
+  <ol class="kb-appearance-cards">
+    {appearances.map((entry) => (
+      <li>
+        <span class="kb-relation-badge">{relationLabels[entry.relation]}</span>
+        <a href={entry.href}>
+          <small>
+            {contentLabel(entry.knowledge)}
+            {entry.knowledge.demo && ' · نمایشی'}
+          </small>
+          <strong>{entry.title}</strong>
+          <span>
+            رفتن به بحث در جلسه <span aria-hidden="true">←</span>
+          </span>
+        </a>
+      </li>
+    ))}
+  </ol>
+) : (
+  <p class="kb-empty-note">
+    هنوز جلسه‌ای به این مفهوم ارجاع نداده است. از مفاهیم مرتبط، مطالعه را ادامه دهید.
+  </p>
+)}

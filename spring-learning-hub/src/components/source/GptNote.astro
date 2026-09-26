@@ -1,0 +1,15 @@
+---
+import SourceBlock from './SourceBlock.astro';
+import type { ComponentProps } from 'astro/types';
+type Props = Omit<
+  ComponentProps<typeof SourceBlock>,
+  'source' | 'recording' | 'timestamp' | 'corrects'
+>;
+---
+
+<SourceBlock {...Astro.props} source="gpt">
+  <aside class="kb-gpt-note" aria-label="یک کلام از GPT">
+    <p class="kb-note-title">یک کلام از GPT</p>
+    <slot />
+  </aside>
+</SourceBlock>

@@ -1,0 +1,66 @@
+---
+title: 'Bean — شیء تحت مدیریت Spring'
+description: تفاوت شیء معمولی با Bean و نقش تعریف Bean در ساخت و اتصال اشیا.
+sidebar:
+  label: Bean
+kb:
+  type: concept
+  id: bean
+  status: draft
+  demo: true
+  createdAt: '2026-09-26'
+  updatedAt: '2026-09-26'
+  sources:
+    gpt:
+      references:
+        - https://docs.spring.io/spring-framework/reference/core/beans/definition.html
+  prerequisites: []
+  relatedConcepts: [application-context, dependency-injection]
+  changes:
+    - date: '2026-09-26'
+      type: initial
+      summary: افزودن مرجع نمایشیِ مستند برای بررسی جست‌وجو و پیوندهای مفهومی.
+---
+
+import SourceBlock from '../../../components/source/SourceBlock.astro';
+import ConceptAppearances from '../../../components/documentation/ConceptAppearances.astro';
+import PrerequisiteList from '../../../components/documentation/PrerequisiteList.astro';
+import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+
+این صفحهٔ نمایشی توسط GPT و با کمک مرجع رسمی نوشته شده؛ هنوز جمع‌بندی محتوای واقعی دوره نیست.
+
+## Bean چیست؟ [#overview]
+
+<SourceBlock id="bean-overview" source="gpt">
+
+Bean یک شیء تحت مدیریت کانتینر Spring است. اطلاعات ساخت، وابستگی‌ها و تنظیمات آن می‌تواند در یک `BeanDefinition` توصیف شود. بنابراین تعریفِ Bean با نمونهٔ ساخته‌شدهٔ آن یکی نیست.
+
+</SourceBlock>
+
+## چرا این تفاوت مهم است؟ [#definition]
+
+<SourceBlock id="bean-definition" source="gpt">
+
+تعریف Bean مانند دستور ساخت عمل می‌کند: نوع، scope و همکارهای موردنیاز شیء را مشخص می‌کند. [ApplicationContext](/concepts/application-context/) از این اطلاعات برای مدیریت اشیا استفاده می‌کند؛ [تزریق وابستگی](/concepts/dependency-injection/) توضیح می‌دهد همکارها چگونه به مصرف‌کننده می‌رسند.
+
+</SourceBlock>
+
+## اشتباه رایج [#pitfalls]
+
+<SourceBlock id="bean-pitfalls" source="gpt">
+
+هر شیئی که با `new` ساخته می‌شود، خودکار به Bean تبدیل نمی‌شود. حتی وجود annotation روی کلاس، بدون پیکربندی و شناسایی مناسب در کانتینر، برای نتیجه‌گیری دربارهٔ مدیریت آن کافی نیست.
+
+</SourceBlock>
+
+## مرجع توضیح [#references]
+
+- [مستندات رسمی Spring](https://docs.spring.io/spring-framework/reference/core/beans/definition.html)
+
+## این مفهوم کجا مطرح شده؟ [#appearances]
+
+<ConceptAppearances />
+
+## تاریخچهٔ تغییرات [#changelog]
+
+<ChangeLog />

@@ -1,0 +1,314 @@
+---
+title: آشنایی با IoC و تزریق وابستگی
+description: نمونهٔ چندمنبعی برای مطالعهٔ توضیح استاد، مرور حیدری و تکمیل GPT.
+sidebar:
+  label: جلسهٔ ۱ (نمونه)
+  order: 1
+kb:
+  type: tuesday
+  id: tuesday-01
+  sessionNumber: 1
+  status: in-progress
+  demo: true
+  createdAt: '2026-09-26'
+  updatedAt: '2026-09-26'
+  sources:
+    teacher:
+      recordings:
+        - id: teacher-demo-01
+          location: 'demo:teacher-recording-01'
+          kind: video
+          durationSeconds: 2400
+      repository:
+        location: 'demo:teacher-repository'
+        snapshotPath: src/data/fixtures/teacher-snapshot
+      references:
+        - src/data/fixtures/README.md
+    heydari:
+      recordings:
+        - id: heydari-demo-01
+          location: 'demo:heydari-recording-01'
+          kind: audio
+          durationSeconds: 900
+    gpt:
+      references:
+        - https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/introduction.html
+  prerequisites:
+    - dependency-injection
+  concepts:
+    - id: dependency-injection
+      relation: introduced
+      anchor: dependency-problem
+    - id: bean
+      relation: mentioned
+      anchor: spring-container
+    - id: application-context
+      relation: introduced
+      anchor: spring-container
+  relatedSessions: []
+  timeline:
+    - topic: صورت مسئلهٔ وابستگی میان کلاس‌ها
+      source: teacher
+      recording: teacher-demo-01
+      start: '00:00'
+      end: '12:40'
+    - topic: دریافت وابستگی در سازنده
+      source: teacher
+      recording: teacher-demo-01
+      start: '12:40'
+      end: '31:10'
+    - topic: اشاره به scope و بازگشت به تزریق وابستگی
+      source: teacher
+      recording: teacher-demo-01
+      start: '31:10'
+      approximate: true
+    - topic: مرور تکمیلی و تفاوت دو معنای Singleton
+      source: heydari
+      recording: heydari-demo-01
+  changes:
+    - date: '2026-09-26'
+      type: initial
+      summary: ساخت نمونهٔ معماری؛ هیچ منبع واقعی بررسی نشده است.
+    - date: '2026-09-26'
+      type: content-update
+      summary: افزودن نمونهٔ مطالعه، کد و جدول برای بررسی طراحی فارسی.
+    - date: '2026-09-26'
+      type: source-added
+      summary: افزودن نقش‌های نمایشی استاد و حیدری برای آزمون فیلتر و حفظ زمینه.
+    - date: '2026-09-26'
+      type: correction
+      summary: افزودن اصلاح آموزشی نمونه و مثال‌های کد با انتساب روشن.
+    - date: '2026-09-26'
+      type: concept-update
+      summary: افزودن پیوندهای مفهومی و نشانی‌های پایدار برای مرور و جست‌وجو.
+---
+
+import SourceBlock from '../../../components/source/SourceBlock.astro';
+import SourceFilter from '../../../components/source/SourceFilter.astro';
+import GptNote from '../../../components/source/GptNote.astro';
+import TechnicalCorrection from '../../../components/source/TechnicalCorrection.astro';
+import CodeExample from '../../../components/code/CodeExample.astro';
+import SessionTimeline from '../../../components/documentation/SessionTimeline.astro';
+import PrerequisiteList from '../../../components/documentation/PrerequisiteList.astro';
+import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+import ScrollableTable from '../../../components/documentation/ScrollableTable.astro';
+import teacherCode from '../../../data/fixtures/teacher-snapshot/src/main/java/NotificationService.java?raw';
+import * as examples from '../../../data/fixtures/gpt-examples';
+
+**تمام محتوای این صفحه ساختگی و تولیدشده توسط GPT است.** نقش‌های «استاد» و «آقای حیدری» صرفاً برای آزمایش رفتار سامانه شبیه‌سازی شده‌اند. هیچ گفته، اشتباه یا کدی به افراد واقعی نسبت داده نمی‌شود. زمان‌ها و منابع ضبط‌شده نیز نمایشی‌اند.
+
+## پیش از مطالعه [#prerequisites]
+
+<PrerequisiteList />
+
+## ترتیب واقعی کلاس [#timeline]
+
+این نمونه نشان می‌دهد ترتیب ارائه، رفت‌وبرگشت میان موضوع‌ها و فایل تکمیلی چگونه ثبت می‌شوند. زمان‌ها نسبت به همان فایل هستند؛ بخش بدون زمان، فقط ترتیب موضوع را حفظ می‌کند.
+
+<SessionTimeline />
+
+## مسیر یادگیری [#learning-path]
+
+در متن آموزشی، ابتدا مسئله را می‌فهمیم و سپس سراغ راه‌حل و نکته‌های تکمیلی می‌رویم. این ترتیب الزاماً ترتیب ضبط کلاس نیست.
+
+<SourceFilter />
+
+<section data-source-group>
+
+### وابستگی از کجا پیدا می‌شود؟ [#dependency-problem]
+
+<SourceBlock id="teacher-dependency" source="teacher" recording="teacher-demo-01" timestamp="04:20" summary="در نمونهٔ کلاس، NotificationService برای ارسال پیام به MessageSender نیاز دارد و این همکار را در سازنده دریافت می‌کند.">
+
+فرض کنید `NotificationService` باید پیامی ارسال کند. ارسال پیام مسئولیت دیگری است که در یک شیء با نام `MessageSender` قرار گرفته است. اگر سرویس درون خودش دربارهٔ ساختن این شیء تصمیم بگیرد، هم منطق اعلان را مدیریت می‌کند و هم به روش مشخصی از ارسال پیام وابسته می‌شود. برای تغییر روش ارسال یا آزمایش رفتار سرویس، ناچار می‌شویم همین تصمیم داخلی را هم در نظر بگیریم.
+
+می‌توان این دو مسئولیت را از هم جدا کرد. سرویس نیازش را اعلام می‌کند و شیء آماده از بیرون به آن داده می‌شود. خوانندهٔ کلاس از روی سازنده می‌فهمد برای ساخته‌شدن آن چه چیزی لازم است. این ایده ابتدا با Java معمولی قابل فهم است و بعد می‌توان نقش `ApplicationContext` را در ساخت و اتصال اشیا بررسی کرد.
+
+</SourceBlock>
+
+<SourceBlock id="heydari-testing" source="heydari" recording="heydari-demo-01" timestamp="02:10" context="teacher-dependency">
+
+برای آزمودن همین سرویس، می‌توان یک `MessageSender` ساده به آن داد که پیام را نگه می‌دارد و واقعاً ارسال نمی‌کند. در این حالت، منطق سرویس جدا از سامانهٔ ارسال پیام بررسی می‌شود. لازم نیست برای فهم این مرز ابتدا همهٔ annotationهای Spring را حفظ کنیم.
+
+</SourceBlock>
+
+<GptNote id="gpt-constructor" context="teacher-dependency">
+
+سازنده مثل فهرست نیازهای شیء است: اگر `NotificationService` بدون یک `MessageSender` ساخته نمی‌شود، این نیاز از همان نقطهٔ ساخت روشن است. خودِ دریافت وابستگی از بیرون به `@Service` وابسته نیست.
+
+</GptNote>
+
+</section>
+
+<section data-source-group>
+
+### کدِ همراه توضیح [#constructor-example]
+
+<CodeExample
+  id="teacher-code"
+  source="teacher"
+  recording="teacher-demo-01"
+  timestamp="16:30"
+  filename="NotificationService.java"
+  repositoryPath="src/main/java/NotificationService.java"
+  lang="java"
+  code={teacherCode}
+  mark="5-7"
+  caption="Teacher Code نمایشی؛ از snapshot آزمایشی همین پروژه، نه مخزن واقعی استاد. MessageSender در این قطعه تعریف نشده است."
+/>
+
+<CodeExample
+  id="gpt-code"
+  source="gpt"
+  filename="Demo.java"
+  lang="java"
+  code={examples.java}
+  mark="24-26"
+  caption="GPT Example؛ نمونهٔ مستقل Java برای دریافت وابستگی و ثبت پیام، بدون پیکربندی Spring."
+/>
+
+</section>
+
+<section data-source-group>
+
+### Singleton؛ دقیق‌تر بگوییم [#singleton-scope]
+
+<SourceBlock id="teacher-scope" source="teacher" recording="teacher-demo-01" timestamp="33:00" summary="موضوع این بخش scope تک‌نمونه‌ای در Spring است: طول عمر و اشتراک یک Bean در container، در برابر الگوی طراحی Singleton.">
+
+در سناریوی ساختگی کلاس، عبارت «Singleton در Spring یعنی از یک کلاس فقط یک شیء در کل JVM وجود دارد» مطرح می‌شود. **این عبارت دقیق نیست؛ اصلاح همراه آن را بخوانید.** هدف این نمونه، آزمایش نمایش محترمانهٔ یک اصلاح فنی است.
+
+</SourceBlock>
+
+<SourceBlock id="heydari-scope" source="heydari" recording="heydari-demo-01" timestamp="06:15" context="teacher-scope">
+
+این Singleton را با الگوی طراحی Singleton یکی نگیرید. در Spring، موضوع scope یک Bean در container است. برای مرور این تفاوت، ابتدا بپرسید «یک نمونه نسبت به کدام محدوده و کدام تعریف Bean؟».
+
+</SourceBlock>
+
+<TechnicalCorrection id="gpt-scope-correction" corrects="teacher-scope" statement="در سناریوی ساختگی: فقط یک شیء از کلاس در کل JVM وجود دارد." correction="scope پیش‌فرض singleton در Spring، یک نمونه به‌ازای هر تعریف Bean در هر container نگه می‌دارد؛ دو تعریف از یک کلاس یا دو container لزوماً یک شیء مشترک ندارند." reason="فرضِ تک‌نمونه‌بودن در کل JVM می‌تواند دربارهٔ اشتراک وضعیت و مرز آزمون‌ها انتظار نادرستی ایجاد کند.">
+
+[توضیح رسمی Spring دربارهٔ Bean scopes](https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html)
+
+</TechnicalCorrection>
+
+</section>
+
+<section data-source-group>
+
+### مرور اصطلاح‌ها و تمرین [#review]
+
+<SourceBlock id="teacher-review" source="teacher">
+
+نام‌هایی مانند `@Service`، `UserService.java` و `spring.datasource.url` باید در متن فارسی بدون جابه‌جایی علامت‌ها خوانده شوند.
+
+<ScrollableTable label="مرور اصطلاح‌ها؛ جدول در صفحهٔ کوچک پیمایش افقی دارد">
+
+| اصطلاح                   | نقش          | پرسش هنگام مطالعه                            |
+| ------------------------ | ------------ | -------------------------------------------- |
+| `MessageSender`          | وابستگی      | کدام مسئولیت را فراهم می‌کند؟                |
+| `NotificationService`    | مصرف‌کننده   | وابستگی از کجا دریافت می‌شود؟                |
+| `@Service`               | annotation   | این علامت چه چیزی را به Spring معرفی می‌کند؟ |
+| `application.properties` | فایل تنظیمات | کدام مقدار مربوط به پیکربندی است؟            |
+
+</ScrollableTable>
+
+1. مسئولیت اصلی سرویس را در یک جمله توضیح دهید.
+2. سازنده را بررسی کنید.
+   - چه ورودی‌ای می‌گیرد؟
+   - کدام متد از آن استفاده می‌کند؟
+3. تغییر روش ارسال پیام را تصور کنید.
+   - کدام قسمت باید بیرون سرویس آماده شود؟
+   - چه چیزی در منطق سرویس ثابت می‌ماند؟
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+### موضوعی که خوب است گفته شود [#supplement]
+
+<SourceBlock id="gpt-supplement" source="gpt">
+
+**شفافیت وابستگی‌ها در نگهداری کد.** در این نمونه فقط به دریافت یک همکار پرداختیم. وقتی نیازهای شیء در سازنده مشخص باشند، تغییر آن‌ها هنگام خواندن و بازبینی کد آسان‌تر دیده می‌شود.
+
+اگر تعداد ورودی‌های سازنده زیاد شد، پیش از پنهان‌کردن آن‌ها نقش کلاس را دوباره بررسی کنید. این نشانه می‌تواند فرصتی برای بازنگری مسئولیت‌ها باشد؛ به‌تنهایی حکم قطعی دربارهٔ طراحی نیست.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+### نمونه‌های کوتاه از قالب‌های فنی [#format-examples]
+
+<SourceBlock id="gpt-config-intro" source="gpt">
+
+این قطعه‌ها فقط برای مرور نمایش زبان‌ها هستند؛ کنار هم یک پروژهٔ کامل نمی‌سازند. کلاس‌های `example.ConsoleSender` و `example.Notifier` در نمونهٔ XML باید در یک پروژهٔ واقعی وجود داشته باشند.
+
+</SourceBlock>
+
+<CodeExample
+  id="gpt-xml"
+  source="gpt"
+  filename="beans.xml"
+  lang="xml"
+  code={examples.xml}
+  caption="پیکربندی نمونه؛ کلاس‌ها باید در پروژه تعریف شده باشند."
+/>
+<CodeExample
+  id="gpt-yaml"
+  source="gpt"
+  filename="application.yml"
+  lang="yaml"
+  code={examples.yaml}
+/>
+<CodeExample
+  id="gpt-properties"
+  source="gpt"
+  filename="application.properties"
+  lang="properties"
+  code={examples.properties}
+/>
+<CodeExample
+  id="gpt-sql"
+  source="gpt"
+  filename="notifications.sql"
+  lang="sql"
+  code={examples.sql}
+  caption="نمایش پرس‌وجو؛ جدول نمونه است."
+/>
+<CodeExample
+  id="gpt-bash"
+  source="gpt"
+  filename="اجرای Demo.java"
+  lang="bash"
+  code={examples.bash}
+/>
+<CodeExample
+  id="gpt-json"
+  source="gpt"
+  filename="notification.json"
+  lang="json"
+  code={examples.json}
+/>
+
+</section>
+
+ <section data-source-group>
+
+### نقش ApplicationContext و Bean [#spring-container]
+
+<SourceBlock id="gpt-container" source="gpt">
+
+در این تکمیلِ نمایشی، مرز بین کلاس معمولی و [Bean](/concepts/bean/) را مرور می‌کنیم: Bean شیئی است که زیر مدیریت کانتینر Spring قرار دارد. [ApplicationContext](/concepts/application-context/) پیکربندی را می‌خواند و مدیریت Beanها را هماهنگ می‌کند.
+
+مثالِ سازندهٔ بالا فقط Dependency Injection را نشان می‌دهد؛ برای سپردن ساخت و اتصال اشیا به Spring باید آن‌ها را به کانتینر معرفی کنیم. [مرجع رسمی Spring](https://docs.spring.io/spring-framework/reference/core/beans/introduction.html) این ارتباط را توضیح می‌دهد.
+
+</SourceBlock>
+
+</section>
+
+## تاریخچهٔ تغییرات [#changelog]
+
+<ChangeLog />

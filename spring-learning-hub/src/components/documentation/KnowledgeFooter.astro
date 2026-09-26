@@ -1,0 +1,42 @@
+---
+import { getCollection } from 'astro:content';
+import DefaultFooter from '@astrojs/starlight/components/Footer.astro';
+import { documentHref } from '../../utils/content-presentation.ts';
+import { relatedEntries, contentLabel } from '../../utils/knowledge-graph.ts';
+const kb = Astro.locals.starlightRoute.entry.data.kb;
+const entries = (await getCollection('docs')).map(({ id, data }) => ({
+  route: documentHref(id),
+  title: data.title,
+  knowledge: data.kb,
+  draft: data.draft,
+}));
+const related = kb && kb.type !== 'index' ? relatedEntries(entries, kb) : [];
+---
+
+{kb && kb.type !== 'index' && (
+  <nav class="kb-related-panel" aria-label="ادامهٔ مسیر مطالعه" data-pagefind-ignore>
+    <div class="kb-panel-title">
+      <span class="kb-icon-tile" aria-hidden="true">
+        ↗
+      </span>
+      <div>
+        <p class="kb-eyebrow">ادامهٔ مسیر</p>
+        <h2>{kb.type === 'concept' ? 'مفاهیم مرتبط' : 'جلسه‌های مرتبط'}</h2>
+      </div>
+    </div>
+    <div class="kb-related-grid">
+      {related.map((entry) => (
+        <a href={entry.route}>
+          <span class="kb-caption">{contentLabel(entry.knowledge)}</span>
+          <strong>{entry.title}</strong>
+          <span aria-hidden="true">←</span>
+        </a>
+      ))}
+    </div>
+    <a class="kb-text-link" href={kb.type === 'concept' ? '/concepts/' : `/${kb.type}/`}>
+      {kb.type === 'concept' ? 'کاوش همهٔ مفاهیم' : 'دیدن همهٔ جلسه‌های این مسیر'}{' '}
+      <span aria-hidden="true">←</span>
+    </a>
+  </nav>
+)}
+<DefaultFooter />

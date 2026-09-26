@@ -1,0 +1,53 @@
+---
+import { getCollection } from 'astro:content';
+import {
+  documentHref,
+  formatDate,
+  statusLabels,
+  persianNumber,
+} from '../../utils/content-presentation.ts';
+import { contentLabel } from '../../utils/knowledge-graph.ts';
+import HubIcon from '../common/HubIcon.astro';
+interface Props {
+  type: 'tuesday' | 'thursday' | 'concept';
+}
+const { type } = Astro.props;
+const entries = (
+  await getCollection('docs', ({ data }) => !data.draft && data.kb.type === type)
+).sort((a, b) => a.id.localeCompare(b.id, 'en', { numeric: true }));
+---
+
+<ul class="kb-document-cards">
+  {entries.map(
+    ({ id, data }) =>
+      data.kb.type !== 'index' && (
+        <li data-path={type}>
+          <div class="kb-path-card-top">
+            <span class="kb-icon-tile">
+              <HubIcon
+                name={type === 'concept' ? 'concept' : type === 'tuesday' ? 'book' : 'practice'}
+              />
+            </span>
+            <span class="kb-pill">{statusLabels[data.kb.status]}</span>
+          </div>
+          <span class="kb-eyebrow">
+            {contentLabel(data.kb)}
+            {data.kb.demo && ' · نمونهٔ نمایشی'}
+          </span>
+          <h3>
+            <a href={documentHref(id)}>{data.title}</a>
+          </h3>
+          <p>{data.description}</p>
+          {data.kb.type !== 'concept' && (
+            <span class="kb-caption">{persianNumber(data.kb.concepts.length)} مفهوم مرتبط</span>
+          )}
+          <div class="kb-card-bottom">
+            <time datetime={data.kb.updatedAt}>{formatDate(data.kb.updatedAt)}</time>
+            <a href={documentHref(id)}>
+              مطالعه <span aria-hidden="true">←</span>
+            </a>
+          </div>
+        </li>
+      ),
+  )}
+</ul>

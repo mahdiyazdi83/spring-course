@@ -1,0 +1,40 @@
+---
+import { sourceIds, sourceLabels } from '../../content/schemas/knowledge.ts';
+const kb = Astro.locals.starlightRoute.entry.data.kb;
+if (kb.type !== 'tuesday') throw new Error('SourceFilter belongs to Tuesday sessions only.');
+---
+
+<kb-source-filter class="kb-source-filter" data-pagefind-ignore>
+  <fieldset disabled>
+    <legend>نمایش توضیح‌های کدام منبع؟</legend>
+    <div class="kb-filter-options">
+      {sourceIds.map((source) => (
+        <label>
+          <input type="checkbox" value={source} checked />
+          <span>{sourceLabels[source]}</span>
+          <small data-unavailable={source} hidden>
+            بدون توضیح در این صفحه
+          </small>
+        </label>
+      ))}
+      <button type="button" data-select-all>
+        نمایش همه
+      </button>
+    </div>
+  </fieldset>
+  <p class="kb-caption">
+    فیلتر فقط متن آموزشی را تغییر می‌دهد. زمینهٔ لازم و اصلاح ضروری، با برچسب جدا حفظ می‌شوند.
+  </p>
+  <p class="kb-caption" role="status" data-filter-status>
+    همهٔ توضیح‌ها نمایش داده می‌شوند.
+  </p>
+  <noscript>
+    <p class="kb-caption">
+      برای فیلتر منابع، JavaScript لازم است؛ همهٔ مطالب همچنان قابل مطالعه‌اند.
+    </p>
+  </noscript>
+</kb-source-filter>
+
+<script>
+  import '../../scripts/source-filter.ts';
+</script>

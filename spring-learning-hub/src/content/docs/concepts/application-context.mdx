@@ -1,0 +1,70 @@
+---
+title: 'ApplicationContext — کانتینر Spring'
+description: جایگاه کانتینر در پیکربندی برنامه و مدیریت وابستگی Beanها.
+sidebar:
+  label: ApplicationContext
+kb:
+  type: concept
+  id: application-context
+  status: draft
+  demo: true
+  createdAt: '2026-09-26'
+  updatedAt: '2026-09-26'
+  sources:
+    gpt:
+      references:
+        - https://docs.spring.io/spring-framework/reference/core/beans/introduction.html
+  prerequisites: [bean]
+  relatedConcepts: [bean, dependency-injection]
+  changes:
+    - date: '2026-09-26'
+      type: initial
+      summary: افزودن مرجع نمایشیِ مستند برای بررسی جست‌وجو و پیوندهای مفهومی.
+---
+
+import SourceBlock from '../../../components/source/SourceBlock.astro';
+import ConceptAppearances from '../../../components/documentation/ConceptAppearances.astro';
+import PrerequisiteList from '../../../components/documentation/PrerequisiteList.astro';
+import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+
+این صفحهٔ نمایشی توسط GPT و با کمک مرجع رسمی نوشته شده؛ هنوز جمع‌بندی محتوای واقعی دوره نیست.
+
+## پیش‌نیازها [#prerequisites]
+
+<PrerequisiteList />
+
+## ApplicationContext چه می‌کند؟ [#overview]
+
+<SourceBlock id="application-context-overview" source="gpt">
+
+`ApplicationContext` رابط اصلی کانتینر Spring است. پیکربندیِ معرفی‌شده به کانتینر مشخص می‌کند چه Beanهایی ساخته یا دریافت شوند و چگونه به هم متصل شوند.
+
+</SourceBlock>
+
+## رابطه با Dependency Injection [#dependencies]
+
+<SourceBlock id="application-context-dependencies" source="gpt">
+
+در Dependency Injection، کلاس نیازهایش را از بیرون دریافت می‌کند. کانتینر می‌تواند این اتصال را مدیریت کند؛ لازم نیست هر سرویس خودش به دنبال همکارهایش بگردد. جزئیات طراحیِ سازنده در [مرجع تزریق وابستگی](/concepts/dependency-injection/#java-example) آمده است.
+
+</SourceBlock>
+
+## کانتینر را با شیء اشتباه نگیریم [#pitfalls]
+
+<SourceBlock id="application-context-pitfalls" source="gpt">
+
+Bean یک شیء مدیریت‌شده است؛ ApplicationContext محیط مدیریت آن است. مشخص‌کردن این مرز هنگام خواندن پیکربندی و پیدا کردن منبع وابستگی‌ها کمک می‌کند.
+
+</SourceBlock>
+
+## مرجع توضیح [#references]
+
+- [مستندات رسمی Spring](https://docs.spring.io/spring-framework/reference/core/beans/introduction.html)
+
+## این مفهوم کجا مطرح شده؟ [#appearances]
+
+<ConceptAppearances />
+
+## تاریخچهٔ تغییرات [#changelog]
+
+<ChangeLog />

@@ -1,0 +1,40 @@
+---
+import { getCollection } from 'astro:content';
+import type { Session } from '../../content/schemas/knowledge.ts';
+import { documentHref } from '../../utils/content-presentation.ts';
+import { relationLabels } from '../../utils/knowledge-graph.ts';
+interface Props {
+  session: Session;
+}
+const { session } = Astro.props;
+const concepts = await getCollection(
+  'docs',
+  ({ data }) => !data.draft && data.kb.type === 'concept',
+);
+const links = session.concepts.flatMap((edge) => {
+  const target = concepts.find(({ data }) => data.kb.type === 'concept' && data.kb.id === edge.id);
+  return target
+    ? [
+        {
+          href: documentHref(target.id),
+          title: target.data.title,
+          relation: relationLabels[edge.relation],
+        },
+      ]
+    : [];
+});
+---
+
+{links.length > 0 && (
+  <nav class="kb-session-concepts" aria-label="مفاهیم این جلسه">
+    <span class="kb-caption">در این جلسه می‌خوانید</span>
+    <div>
+      {links.map((link) => (
+        <a href={link.href}>
+          <span>{link.title}</span>
+          <small>{link.relation}</small>
+        </a>
+      ))}
+    </div>
+  </nav>
+)}

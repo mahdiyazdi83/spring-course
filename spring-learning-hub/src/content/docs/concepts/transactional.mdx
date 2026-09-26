@@ -1,0 +1,70 @@
+---
+title: '@Transactional — مرز تراکنش'
+description: نقش annotation تراکنش و دلیل اهمیت مسیر عبور فراخوانی از proxy.
+sidebar:
+  label: '@Transactional'
+kb:
+  type: concept
+  id: transactional
+  status: draft
+  demo: true
+  createdAt: '2026-09-26'
+  updatedAt: '2026-09-26'
+  sources:
+    gpt:
+      references:
+        - https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/annotations.html
+  prerequisites: [bean]
+  relatedConcepts: [bean]
+  changes:
+    - date: '2026-09-26'
+      type: initial
+      summary: افزودن مرجع نمایشیِ مستند برای بررسی جست‌وجو و پیوندهای مفهومی.
+---
+
+import SourceBlock from '../../../components/source/SourceBlock.astro';
+import ConceptAppearances from '../../../components/documentation/ConceptAppearances.astro';
+import PrerequisiteList from '../../../components/documentation/PrerequisiteList.astro';
+import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+
+این صفحهٔ نمایشی توسط GPT و با کمک مرجع رسمی نوشته شده؛ هنوز جمع‌بندی محتوای واقعی دوره نیست.
+
+## پیش‌نیازها [#prerequisites]
+
+<PrerequisiteList />
+
+## @Transactional چه چیزی را بیان می‌کند؟ [#overview]
+
+<SourceBlock id="transactional-overview" source="gpt">
+
+`@Transactional` متادیتای رفتار تراکنشی را روی متد یا کلاس بیان می‌کند. اعمال این رفتار به فعال‌بودن زیرساخت مدیریت تراکنش و پیکربندی مناسب آن وابسته است؛ صرف نوشتن annotation به‌تنهایی کافی نیست.
+
+</SourceBlock>
+
+## در حالت پیش‌فرض proxy [#proxy-boundary]
+
+<SourceBlock id="transactional-proxy-boundary" source="gpt">
+
+در حالت پیش‌فرضِ proxy، زیرساخت Spring فراخوانی‌هایی را بررسی می‌کند که از proxy عبور می‌کنند. اگر یک متد روی همان شیء، متد دیگری را با `this` صدا بزند، این فراخوانی داخلی از proxy عبور نمی‌کند.
+
+</SourceBlock>
+
+## نکتهٔ مهم برای مرور کد [#pitfalls]
+
+<SourceBlock id="transactional-pitfalls" source="gpt">
+
+قرار دادن `@Transactional` روی متدی که فقط از درون همان شیء فراخوانی می‌شود، در این حالت رفتار تراکنشی تازه‌ای ایجاد نمی‌کند. هنگام بررسی کد، علاوه بر annotation، مسیر فراخوانی و شیئی را که فراخواننده دریافت کرده دنبال کنید. حالت AspectJ سازوکار متفاوتی دارد.
+
+</SourceBlock>
+
+## مرجع توضیح [#references]
+
+- [مستندات رسمی Spring](https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/annotations.html)
+
+## این مفهوم کجا مطرح شده؟ [#appearances]
+
+<ConceptAppearances />
+
+## تاریخچهٔ تغییرات [#changelog]
+
+<ChangeLog />

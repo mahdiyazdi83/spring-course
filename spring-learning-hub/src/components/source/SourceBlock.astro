@@ -1,0 +1,43 @@
+---
+import { sourceBlockSchema } from '../../content/schemas/blocks.ts';
+import type { z } from 'astro/zod';
+import { provenanceErrors, requireDocument, sourceCaption } from '../../utils/source-blocks.ts';
+
+type Props = z.input<typeof sourceBlockSchema>;
+const block = sourceBlockSchema.parse(Astro.props);
+const kb = requireDocument(Astro.locals.starlightRoute.entry.data.kb);
+const errors = provenanceErrors(block, kb);
+if (errors.length) throw new Error(errors.join('\n'));
+---
+
+<section
+  id={block.id}
+  class="kb-source-block"
+  data-source-block
+  data-source={block.source}
+  data-context={block.context}
+  data-corrects={block.corrects}
+>
+  <div class="kb-source-label" data-pagefind-ignore>
+    <span>{sourceCaption(block, kb)}</span>
+    {block.timestamp && (
+      <span>
+        · <bdi dir="ltr">{block.timestamp}</bdi>
+      </span>
+    )}
+    <span class="kb-context-label" data-context-label hidden>
+      زمینهٔ لازم برای متن انتخاب‌شده
+    </span>
+    <span class="kb-context-label" data-correction-label hidden>
+      اصلاح ضروری همراه متن انتخاب‌شده
+    </span>
+  </div>
+  <div data-block-body>
+    <slot />
+  </div>
+  {block.summary && (
+    <p class="kb-context-summary" data-block-summary data-pagefind-ignore hidden>
+      {block.summary}
+    </p>
+  )}
+</section>

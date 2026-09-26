@@ -1,0 +1,224 @@
+---
+import { getCollection } from 'astro:content';
+import { documentHref, formatDate, persianNumber } from '../../utils/content-presentation.ts';
+import { contentLabel } from '../../utils/knowledge-graph.ts';
+import HubIcon from '../common/HubIcon.astro';
+const entries = (await getCollection('docs', ({ data }) => !data.draft)).flatMap(({ id, data }) =>
+  data.kb.type === 'index'
+    ? []
+    : [{ id, title: data.title, description: data.description, kb: data.kb }],
+);
+const published = entries.filter(({ kb }) => !kb.demo);
+const pool = published.length ? published : entries;
+const sessions = pool.filter(({ kb }) => kb.type !== 'concept');
+const concepts = pool.filter(({ kb }) => kb.type === 'concept');
+const latest = [...sessions].sort(
+  (a, b) =>
+    b.kb.updatedAt.localeCompare(a.kb.updatedAt) ||
+    (a.kb.type === b.kb.type
+      ? b.id.localeCompare(a.id, 'en', { numeric: true })
+      : a.kb.type === 'tuesday'
+        ? -1
+        : 1),
+)[0];
+const sections = [
+  {
+    type: 'tuesday',
+    href: '/tuesday/',
+    title: 'یاد بگیر',
+    subtitle: 'کلاس‌های سه‌شنبه',
+    description: 'از توضیح استاد و کد کلاس، تا نکته‌های تکمیلی آقای حیدری.',
+    icon: 'book' as const,
+    number: '۰۱',
+  },
+  {
+    type: 'thursday',
+    href: '/thursday/',
+    title: 'مرور و تمرین کن',
+    subtitle: 'جلسه‌های پنج‌شنبه',
+    description: 'پرسش‌ها را دنبال کن و آموخته‌ها را در جلسه‌ای مستقل به کار بگیر.',
+    icon: 'practice' as const,
+    number: '۰۲',
+  },
+  {
+    type: 'concept',
+    href: '/concepts/',
+    title: 'عمیق‌تر بفهم',
+    subtitle: 'مرجع مفاهیم',
+    description: 'هر مفهوم را یک‌جا بخوان و ردّ آن را در جلسه‌های مختلف پیدا کن.',
+    icon: 'concept' as const,
+    number: '۰۳',
+  },
+];
+const updates = pool
+  .flatMap((entry) => {
+    const change = [...entry.kb.changes].reverse().sort((a, b) => b.date.localeCompare(a.date))[0];
+    return change ? [{ ...change, entry }] : [];
+  })
+  .sort((a, b) => b.date.localeCompare(a.date))
+  .slice(0, 3);
+---
+
+<div class="kb-dashboard">
+  <section class="kb-welcome" aria-labelledby="welcome-title">
+    <div class="kb-welcome-copy">
+      <span class="kb-pill">
+        <span class="kb-live-dot" aria-hidden="true"></span> فضای یادگیری و مرور
+      </span>
+      <h2 id="welcome-title">
+        هر جلسه،
+        <br />
+        <em>یک قدم جلوتر.</em>
+      </h2>
+      <p>
+        از کلاس تا درک عمیق‌تر؛ درس‌ها، کدها و مفاهیم به هم وصل‌اند تا مسیر مطالعه‌ات روشن باشد.
+      </p>
+      <div class="kb-hero-actions">
+        {latest && (
+          <a class="kb-button-primary" href={documentHref(latest.id)}>
+            شروع مطالعهٔ {published.length ? 'آخرین جلسه' : 'نمونه'} <HubIcon name="arrow" />
+          </a>
+        )}
+        <a class="kb-button-secondary" href="/concepts/">
+          کاوش مفاهیم
+        </a>
+      </div>
+    </div>
+    <div class="kb-learning-map" aria-label="سه بخش مرتبط: یادگیری، مرور و مفاهیم">
+      <span class="kb-map-caption">مسیرِ فهمیدن</span>
+      <a class="kb-map-node kb-map-main" href="/concepts/">
+        <HubIcon name="layers" />
+        <strong lang="en" dir="ltr">
+          Spring
+        </strong>
+        <small>مفهوم‌ها را به هم وصل کن</small>
+      </a>
+      <div class="kb-map-branches">
+        <a href="/tuesday/">
+          <HubIcon name="book" />
+          <span>یادگیری</span>
+        </a>
+        <a href="/thursday/">
+          <HubIcon name="practice" />
+          <span>مرور و تمرین</span>
+        </a>
+      </div>
+      <span class="kb-map-caption">بخوان · تجربه کن · برگرد</span>
+    </div>
+  </section>
+  <div class="kb-stat-grid" aria-label="محتوای دانش‌نامه">
+    <div>
+      <span class="kb-icon-tile">
+        <HubIcon name="book" />
+      </span>
+      <strong>{persianNumber(sessions.length)}</strong>
+      <span>جلسه{!published.length && 'ٔ نمونه'}</span>
+    </div>
+    <div>
+      <span class="kb-icon-tile">
+        <HubIcon name="concept" />
+      </span>
+      <strong>{persianNumber(concepts.length)}</strong>
+      <span>مفهوم{!published.length && ' نمایشی'}</span>
+    </div>
+    <div>
+      <span class="kb-icon-tile">
+        <HubIcon name="layers" />
+      </span>
+      <strong>
+        {persianNumber(
+          pool
+            .filter(({ kb }) => kb.type !== 'concept')
+            .reduce((n, { kb }) => n + (kb.type !== 'concept' ? kb.concepts.length : 0), 0),
+        )}
+      </strong>
+      <span>پیوند جلسه به مفهوم</span>
+    </div>
+  </div>
+  {!published.length && (
+    <p class="kb-demo-banner">
+      <span aria-hidden="true">◈</span> این فضا فعلاً با محتوای نمایشی آماده شده؛ جلسه‌های واقعی
+      دوره هنوز اضافه نشده‌اند.
+    </p>
+  )}
+  <div class="kb-section-heading">
+    <div>
+      <p class="kb-eyebrow">سه مسیر، یک دانش‌نامه</p>
+      <h2 id="browse">از کجا شروع می‌کنی؟</h2>
+    </div>
+    <span class="kb-caption">متناسب با هدفت انتخاب کن</span>
+  </div>
+  <div class="kb-path-grid">
+    {sections.map((section) => (
+      <a class="kb-path-card" href={section.href} data-path={section.type}>
+        <div class="kb-path-card-top">
+          <span class="kb-icon-tile">
+            <HubIcon name={section.icon} />
+          </span>
+          <span class="kb-path-number">{section.number}</span>
+        </div>
+        <span class="kb-eyebrow">{section.subtitle}</span>
+        <h3>{section.title}</h3>
+        <p>{section.description}</p>
+        <div class="kb-card-bottom">
+          <span>
+            {persianNumber(entries.filter(({ kb }) => kb.type === section.type).length)} صفحه
+          </span>
+          <HubIcon name="arrow" />
+        </div>
+      </a>
+    ))}
+  </div>
+  <div class="kb-dashboard-bottom">
+    <section class="kb-feature-panel" aria-labelledby="latest-title">
+      <div class="kb-section-heading">
+        <h2 id="latest-title">روی میز مطالعه</h2>
+        <span class="kb-caption">آخرین جلسه</span>
+      </div>
+      {latest && (
+        <a class="kb-session-feature" href={documentHref(latest.id)}>
+          <span class="kb-session-number">
+            {latest.kb.type !== 'concept' &&
+              persianNumber(latest.kb.sessionNumber).padStart(2, '۰')}
+          </span>
+          <span>
+            <small>
+              {contentLabel(latest.kb)}
+              {latest.kb.demo && ' · نمونه'}
+            </small>
+            <strong>{latest.title}</strong>
+            <span>{latest.description}</span>
+          </span>
+          <HubIcon name="arrow" />
+        </a>
+      )}
+      <div class="kb-section-heading">
+        <h3>یک مفهوم برای مرور</h3>
+        <a href="/concepts/">همهٔ مفاهیم ←</a>
+      </div>
+      <div class="kb-quick-concepts">
+        {concepts.slice(0, 4).map((entry) => (
+          <a href={documentHref(entry.id)}>
+            {entry.title}
+            <span aria-hidden="true">↗</span>
+          </a>
+        ))}
+      </div>
+    </section>
+    <section class="kb-feature-panel" aria-labelledby="recent-updates">
+      <div class="kb-section-heading">
+        <h2 id="recent-updates">تازه‌های دانش‌نامه</h2>
+        <span class="kb-live-dot" aria-hidden="true"></span>
+      </div>
+      <ol class="kb-activity-list">
+        {updates.map(({ date, summary, entry }) => (
+          <li>
+            <time datetime={date}>{formatDate(date)}</time>
+            <a href={documentHref(entry.id)}>{entry.title}</a>
+            <p>{summary}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+  </div>
+</div>

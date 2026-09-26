@@ -1,0 +1,40 @@
+---
+import { persianNumber } from '../../utils/content-presentation.ts';
+import { requireDocument, sourceCaption } from '../../utils/source-blocks.ts';
+const kb = requireDocument(Astro.locals.starlightRoute.entry.data.kb);
+if (kb.type === 'concept') throw new Error('SessionTimeline requires a session.');
+const items = kb.timeline;
+---
+
+<div class="kb-timeline">
+  {kb.demo && (
+    <p class="kb-caption">
+      نمونهٔ نمایشی؛ ترتیب و زمان‌ها ساختگی‌اند و فایل ضبط‌شده‌ای وجود ندارد.
+    </p>
+  )}
+  {items.length ? (
+    <ol>
+      {items.map((item, index) => (
+        <li>
+          <span class="kb-timeline-position">
+            {item.start ? (
+              <span dir="ltr">
+                {item.start}
+                {item.end && ` → ${item.end}`}
+              </span>
+            ) : (
+              <span>بخش {persianNumber(index + 1)}</span>
+            )}
+          </span>
+          <span>
+            {item.topic}
+            {item.approximate && <small> (زمان تقریبی)</small>}
+            <small class="kb-timeline-source">{sourceCaption(item, kb)}</small>
+          </span>
+        </li>
+      ))}
+    </ol>
+  ) : (
+    <p class="kb-caption">ترتیب موضوع‌های کلاس هنوز ثبت نشده است.</p>
+  )}
+</div>

@@ -1,0 +1,102 @@
+---
+title: تزریق وابستگی — Dependency Injection
+description: نمونهٔ مرجع یک مفهوم؛ مسئله، روش کار و نکته‌های رایج تزریق وابستگی.
+sidebar:
+  label: تزریق وابستگی (نمونه)
+kb:
+  type: concept
+  id: dependency-injection
+  status: draft
+  demo: true
+  createdAt: '2026-09-26'
+  updatedAt: '2026-09-26'
+  sources:
+    gpt: {}
+  prerequisites: []
+  relatedConcepts:
+    - bean
+    - application-context
+  changes:
+    - date: '2026-09-26'
+      type: initial
+      summary: ایجاد صفحهٔ نمونهٔ مفهوم برای بررسی مسیر و ارجاع‌ها.
+    - date: '2026-09-26'
+      type: content-update
+      summary: افزودن نمونهٔ توضیح و کد برای بررسی تجربهٔ مطالعهٔ مفهوم.
+    - date: '2026-09-26'
+      type: concept-update
+      summary: مشخص‌کردن منبع توضیح‌ها و استخراج خودکار حضور مفهوم در جلسه‌ها.
+    - date: '2026-09-26'
+      type: concept-update
+      summary: افزودن پیوندهای مفهومی و نشانی‌های پایدار برای مرور و جست‌وجو.
+---
+
+import ReadingNote from '../../../components/documentation/ReadingNote.astro';
+import SourceBlock from '../../../components/source/SourceBlock.astro';
+import ConceptAppearances from '../../../components/documentation/ConceptAppearances.astro';
+import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+
+این توضیح کوتاه و کد همراه آن توسط GPT برای نمایش قالب مرجع مفاهیم نوشته شده‌اند؛ هنوز جمع‌بندی محتوای واقعی دوره نیستند.
+
+## معرفی [#overview]
+
+<SourceBlock id="concept-overview" source="gpt">
+
+تزریق وابستگی یا `Dependency Injection` یعنی شیء، همکار موردنیازش را از بیرون دریافت کند. به جای اینکه هر کلاس مسئول ساخت همهٔ اشیای موردنیاز خودش باشد، می‌توان مسئولیت ساختن و متصل‌کردن آن‌ها را در جای دیگری قرار داد.
+
+</SourceBlock>
+
+## چرا به آن نیاز داریم؟ [#why]
+
+<SourceBlock id="concept-purpose" source="gpt">
+
+وقتی یک سرویس فقط به قرارداد موردنیازش وابسته باشد، می‌توان در شرایط مختلف همکار متفاوتی به آن داد. برای نمونه، در زمان آزمایش می‌توان از یک پیاده‌سازی ساده استفاده کرد که پیام را واقعاً ارسال نمی‌کند. در نتیجه، بررسی منطق سرویس از بررسی سامانهٔ ارسال پیام جدا می‌شود.
+
+</SourceBlock>
+
+## یک مثال با Java [#java-example]
+
+<SourceBlock id="concept-example" source="gpt">
+
+در این مثال، وابستگی با سازنده دریافت می‌شود. `Sender` فقط یک interface کوچک است و نمونه بدون نیاز به پیکربندی Spring، ایده را نشان می‌دهد.
+
+```java title="Notifier.java · GPT Example"
+interface Sender {
+    void send(String message);
+}
+
+final class Notifier {
+    private final Sender sender;
+
+    Notifier(Sender sender) {
+        this.sender = sender;
+    }
+
+    void notify(String message) {
+        sender.send(message);
+    }
+}
+```
+
+</SourceBlock>
+
+## نکته‌های رایج [#pitfalls]
+
+<SourceBlock id="concept-pitfalls" source="gpt">
+
+<ReadingNote title="مفهوم را به annotation محدود نکنید">
+  تزریق وابستگی یک روش طراحی است. ابتدا می‌توان آن را در Java معمولی فهمید و بعد نقش Spring در ساخت
+  و اتصال اشیا را بررسی کرد.
+</ReadingNote>
+
+ساختن یک interface به‌تنهایی به معنای تزریق وابستگی نیست. پرسش اصلی این است که شیء موردنیاز کجا ساخته می‌شود و چگونه به کلاس مصرف‌کننده می‌رسد.
+
+</SourceBlock>
+
+## ارتباط با جلسه‌ها [#appearances]
+
+<ConceptAppearances />
+
+## تاریخچهٔ تغییرات [#changelog]
+
+<ChangeLog />

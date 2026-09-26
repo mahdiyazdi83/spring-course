@@ -1,0 +1,12 @@
+---
+import type { EditorialDocument } from '../../utils/source-blocks.ts';
+import { statusLabels } from '../../utils/content-presentation.ts';
+interface Props {
+  status: EditorialDocument['status'];
+}
+const { status } = Astro.props;
+---
+
+<span class="kb-status" data-status={status}>
+  {statusLabels[status]}
+</span>

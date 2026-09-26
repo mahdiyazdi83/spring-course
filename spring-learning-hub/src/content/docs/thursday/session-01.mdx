@@ -1,0 +1,109 @@
+---
+title: مرور وابستگی میان کلاس‌ها
+description: نمونهٔ یک جلسهٔ مستقل برای مرور مفاهیم و پرسش‌های یادگیری.
+sidebar:
+  label: جلسهٔ ۱ (نمونه)
+  order: 1
+kb:
+  type: thursday
+  id: thursday-01
+  sessionNumber: 1
+  status: draft
+  demo: true
+  createdAt: '2026-09-26'
+  updatedAt: '2026-09-26'
+  sources:
+    gpt:
+      references:
+        - https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/Class.html
+        - https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/annotations.html
+  prerequisites:
+    - dependency-injection
+  prerequisiteSessions:
+    - tuesday-01
+  concepts:
+    - id: dependency-injection
+      relation: reviewed
+      anchor: learning-path
+    - id: reflection
+      relation: mentioned
+      anchor: further-questions
+    - id: transactional
+      relation: reviewed
+      anchor: further-questions
+  relatedSessions:
+    - tuesday-01
+  timeline:
+    - topic: مرور مفاهیم سه‌شنبه
+      source: gpt
+    - topic: گفت‌وگو دربارهٔ تزریق وابستگی
+      source: gpt
+    - topic: جمع‌بندی و پرسش‌ها
+      source: gpt
+  changes:
+    - date: '2026-09-26'
+      type: initial
+      summary: ساخت نمونهٔ مستقل پنج‌شنبه و ارجاع نمایشی به سه‌شنبه.
+    - date: '2026-09-26'
+      type: content-update
+      summary: افزودن نمونهٔ زمان‌بندی بدون timestamp و الگوی مرور.
+    - date: '2026-09-26'
+      type: content-update
+      summary: اتصال پیش‌نیازها، منابع، تایم‌لاین و تاریخچه به اجزای مستندات.
+    - date: '2026-09-26'
+      type: concept-update
+      summary: افزودن پیوندهای مفهومی و نشانی‌های پایدار برای مرور و جست‌وجو.
+---
+
+import SessionTimeline from '../../../components/documentation/SessionTimeline.astro';
+import PrerequisiteList from '../../../components/documentation/PrerequisiteList.astro';
+import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+import SourceBlock from '../../../components/source/SourceBlock.astro';
+
+این متن نمونه توسط GPT برای بررسی صفحهٔ یک جلسهٔ مستقل نوشته شده است. هیچ منبع واقعی برای این جلسه پردازش نشده است.
+
+## پیش‌نیاز نمونه [#prerequisites]
+
+<PrerequisiteList />
+
+## ترتیب واقعی کلاس [#timeline]
+
+وقتی زمان دقیق در دسترس نیست، ترتیب موضوع‌ها همچنان به مرور کلاس کمک می‌کند.
+
+<SessionTimeline />
+
+## مسیر یادگیری [#learning-path]
+
+<SourceBlock id="thursday-recap" source="gpt">
+
+مفهوم [تزریق وابستگی](/concepts/dependency-injection/) در [نمونهٔ جلسهٔ ۱ سه‌شنبه](/tuesday/session-01/) معرفی شد. در این جلسه به‌جای تکرار تعریف، روی پیدا کردن وابستگی در سازنده و توضیح نقش آن تمرکز می‌کنیم.
+
+بدون نگاه‌کردن به کد، توضیح دهید یک شیء چگونه نیازهایش را از بیرون دریافت می‌کند. سپس پاسخ را با کد همان جلسه مقایسه کنید.
+
+</SourceBlock>
+
+## پرسش‌های مرور [#review-questions]
+
+<SourceBlock id="thursday-questions" source="gpt">
+
+1. وابستگی یک کلاس را از کجا پیدا می‌کنید؟
+2. سازنده چگونه نیازهای کلاس را آشکار می‌کند؟
+3. چه چیزی در مثال `NotificationService` هنوز پیاده‌سازی نشده است؟
+
+به جای حفظ‌کردن تعریف‌ها، مثال کوچکی از پروژهٔ خودتان پیدا کنید و مسئولیت هر کلاس را توضیح دهید.
+
+</SourceBlock>
+
+## پرسش‌هایی برای ادامهٔ یادگیری [#further-questions]
+
+<SourceBlock id="thursday-further" source="gpt">
+
+این دو پرسش به نمونهٔ نمایشی اضافه شده‌اند و گزارش گفت‌وگوی یک کلاس واقعی نیستند. در [Reflection](/concepts/reflection/)، تفاوت بررسی اعضای یک کلاس با تزریق وابستگی چیست؟ خواندن اطلاعات یک متد به‌تنهایی وابستگی‌های یک شیء را فراهم نمی‌کند.
+
+دربارهٔ [@Transactional](/concepts/transactional/) هم مسیر فراخوانی را رسم کنید: فراخوانی از بیرونِ proxy با فراخوانی داخلی از طریق `this` چه تفاوتی دارد؟ نکتهٔ اصلیِ مرور، شناخت مرز اعمال رفتار تراکنشی است؛ پاسخ و مرجع رسمی در صفحهٔ مفهوم آمده است.
+
+</SourceBlock>
+
+## تاریخچهٔ تغییرات [#changelog]
+
+<ChangeLog />

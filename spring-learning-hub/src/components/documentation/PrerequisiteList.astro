@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content';
+import { documentHref } from '../../utils/content-presentation.ts';
+import { requireDocument } from '../../utils/source-blocks.ts';
+const kb = requireDocument(Astro.locals.starlightRoute.entry.data.kb);
+const ids = [...kb.prerequisites, ...(kb.type === 'concept' ? [] : kb.prerequisiteSessions)];
+const entries = await getCollection('docs', ({ data }) => !data.draft);
+const links = ids.map((id) => {
+  const entry = entries.find(({ data }) => data.kb.type !== 'index' && data.kb.id === id);
+  if (!entry) throw new Error(`Missing published prerequisite: ${id}`);
+  return { title: entry.data.title, href: documentHref(entry.id) };
+});
+---
+
+{links.length ? (
+  <ul class="kb-prerequisites">
+    {links.map((link) => (
+      <li>
+        <a href={link.href}>{link.title}</a>
+      </li>
+    ))}
+  </ul>
+) : (
+  <p class="kb-caption">پیش‌نیاز مستندشده‌ای برای این صفحه ثبت نشده است.</p>
+)}

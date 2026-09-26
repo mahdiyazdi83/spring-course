@@ -1,0 +1,24 @@
+---
+import { requireDocument } from '../../utils/source-blocks.ts';
+import { formatDate } from '../../utils/content-presentation.ts';
+const kb = requireDocument(Astro.locals.starlightRoute.entry.data.kb);
+const labels = {
+  initial: 'ایجاد صفحه',
+  'source-added': 'افزودن منبع',
+  correction: 'اصلاح',
+  'content-update': 'تکمیل محتوا',
+  'concept-update': 'به‌روزرسانی مفهوم',
+};
+const changes = [...kb.changes].reverse().sort((a, b) => b.date.localeCompare(a.date));
+---
+
+<ol class="kb-change-log" data-pagefind-ignore>
+  {changes.map((change) => (
+    <li>
+      <div class="kb-caption">
+        <time datetime={change.date}>{formatDate(change.date)}</time> · {labels[change.type]}
+      </div>
+      <p>{change.summary}</p>
+    </li>
+  ))}
+</ol>

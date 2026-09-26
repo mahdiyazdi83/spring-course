@@ -1,0 +1,25 @@
+---
+import type { z } from 'astro/zod';
+import { correctionSchema } from '../../content/schemas/blocks.ts';
+import SourceBlock from './SourceBlock.astro';
+type Props = Omit<z.input<typeof correctionSchema>, 'source'>;
+const { statement, correction, reason, ...block } = correctionSchema.parse({
+  ...Astro.props,
+  source: 'gpt',
+});
+---
+
+<SourceBlock {...block}>
+  <aside class="kb-technical-correction" aria-label="دقیق‌تر بگوییم">
+    <p class="kb-note-title">دقیق‌تر بگوییم</p>
+    <dl>
+      <dt>عبارت مطرح‌شده</dt>
+      <dd>{statement}</dd>
+      <dt>رفتار دقیق</dt>
+      <dd>{correction}</dd>
+      <dt>چرا مهم است؟</dt>
+      <dd>{reason}</dd>
+    </dl>
+    <slot />
+  </aside>
+</SourceBlock>

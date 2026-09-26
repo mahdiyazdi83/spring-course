@@ -1,0 +1,34 @@
+---
+import { Code } from '@astrojs/starlight/components';
+import type { z } from 'astro/zod';
+import { codeExampleSchema } from '../../content/schemas/blocks.ts';
+import { requireDocument } from '../../utils/source-blocks.ts';
+import SourceBlock from '../source/SourceBlock.astro';
+type Props = z.input<typeof codeExampleSchema>;
+const { code, lang, filename, repositoryPath, caption, mark, ...block } = codeExampleSchema.parse(
+  Astro.props,
+);
+const kb = requireDocument(Astro.locals.starlightRoute.entry.data.kb);
+if (block.source === 'teacher' && (!kb.sources.teacher?.repository || !repositoryPath)) {
+  throw new Error(
+    `${block.id}: Teacher Code requires a pinned teacher repository and repositoryPath.`,
+  );
+}
+const label = block.source === 'teacher' ? 'Teacher Code' : 'GPT Example';
+---
+
+<SourceBlock {...block}>
+  <div class="kb-code-meta">
+    <strong>
+      <bdi dir="ltr">{label}</bdi>
+      {kb.demo && ' · نمایشی'}
+    </strong>
+    {repositoryPath && (
+      <span>
+        مسیر در نسخهٔ ثبت‌شده: <bdi dir="ltr">{repositoryPath}</bdi>
+      </span>
+    )}
+  </div>
+  <Code code={code} lang={lang} title={filename} mark={mark} />
+  {caption && <p class="kb-caption">{caption}</p>}
+</SourceBlock>

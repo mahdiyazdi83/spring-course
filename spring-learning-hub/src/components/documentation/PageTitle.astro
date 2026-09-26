@@ -1,0 +1,78 @@
+---
+import DefaultPageTitle from '@astrojs/starlight/components/PageTitle.astro';
+import SessionMeta from './SessionMeta.astro';
+import SessionConcepts from './SessionConcepts.astro';
+import { searchTitle as makeSearchTitle } from '../../utils/knowledge-graph.ts';
+import { persianNumber, sectionLabels } from '../../utils/content-presentation.ts';
+
+const { kb } = Astro.locals.starlightRoute.entry.data;
+const section = !kb
+  ? undefined
+  : kb.type === 'index'
+    ? kb.section
+    : kb.type === 'concept'
+      ? 'concepts'
+      : kb.type;
+const document = kb && kb.type !== 'index' ? kb : undefined;
+const session = document && document.type !== 'concept' ? document : undefined;
+const searchTitle = kb
+  ? makeSearchTitle(Astro.locals.starlightRoute.entry.data.title, kb)
+  : Astro.locals.starlightRoute.entry.data.title;
+const searchType = session
+  ? `جلسهٔ ${session.type === 'tuesday' ? 'سه‌شنبه' : 'پنج‌شنبه'}`
+  : document
+    ? 'مفهوم'
+    : 'فهرست';
+---
+
+<div
+  class="kb-page-heading"
+  data-kind={kb?.type}
+  data-section={section}
+  data-search-title={searchTitle}
+  data-pagefind-meta="title[data-search-title]"
+  data-pagefind-filter={`نوع:${searchType}`}
+>
+  {section && section !== 'home' && (
+    <nav class="kb-breadcrumbs" aria-label="مسیر صفحه">
+      <ol>
+        <li>
+          <a href="/">خانه</a>
+        </li>
+        <li>
+          {kb.type === 'index' ? (
+            <span aria-current="page">{sectionLabels[section]}</span>
+          ) : (
+            <a href={`/${section}/`}>{sectionLabels[section]}</a>
+          )}
+        </li>
+        {document && (
+          <li aria-current="page">
+            {session ? `جلسهٔ ${persianNumber(session.sessionNumber)}` : 'صفحهٔ مفهوم'}
+          </li>
+        )}
+      </ol>
+    </nav>
+  )}
+  <p class="kb-eyebrow">
+    {session
+      ? `جلسهٔ ${persianNumber(session.sessionNumber)} · ${session.type === 'tuesday' ? 'سه‌شنبه' : 'پنج‌شنبه'}`
+      : document
+        ? 'مرجع مفاهیم'
+        : 'پایگاه یادگیری Spring'}
+  </p>
+  <div dir="auto" class="kb-title-isolate">
+    <DefaultPageTitle />
+  </div>
+  {kb?.type === 'index' && (
+    <p class="kb-page-description">{Astro.locals.starlightRoute.entry.data.description}</p>
+  )}
+  {document && <SessionMeta document={document} />}
+  {document?.demo && (
+    <p class="kb-demo-note">
+      <strong>محتوای نمایشی</strong>
+      <span>این صفحه نمونهٔ مطالعه است و گزارش یک کلاس واقعی نیست.</span>
+    </p>
+  )}
+  {session && <SessionConcepts session={session} />}
+</div>

@@ -1,0 +1,34 @@
+---
+import { sourceIds, sourceLabels } from '../../content/schemas/knowledge.ts';
+import type { EditorialDocument } from '../../utils/source-blocks.ts';
+import { formatDate, persianNumber } from '../../utils/content-presentation.ts';
+import DocumentStatus from './DocumentStatus.astro';
+interface Props {
+  document: EditorialDocument;
+}
+const { document } = Astro.props;
+const sourceNames = sourceIds.flatMap((id) => {
+  const material = document.sources[id];
+  if (!material) return [];
+  const available = [
+    material.recordings.some(({ kind }) => kind === 'video') && 'ویدیو',
+    material.recordings.some(({ kind }) => kind === 'audio') && 'صوت',
+    material.repository && 'کد',
+    material.references.length > 0 && 'مرجع',
+  ].filter(Boolean);
+  return [`${sourceLabels[id]}${available.length ? ` (${available.join('، ')})` : ''}`];
+});
+---
+
+<div class="kb-document-meta" data-pagefind-ignore>
+  <DocumentStatus status={document.status} />
+  {document.type !== 'concept' && <span>جلسهٔ {persianNumber(document.sessionNumber)}</span>}
+  <span>
+    آخرین به‌روزرسانی: <time datetime={document.updatedAt}>{formatDate(document.updatedAt)}</time>
+  </span>
+  <span>
+    {sourceNames.length
+      ? `منابع${document.demo ? ' نمایشی' : ''}: ${sourceNames.join('، ')}`
+      : 'منبع کلاس ثبت نشده'}
+  </span>
+</div>
