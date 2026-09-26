@@ -87,6 +87,7 @@
   margin-block: var(--kb-space-5);
 }
 .kb-source-filter fieldset {
+  min-inline-size: 0;
   border: 0;
   padding: 0;
   margin: 0;
@@ -100,7 +101,12 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--kb-space-3) var(--kb-space-5);
+  gap: var(--kb-space-3);
+}
+/* Markdown sibling spacing must not stagger form controls or double the legend gap. */
+.kb-source-filter .kb-filter-options,
+.kb-source-filter .kb-filter-options > * {
+  margin: 0;
 }
 .kb-filter-options label {
   display: inline-flex;
