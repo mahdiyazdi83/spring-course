@@ -1,28 +1,28 @@
-# دانش‌نامهٔ Spring
+# Spring Learning Hub
 
-یک محیط فارسی و راست‌به‌چپ برای مطالعهٔ Spring؛ ساخته‌شده با **Astro، Starlight، TypeScript و MDX**.
+A Persian, right-to-left Spring learning hub built with **Astro, Starlight, TypeScript and MDX**.
 
-داشبورد آموزشی، جلسه‌های سه‌شنبه، مرورهای مستقل پنج‌شنبه و مرجع مفاهیم، مسیرهای اصلی این پروژه‌اند. توضیح‌های استاد، حیدری و GPT انتساب جدا دارند و در جلسه‌های سه‌شنبه قابل فیلتر هستند.
+Explore Tuesday classes, independent Thursday sessions and a linked concept reference through an educational dashboard. Teacher, Heydari and GPT explanations retain separate attribution.
 
-> **وضعیت محتوا:** هر پنج فاز ساخت قالب تکمیل شده است. مطالب فعلی نمونه‌های مشخصاً نمایشی هستند؛ هنوز هیچ جلسهٔ واقعی پردازش نشده است.
+> **Content status:** All five template phases are complete. Current lessons are explicitly labeled demonstrations; no real course session has been processed yet.
 
-## امکانات
+## Features
 
-- داشبورد و کارت‌های آموزشی، پیش‌نیازها، تایم‌لاین و تاریخچهٔ تغییرات
-- فیلتر منابع با حفظ خلاصهٔ زمینه و اصلاح‌های ضروری
-- جست‌وجوی محلی فارسی و انگلیسی با Pagefind و پیوند مستقیم به بخش‌ها
-- ارتباط مفاهیم با جلسه‌ها و پیشنهاد مطالب مرتبط
-- قالب روشن/تیره، فونت محلی Vazirmatn و منوی راست‌چین، حتی برای عنوان‌های انگلیسی
-- کدهای LTR با برجسته‌سازی، کپی و اسکرول مستقل
-- خروجی کاملاً ایستا؛ بدون پایگاه داده یا سرویس جست‌وجوی خارجی
+- Educational dashboard, prerequisites, recording timelines and change history
+- Source filters that preserve necessary context summaries and corrections
+- Local Persian/English Pagefind search with direct section links
+- Concept-to-session relationships and related reading
+- Light/dark themes, local Vazirmatn fonts and right-aligned navigation, including English labels
+- LTR code blocks with highlighting, copying and independent horizontal scrolling
+- Static output with no database or external search service
 
-## پیش‌نیازها
+## Requirements
 
-- **Node.js 24 LTS**، حداقل `24.16.0` و کمتر از `25`؛ نسخهٔ بررسی‌شده در `.node-version` ثبت شده است.
-- npm همراه Node.js
-- Git برای دریافت مخزن
+- **Node.js 24 LTS:** at least `24.16.0`, below `25`. The tested version is recorded in `spring-learning-hub/.node-version`.
+- npm, included with Node.js
+- Git to clone the repository
 
-نسخه‌ها را در ترمینال بررسی کنید:
+Check your installation:
 
 ```sh
 node --version
@@ -30,7 +30,7 @@ npm --version
 git --version
 ```
 
-## دریافت و اجرای توسعه
+## Quick start
 
 ```sh
 git clone https://github.com/mahdiyazdi83/spring-course.git
@@ -39,110 +39,195 @@ npm ci
 npm run dev
 ```
 
-آدرس نمایش‌داده‌شده در ترمینال را باز کنید؛ به‌صورت پیش‌فرض [localhost:4321](http://localhost:4321/).
-با ذخیرهٔ فایل‌ها، صفحه به‌روزرسانی می‌شود. برای توقف سرور `Ctrl+C` بزنید.
+Open the URL printed in the terminal, normally [http://localhost:4321/](http://localhost:4321/).
+Development mode refreshes the page when files change.
 
-اگر پروژه را قبلاً دریافت کرده‌اید، فقط وارد پوشهٔ `spring-learning-hub` شوید.
-تمام فرمان‌های npm این راهنما باید **داخل همین پوشه** اجرا شوند.
-نصب اولیهٔ بسته‌ها به اینترنت نیاز دارد.
+**Run every npm command below from the `spring-learning-hub` directory.**
+The initial dependency installation requires internet access.
 
-## اجرای نسخهٔ نهایی و جست‌وجو
+## Build and preview with search
 
-جست‌وجوی Pagefind پس از ساخت نمایه کار می‌کند؛ آن را در حالت توسعه آزمایش نکنید.
+Pagefind requires a built search index. Use build + preview to test search:
 
 ```sh
 npm run build
 npm run preview
 ```
 
-آدرس preview در ترمینال نمایش داده می‌شود؛ معمولاً [localhost:4321](http://localhost:4321/).
-جست‌وجو با دکمهٔ بالای صفحه یا `Ctrl+K` / `Cmd+K` باز می‌شود.
-پس از تغییر محتوا، برای تازه‌شدن نمایه دوباره build بگیرید.
+Open the preview URL printed in the terminal. Use the search button or `Ctrl+K` / `Cmd+K`.
+After editing content, rebuild to update both pages and the search index.
 
-اگر پورت اشغال است، سرور قبلی را متوقف کنید یا پورت دیگری بدهید:
+Stop a foreground server with `Ctrl+C`. If Astro reports an existing preview server, stop it explicitly:
 
 ```sh
-npm run dev -- --port 4322
-npm run preview -- --port 4322
+npx astro preview stop
 ```
 
-## فرمان‌های کیفیت
+This is also useful when restarting preview with a different host or port.
 
-| فرمان                      | کاربرد                                                                   |
-| -------------------------- | ------------------------------------------------------------------------ |
-| `npm run check`            | قالب‌بندی، lint، تایپ‌ها، آزمون‌ها، اعتبارسنجی محتوا، ساخت و بررسی خروجی |
-| `npm run format`           | قالب‌بندی فایل‌ها                                                        |
-| `npm run lint`             | بررسی کد با ESLint                                                       |
-| `npm run typecheck`        | بررسی Astro و TypeScript                                                 |
-| `npm test`                 | آزمون مدل محتوا، ارتباط‌ها، منابع و دارایی‌ها                            |
-| `npm run validate:content` | بررسی شناسه‌ها، مسیرها، ارجاع‌ها و انتساب MDX                            |
-| `npm run verify:build`     | بررسی خروجی موجود در dist؛ ابتدا build لازم است                          |
+## Share the site on your local network (LAN)
 
-پیش از انتشار تغییرات، `npm run check` را اجرا کنید.
+Run the built site on the host computer so other computers or phones on the same network can open it.
+Client devices only need a browser; they do not need Node.js or a copy of the repository.
 
-## ساختار پروژه
+### 1. Build and start the network preview
+
+```sh
+npm run build
+npx astro preview stop
+npm run preview -- --host 0.0.0.0 --port 4321
+```
+
+The stop command is needed only if another preview instance is already running.
+Binding to `0.0.0.0` makes the server listen on the host's IPv4 network interfaces,
+instead of accepting only localhost connections. This is a command-line setting;
+no change to `astro.config.mjs` is required.
+
+Keep the host computer awake and the server process running while others use the site.
+This preview is suitable for temporary LAN sharing; it is not configured as an always-on service.
+
+### 2. Find the host's LAN address
+
+On Windows, run:
+
+```powershell
+ipconfig
+```
+
+Find the **IPv4 Address** for the active Ethernet or Wi-Fi adapter. Ignore loopback,
+disconnected adapters and unrelated VPN/virtual adapters.
+
+Other devices should open:
+
+```text
+http://HOST_LAN_IP:4321/
+```
+
+For example, if the host address is `192.168.1.50`, open `http://192.168.1.50:4321/`.
+Use your own host's address, not the example. The server also prints its network URL.
+
+Do **not** enter `0.0.0.0` in the client browser. On another device,
+`localhost` and `127.0.0.1` refer to that device, not the host computer.
+DHCP can change the host's IP address after a reconnect or restart; check it again if the old URL stops working.
+
+### 3. Check connectivity and the firewall
+
+- Connect the host and clients to a network that permits communication between devices.
+  Guest Wi-Fi or client isolation may block access even when both devices have internet.
+- First open the LAN URL on the host, then test it from another device.
+- If a Windows client cannot connect, check the port from that client:
+
+```powershell
+Test-NetConnection -ComputerName HOST_LAN_IP -Port 4321
+```
+
+Replace `HOST_LAN_IP` with the host's actual IPv4 address before running the command.
+
+If the firewall blocks access, an administrator can allow inbound TCP port `4321`,
+restricted to the local subnet and the intended network interface/profile.
+Do not disable the firewall or configure internet/router port forwarding for LAN access.
+**No firewall rule is installed by this project.** Starting the server does not automatically
+grant access through Windows Firewall.
+
+### Change the port or use development mode
+
+If another application occupies port 4321, stop the existing preview and select a different port:
+
+```sh
+npx astro preview stop
+npm run preview -- --host 0.0.0.0 --port 4322
+```
+
+Clients must then use `:4322`, and any firewall allowance must match that port.
+For live development over the LAN, use:
+
+```sh
+npm run dev -- --host 0.0.0.0 --port 4321
+```
+
+Use **build + preview** when clients need working Pagefind search.
+LAN access does not require configuring `site` or deploying to GitHub Pages.
+
+## Quality checks
+
+| Command                    | Purpose                                                                           |
+| -------------------------- | --------------------------------------------------------------------------------- |
+| `npm run check`            | Formatting, lint, types, tests, content validation, build and output verification |
+| `npm run format`           | Format project files                                                              |
+| `npm run lint`             | Run ESLint                                                                        |
+| `npm run typecheck`        | Check Astro and TypeScript                                                        |
+| `npm test`                 | Test content, relationships, source behavior and asset checks                     |
+| `npm run validate:content` | Validate IDs, routes, references and MDX provenance                               |
+| `npm run verify:build`     | Check existing dist output; run build first                                       |
+
+Run `npm run check` before publishing code or content changes.
+
+## Repository layout
 
 ```text
 spring-course/
 ├── README.md
 └── spring-learning-hub/
     ├── src/content/docs/
-    │   ├── tuesday/          # کلاس و توضیح تکمیلی همان جلسه
-    │   ├── thursday/         # جلسه‌های مستقل پنج‌شنبه
-    │   └── concepts/         # مرجع مفاهیم
-    ├── src/components/      # اجزای آموزشی و نمایش منابع
-    ├── src/styles/          # توکن‌ها، RTL و داشبورد
-    ├── src/content/schemas/ # قرارداد داده‌ها
-    ├── scripts/             # اعتبارسنجی و ممیزی خروجی
-    ├── tests/               # آزمون‌ها و نمونهٔ فشار چیدمان
-    ├── public/              # دارایی‌های عمومی و مجوز فونت
-    └── agent/               # معماری، قواعد و گردش کار نگهداری
+    │   ├── tuesday/          # Classes and their matching follow-ups
+    │   ├── thursday/         # Independent Thursday sessions
+    │   └── concepts/         # Canonical concept reference
+    ├── src/components/      # Educational and source components
+    ├── src/styles/          # Tokens, RTL and dashboard styles
+    ├── src/content/schemas/ # Content contracts
+    ├── scripts/             # Validation and output audits
+    ├── tests/               # Tests and layout stress fixtures
+    ├── public/              # Public assets and font license
+    └── agent/               # Architecture and maintenance workflows
 ```
 
-پوشه‌های محلی `records/` و `teacher-files/` ورودی خام هستند و همراه این مخزن منتشر نمی‌شوند.
-`node_modules/`، `dist/`، کش‌ها و فایل‌های محیطی نیز در Git ثبت نمی‌شوند.
+Local `records/` and `teacher-files/` directories are raw inputs and are not published.
+Dependencies, generated output, caches and environment files are also excluded from Git.
 
-## افزودن محتوای واقعی
+## Add real course content
 
-ابتدا [راهنمای نگهداری](agent/README.md) و [چک‌لیست پردازش](agent/PROCESSING-CHECKLIST.md) را بخوانید.
+Start with the [maintenance guide](agent/README.md) and [processing checklist](agent/PROCESSING-CHECKLIST.md).
 
-- جلسهٔ سه‌شنبه در `tuesday/session-NN.mdx` قرار می‌گیرد؛ توضیح حیدری به همان صفحه اضافه می‌شود.
-- جلسهٔ پنج‌شنبه هویت و مسیر مستقل دارد.
-- شناسهٔ فایل و anchorها ثابت می‌مانند؛ عنوان می‌تواند تغییر کند.
-- تاریخ‌ها، منابع، پیش‌نیازها و ارتباط مفاهیم در frontmatter و بدنهٔ آموزشی در MDX هستند.
-- انتساب واقعی، زمان ضبط و نسخهٔ مخزن را جعل نکنید. کد تولیدشده باید GPT Example باشد.
-- مطالب نمایشی را فقط پس از جایگزینی کامل با محتوای تأییدشده به محتوای واقعی تبدیل کنید.
+- Tuesday lessons live in `src/content/docs/tuesday/session-NN.mdx`; Heydari follow-ups extend the matching page.
+- Thursday sessions keep their own identities and routes.
+- Keep file IDs and section anchors stable even when titles change.
+- Store dates, sources, prerequisites and concept relationships in frontmatter; write the learning body in MDX.
+- Do not invent source attribution, recording timestamps or repository revisions. Generated code must be labeled GPT Example.
+- Replace simulated material with verified documentation before removing demo markers.
 
-جزئیات: [مدل محتوا](agent/CONTENT-MODEL.md)، [اجزای MDX](agent/COMPONENTS.md)،
-[گردش کار جلسه‌ها](agent/SESSION-WORKFLOW.md)، [معماری](agent/ARCHITECTURE.md) و [سیستم طراحی](agent/DESIGN-SYSTEM.md).
+See the [content model](agent/CONTENT-MODEL.md), [MDX components](agent/COMPONENTS.md),
+[session workflow](agent/SESSION-WORKFLOW.md), [architecture](agent/ARCHITECTURE.md)
+and [design system](agent/DESIGN-SYSTEM.md).
 
-## استقرار و استفادهٔ آفلاین
+## Static hosting and offline use
 
-پس از `npm run build`، **تمام محتوای `dist/`** را در ریشهٔ یک میزبان ایستا قرار دهید.
-پوشه‌های `_astro/`، `pagefind/` و فونت‌ها باید همراه خروجی منتقل شوند.
+For permanent hosting, build and serve **all contents of `dist/`** from a static server.
+Include `_astro/`, `pagefind/` and the generated font assets.
 
-میزبان باید مسیرهای پوشه‌ای را به `index.html` برساند، فایل‌های `.wasm` را با
-`application/wasm` ارائه کند و در صورت نیاز `404.html` را برای مسیر ناموجود تنظیم کند.
-`npm run preview` ابزار بررسی محلی است، نه سرویس استقرار دائمی.
+Configure directory URLs to resolve to `index.html`, serve `.wasm` files as
+`application/wasm`, and optionally use `404.html` for missing pages.
 
-فونت، CSS، JavaScript و نمایهٔ جست‌وجو محلی‌اند. پس از نصب و ساخت، سایت روی HTTP محلی
-بدون سرویس اینترنتی قابل استفاده است؛ لینک‌های اسناد خارجی طبیعتاً اینترنت می‌خواهند.
-بازکردن مستقیم HTML با `file://` و کش آفلاین مبتنی بر service worker پشتیبانی نمی‌شود.
+Fonts, CSS, JavaScript and the search index are local. Once installed and built, the site
+works over local HTTP without an external runtime service. External documentation links still require internet.
+Direct `file://` access and service-worker offline caching are not supported.
 
-هنگام مشخص‌شدن دامنه، مقدار `site` را در `astro.config.mjs` تنظیم کنید.
-استقرار زیر مسیر، مانند `/spring-course/`، به تنظیم `base` و بازبینی لینک‌ها نیاز دارد؛
-این نسخه برای ریشهٔ میزبان تنظیم شده است و خودکار روی GitHub Pages منتشر نمی‌شود.
+Set `site` in `astro.config.mjs` when a permanent deployment URL is known.
+Subpath hosting, such as `/spring-course/`, requires a `base` and link review.
+The current site targets the host root; pushing to GitHub does not automatically deploy it to GitHub Pages.
 
-## رفع اشکال
+## Troubleshooting
 
-- **خطای نسخهٔ Node:** نسخهٔ 24 سازگار را فعال کنید و دوباره `npm ci` بزنید.
-- **جست‌وجو کار نمی‌کند:** از build + preview استفاده کنید و تمام پوشهٔ `pagefind/` را حفظ کنید.
-- **تغییرات در preview دیده نمی‌شود:** دوباره build بگیرید و صفحه را بازخوانی کنید.
-- **اشکال اجرای npm.ps1 در PowerShell:** می‌توانید به‌جای `npm` از `npm.cmd` استفاده کنید.
-- **نبود sitemap:** تا تعیین دامنهٔ واقعی، هشدار مورد انتظار است.
+- **Node version error:** activate a supported Node 24 version and run `npm ci` again.
+- **Search unavailable:** use build + preview and preserve the entire `pagefind/` directory.
+- **Stale preview content:** rebuild, then refresh the browser.
+- **Another preview is already running:** run `npx astro preview stop` before starting a new instance.
+- **LAN URL fails:** verify the IP, server process, port, firewall and network client isolation.
+- **PowerShell blocks npm.ps1:** use `npm.cmd` instead of `npm`, or `npx.cmd` instead of `npx`.
+- **No sitemap:** expected until a permanent `site` URL is configured.
 
-دو هشدار شناخته‌شدهٔ دیگر ابزار ساخت مربوط به دستور داخلی MDX
-`use astro:head-inject` و نبود صفحهٔ 404 سفارشی Starlight هستند؛ ساخت موفق است و 404 پیش‌فرض تولید می‌شود.
-این هشدارها پنهان نشده‌اند. نتیجه و حدود بررسی‌ها در [گزارش فاز پنجم](agent/logs/2026-09-26-phase-5.md) ثبت شده است.
+Two other known build warnings concern the generated MDX `use astro:head-inject` directive
+and Starlight's missing custom 404 lookup. Builds succeed and the default 404 page is generated.
+These warnings are not suppressed. See the [Phase 5 report](agent/logs/2026-09-26-phase-5.md)
+for validation coverage and limitations.
 
-فونت Vazirmatn با مجوز OFL عرضه می‌شود؛ متن مجوز در [Vazirmatn-OFL.txt](public/licenses/Vazirmatn-OFL.txt) موجود است.
+Vazirmatn is distributed under the OFL; see [Vazirmatn-OFL.txt](public/licenses/Vazirmatn-OFL.txt).
