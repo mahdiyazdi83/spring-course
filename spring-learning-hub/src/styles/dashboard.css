@@ -963,3 +963,49 @@ site-search dialog .pagefind-ui__message {
   display: inline-block;
   unicode-bidi: plaintext;
 }
+.sidebar-content a {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+.sidebar-content a::before {
+  content: '';
+  flex: 0 0 1.1rem;
+  block-size: 1.1rem;
+  background: currentColor;
+  mask: var(--kb-nav-icon, url('/icons/book.svg')) center / contain no-repeat;
+}
+.sidebar-content a[href='/'] {
+  --kb-nav-icon: url('/icons/home.svg');
+}
+.sidebar-content a[href^='/thursday/'] {
+  --kb-nav-icon: url('/icons/practice.svg');
+}
+.sidebar-content a[href^='/concepts/'] {
+  --kb-nav-icon: url('/icons/concept.svg');
+}
+.sidebar-content a > span {
+  min-inline-size: 0;
+}
+.sidebar-content summary .large {
+  color: var(--kb-link);
+}
+.kb-document-meta > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.kb-document-meta svg {
+  inline-size: 1rem;
+  block-size: 1rem;
+  color: var(--kb-link);
+}
+.kb-section-heading h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.kb-section-heading h2 svg {
+  color: var(--kb-link);
+}

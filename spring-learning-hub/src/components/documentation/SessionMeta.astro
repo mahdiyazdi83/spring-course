@@ -3,6 +3,7 @@ import { sourceIds, sourceLabels } from '../../content/schemas/knowledge.ts';
 import type { EditorialDocument } from '../../utils/source-blocks.ts';
 import { formatDate, persianNumber } from '../../utils/content-presentation.ts';
 import DocumentStatus from './DocumentStatus.astro';
+import HubIcon from '../common/HubIcon.astro';
 interface Props {
   document: EditorialDocument;
 }
@@ -22,11 +23,18 @@ const sourceNames = sourceIds.flatMap((id) => {
 
 <div class="kb-document-meta" data-pagefind-ignore>
   <DocumentStatus status={document.status} />
-  {document.type !== 'concept' && <span>جلسهٔ {persianNumber(document.sessionNumber)}</span>}
+  {document.type !== 'concept' && (
+    <span>
+      <HubIcon name="book" />
+      جلسهٔ {persianNumber(document.sessionNumber)}
+    </span>
+  )}
   <span>
+    <HubIcon name="calendar" />
     آخرین به‌روزرسانی: <time datetime={document.updatedAt}>{formatDate(document.updatedAt)}</time>
   </span>
   <span>
+    <HubIcon name="sources" />
     {sourceNames.length
       ? `منابع${document.demo ? ' نمایشی' : ''}: ${sourceNames.join('، ')}`
       : 'منبع کلاس ثبت نشده'}

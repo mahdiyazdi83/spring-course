@@ -5,6 +5,9 @@ Current scope: the Phase 5 template plus user-authorized documentation of sessio
 Use `PROCESSING-CHECKLIST.md` for each real session and `workflows/local-transcription.md`
 for authorized local ASR. The session-2 processing log records completed coverage and source limits;
 do not infer completion from the presence of a recording in frontmatter.
+The simulated Tuesday/Thursday session-01 pages are native drafts, retained only as
+authoring examples. They are excluded from the built site, navigation and search;
+published lessons currently start at session 02. Do not republish fake session 01.
 
 ## Read only what the task needs
 

@@ -35,6 +35,9 @@ Do not scatter literal palette colors in Astro components.
 Vazirmatn Variable is bundled locally from Fontsource. Preserve its OFL license in
 `public/licenses/`. No CDN font or runtime image service. HubIcon is a small repository-native
 SVG set, not an icon-font dependency. Code uses Consolas/Liberation Mono.
+Native sidebar links use local SVG masks under `public/icons/`, with distinct home,
+class, practice and concept symbols. Labels remain visible; icons are decorative.
+Session metadata and dashboard actions use the matching HubIcon stroke style.
 
 ## Reading and RTL
 
