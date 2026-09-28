@@ -2,16 +2,21 @@
 title: 'Bean — شیء تحت مدیریت Spring'
 description: تفاوت شیء معمولی با Bean و نقش تعریف Bean در ساخت و اتصال اشیا.
 sidebar:
-  hidden: true
   label: Bean
 kb:
   type: concept
   id: bean
-  status: draft
-  demo: true
+  status: complete
+  demo: false
   createdAt: '2026-09-26'
-  updatedAt: '2026-09-26'
+  updatedAt: '2026-09-28'
   sources:
+    teacher:
+      repository:
+        location: ../teacher-files
+        commit: 8168a8b47b45a04a71920a144ea65daf09f906a2
+      references:
+        - ../teacher-files/session3
     gpt:
       references:
         - https://docs.spring.io/spring-framework/reference/core/beans/definition.html
@@ -21,6 +26,9 @@ kb:
     - date: '2026-09-26'
       type: initial
       summary: افزودن مرجع نمایشیِ مستند برای بررسی جست‌وجو و پیوندهای مفهومی.
+    - date: '2026-09-28'
+      type: concept-update
+      summary: جایگزینی محتوای نمایشی با مرجع مرتبط با کد واقعی جلسهٔ سوم و مستندات رسمی.
 ---
 
 import SourceBlock from '../../../components/source/SourceBlock.astro';
@@ -28,21 +36,31 @@ import ConceptAppearances from '../../../components/documentation/ConceptAppeara
 import PrerequisiteList from '../../../components/documentation/PrerequisiteList.astro';
 import ChangeLog from '../../../components/documentation/ChangeLog.astro';
 
-این صفحهٔ نمایشی توسط GPT و با کمک مرجع رسمی نوشته شده؛ هنوز جمع‌بندی محتوای واقعی دوره نیست.
-
 ## Bean چیست؟ [#overview]
 
 <SourceBlock id="bean-overview" source="gpt">
 
-Bean یک شیء تحت مدیریت کانتینر Spring است. اطلاعات ساخت، وابستگی‌ها و تنظیمات آن می‌تواند در یک `BeanDefinition` توصیف شود. بنابراین تعریفِ Bean با نمونهٔ ساخته‌شدهٔ آن یکی نیست.
+Bean شیئی است که کانتینر Spring آن را مدیریت می‌کند. کلاس، تعریف Bean و نمونهٔ ساخته‌شده سه چیز متفاوت‌اند: کلاس نوع را مشخص می‌کند؛ تعریف Bean تنظیمات ساخت و مدیریت را نگه می‌دارد؛ نمونه، شیء موجود در حافظه است.
 
 </SourceBlock>
 
-## چرا این تفاوت مهم است؟ [#definition]
+## تعریف، نام و نمونه [#definition]
 
-<SourceBlock id="bean-definition" source="gpt">
+<SourceBlock id="bean-definition" source="teacher">
 
-تعریف Bean مانند دستور ساخت عمل می‌کند: نوع، scope و همکارهای موردنیاز شیء را مشخص می‌کند. [ApplicationContext](/concepts/application-context/) از این اطلاعات برای مدیریت اشیا استفاده می‌کند؛ [تزریق وابستگی](/concepts/dependency-injection/) توضیح می‌دهد همکارها چگونه به مصرف‌کننده می‌رسند.
+در فایل `SpringContextDemo/src/main/resources/config.xml` دو تعریف جدا برای کلاس `BeanOne` وجود دارد و نام هیچ‌کدام صریح تعیین نشده است. Spring برایشان نام تولید می‌کند؛ یکسان‌بودن کلاس به معنی یکسان‌بودن تعریف نیست. Bean دیگری از نوع `BeanTwo` با نام `two` معرفی شده است.
+
+مثال `p04beanDefinition` نیز مقدار اولیهٔ `name` را در سازنده می‌دهد و سپس آن را از طریق property تغییر می‌دهد. بنابراین خواندن `getName()` بعد از تکمیل مقداردهی باید اثر setter نهایی را نشان دهد، نه صرفاً ورودی سازنده را. [کد و محدودیت اجرای مثال](/tuesday/session-03/#bean-definition)
+
+</SourceBlock>
+
+## Spring چگونه Bean را می‌شناسد؟ [#registration]
+
+<SourceBlock id="bean-registration" source="gpt">
+
+در این جلسه سه شیوه را می‌بینیم: تعریف XML، متد `@Bean` در پیکربندی Java و شناسایی `@Component` با component scanning. وجود annotation بدون شناسایی کلاس در کانتینر کافی نیست.
+
+نام، راه ارجاع به Bean است و با نام کلاس الزاماً یکی نیست. چند نام می‌توانند alias یک Bean باشند؛ این با چند تعریف مستقل از یک کلاس فرق دارد. تعریف Bean نیز الزاماً در همان لحظه به نمونه تبدیل نمی‌شود؛ تنظیمات scope و lazy بودن روی زمان ساخت اثر دارند. [مرجع تعریف و نام Bean](https://docs.spring.io/spring-framework/reference/core/beans/definition.html)
 
 </SourceBlock>
 
@@ -50,13 +68,14 @@ Bean یک شیء تحت مدیریت کانتینر Spring است. اطلاعا�
 
 <SourceBlock id="bean-pitfalls" source="gpt">
 
-هر شیئی که با `new` ساخته می‌شود، خودکار به Bean تبدیل نمی‌شود. حتی وجود annotation روی کلاس، بدون پیکربندی و شناسایی مناسب در کانتینر، برای نتیجه‌گیری دربارهٔ مدیریت آن کافی نیست.
+`new` به‌خودی‌خود ممنوع نیست؛ حتی متد `@Bean` معمولاً با آن شیء می‌سازد. پرسش این است که شیء ساخته‌شده به کانتینر تحویل داده می‌شود یا صرفاً یک شیء مستقل در برنامه است. همچنین Bean در Spring را نباید با قرارداد JavaBeans مانند getter و setter یکی دانست.
 
 </SourceBlock>
 
 ## مرجع توضیح [#references]
 
-- [مستندات رسمی Spring](https://docs.spring.io/spring-framework/reference/core/beans/definition.html)
+- [تعریف و نام‌گذاری Bean در Spring](https://docs.spring.io/spring-framework/reference/core/beans/definition.html)
+- [مثال‌های نسخه‌دار جلسهٔ سوم](/tuesday/session-03/#bean-definition)
 
 ## این مفهوم کجا مطرح شده؟ [#appearances]
 

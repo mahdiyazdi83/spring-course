@@ -1,0 +1,292 @@
+---
+title: 'جلسهٔ سوم پنج‌شنبه — از نیازمندی‌ها تا فهم کانتینر'
+description: مرور مستقل حیدری دربارهٔ نیازمندی‌های غیرعملکردی، سرعت تحویل، coupling، تزریق وابستگی و خواندن کانتینر دستی.
+sidebar:
+  label: جلسهٔ ۳ — مرور DI و کانتینر
+  order: 3
+kb:
+  type: thursday
+  id: thursday-03
+  sessionNumber: 3
+  status: complete
+  demo: false
+  createdAt: '2026-09-28'
+  updatedAt: '2026-09-28'
+  sources:
+    heydari:
+      recordings:
+        - id: heydari-03-thursday1
+          location: ../records/mr.heydari-thursday-audio/session3/3(1).m4a
+          kind: audio
+          durationSeconds: 2532
+        - id: heydari-03-thursday2
+          location: ../records/mr.heydari-thursday-audio/session3/3(2).m4a
+          kind: audio
+          durationSeconds: 2821
+    gpt:
+      references:
+        - https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/beanfactory.html
+        - https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/reflect/Field.html
+        - https://martinfowler.com/articles/injection.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/classpath-scanning.html
+  prerequisiteSessions: [tuesday-03]
+  concepts:
+    - id: dependency-injection
+      relation: reviewed
+      anchor: dependency-and-control
+    - id: reflection
+      relation: expanded
+      anchor: read-the-container
+    - id: application-context
+      relation: reviewed
+      anchor: container-questions
+    - id: bean
+      relation: reviewed
+      anchor: container-questions
+  timeline:
+    - topic: تمایز الگوی طراحی، سبک معماری و ابزار؛ تعیین محدودهٔ مطالعه
+      source: heydari
+      recording: heydari-03-thursday1
+      start: '00:00'
+      approximate: true
+    - topic: نیازمندی عملکردی و غیرعملکردی با مثال کیف پول و ظرفیت تراکنش
+      source: heydari
+      recording: heydari-03-thursday1
+      start: '04:30'
+      approximate: true
+    - topic: دسترس‌پذیری، بازیابی، مقیاس‌پذیری، پایش و لاگ
+      source: heydari
+      recording: heydari-03-thursday1
+      start: '09:00'
+      approximate: true
+    - topic: Fast Flow Development و کوتاه‌کردن فاصلهٔ تغییر تا استقرار
+      source: heydari
+      recording: heydari-03-thursday1
+      start: '16:00'
+      approximate: true
+    - topic: محدودهٔ یادگیری اصول طراحی و دو پایهٔ IOC و AOP
+      source: heydari
+      recording: heydari-03-thursday1
+      start: '21:00'
+      approximate: true
+    - topic: کانتینر، ساخت و نگهداری اشیا و روش‌های تزریق
+      source: heydari
+      recording: heydari-03-thursday1
+      start: '24:00'
+      approximate: true
+    - topic: Service Locator در برابر دریافت وابستگی از سازنده
+      source: heydari
+      recording: heydari-03-thursday1
+      start: '28:40'
+      approximate: true
+    - topic: تفاوت زمان ساخت و تحویل؛ ابهام lazy و eager در مثال
+      source: heydari
+      recording: heydari-03-thursday1
+      start: '36:00'
+      approximate: true
+    - topic: مرور وابستگی، جایگزینی پیاده‌سازی و وارونگی کنترل
+      source: heydari
+      recording: heydari-03-thursday2
+      start: '03:00'
+      approximate: true
+    - topic: پرسش دربارهٔ BeanFactory و ApplicationContext و بازگشت به کد
+      source: heydari
+      recording: heydari-03-thursday2
+      start: '13:45'
+      approximate: true
+    - topic: Reflection، گرفتن فیلدها و پیدا کردن annotation
+      source: heydari
+      recording: heydari-03-thursday2
+      start: '18:00'
+      approximate: true
+    - topic: اتصال id به نام کلاس؛ getBean و جای‌گذاری وابستگی
+      source: heydari
+      recording: heydari-03-thursday2
+      start: '24:00'
+      approximate: true
+    - topic: مرور دوبارهٔ نگاشت bank و مراحل ساخت و تزریق
+      source: heydari
+      recording: heydari-03-thursday2
+      start: '33:00'
+      approximate: true
+    - topic: ارتباط مثال دستی با component scanning و BeanDefinition
+      source: heydari
+      recording: heydari-03-thursday2
+      start: '42:40'
+      approximate: true
+  changes:
+    - date: '2026-09-28'
+      type: initial
+      summary: ایجاد درس مستقل از دو صوت پنج‌شنبهٔ جلسهٔ سوم و اتصال مرورها به کد سه‌شنبه.
+    - date: '2026-09-28'
+      type: correction
+      summary: روشن‌کردن ترتیب ساخت و استفاده در IoC و تفاوت Field.set با setter پس از بازبینی صوت و کد.
+---
+
+import SourceBlock from '../../../components/source/SourceBlock.astro';
+import GptNote from '../../../components/source/GptNote.astro';
+import TechnicalCorrection from '../../../components/source/TechnicalCorrection.astro';
+import PrerequisiteList from '../../../components/documentation/PrerequisiteList.astro';
+import SessionTimeline from '../../../components/documentation/SessionTimeline.astro';
+import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+
+این جلسه از دو فایل صوتی پنج‌شنبه تدوین شده و رویدادی مستقل از کلاس استاد است. بخش اول به مرتب‌کردن اصطلاح‌ها و هدف مطالعه می‌پردازد؛ بخش دوم با پرسش‌وپاسخ دربارهٔ DI و خواندن کد کانتینر ادامه پیدا می‌کند. کد قابل استنادِ مثال بانک در [درس سه‌شنبه](/tuesday/session-03/#manual-container) قرار دارد؛ وجود صوت، به معنی در اختیار داشتن تصویر یا فایل کد جداگانهٔ پنج‌شنبه نیست.
+
+**پوشش منابع:** متن حاصل از سراسر دو صوت، حدود ۸۹ دقیقه، مرور شده و چند بخش مبهم دوباره پردازش شده‌اند. این متن بازنویسی آموزشی با کمک تبدیل محلی گفتار به متن است؛ عبارت‌های نامفهوم، سکوت‌ها و گفت‌وگوهای غیرآموزشی بازسازی نشده‌اند. تاریخ تدوین، تاریخ برگزاری فرض نشده است.
+
+## پیش‌نیاز مطالعه [#prerequisites]
+
+<PrerequisiteList />
+
+## ترتیب موضوع‌ها در دو فایل [#timeline]
+
+زمان‌ها تقریبی‌اند و برای هر فایل از صفر شروع می‌شوند.
+
+<SessionTimeline />
+
+## ۱. اول بدانیم هر اصطلاح چه نوع چیزی است [#study-scope]
+
+<SourceBlock id="heydari-study-scope" source="heydari" recording="heydari-03-thursday1" timestamp="00:00">
+
+مرور با این نکته شروع می‌شود که نام الگو، سبک معماری و ابزار را نباید در یک سطح قرار داد. آشنایی با الگوهای طراحی برای برنامه‌نویس مهم است، اما شنیدن چند نام مربوط به سیستم‌های توزیع‌شده به معنی لزوم یادگیری عمیق همهٔ آن‌ها پیش از شروع Spring نیست.
+
+حیدری پیشنهاد می‌کند فعلاً مسئلهٔ هر اصطلاح را بشناسیم و عمق مطالعه را با مرحلهٔ یادگیری تنظیم کنیم. خروجی مفید این بخش، فهرستی بی‌انتها از ابزارها نیست: باید بتوانیم بگوییم یک مفهوم چه مسئله‌ای را توضیح می‌دهد و در مثال فعلی کجا دیده می‌شود.
+
+</SourceBlock>
+
+## ۲. قابلیت کسب‌وکار با کیفیت اجرای آن فرق دارد [#requirements]
+
+<SourceBlock id="heydari-requirements" source="heydari" recording="heydari-03-thursday1" timestamp="06:00" summary="در مثال کیف پول، شارژ و برداشت قابلیت‌های عملکردی‌اند؛ ظرفیت پاسخ‌گویی و کیفیت اجرای سرویس نیازمندی‌های جداگانه‌ای هستند.">
+
+مثال صوت، **کیف پول** است. امکان شارژ و برداشت، بخشی از کاری است که محصول باید انجام دهد؛ این‌ها نیازمندی‌های عملکردی‌اند. حالا اگر در یک توافق، ظرفیت بیش از ۵۰۰ تراکنش در ثانیه خواسته شود، سؤال دیگری مطرح شده است: همین قابلیت با چه کیفیت و ظرفیتی اجرا می‌شود؟ عدد، مثال جلسه است و معیار عمومی همهٔ سامانه‌ها نیست.
+
+برای یافتن نیازمندی‌های غیرعملکردی، حیدری سؤال‌های عملی پیشنهاد می‌کند: سیستم چقدر سریع باشد؟ چقدر رشد کند؟ چه مدت در دسترس باشد؟ نگهداری و مشاهدهٔ وضعیت آن چقدر آسان باشد؟ بعد از خرابی چقدر زود خدمت‌رسانی از سر گرفته شود؟
+
+در ادامه، مقیاس‌پذیری، بازیابی پس از بحران، پایش و تجمیع لاگ به‌عنوان حوزه‌های مرتبط مرور می‌شوند. بعضی از این مسائل به زیرساخت و تصمیم‌های کلان وابسته‌اند؛ قرار نیست با اضافه‌کردن یک annotation در کد حل شوند.
+
+</SourceBlock>
+
+<GptNote id="gpt-measurable-requirements" context="heydari-requirements">
+
+برای تمرین، جملهٔ مبهم «سیستم سریع باشد» را به یک پرسش قابل بررسی تبدیل کنید: کدام عملیات، با چه حجم بار و در چه محیطی؟ بدون این زمینه، حتی عدد TPS هم برای قضاوت کافی نیست. در این مرحله هدف، دیدن تفاوت قابلیت و کیفیت اجرای آن است؛ طراحی ظرفیت یک سامانهٔ واقعی موضوع جداگانه‌ای است.
+
+</GptNote>
+
+## ۳. سرعت توسعه فقط سرعت نوشتن کد نیست [#fast-flow]
+
+<SourceBlock id="heydari-fast-flow" source="heydari" recording="heydari-03-thursday1" timestamp="16:00">
+
+در توضیح Fast Flow Development، فاصلهٔ شروع تغییر تا استقرار آن در محیط استفاده اهمیت دارد. مثال بحث این است که تغییر یک نیاز کسب‌وکار نباید آن‌قدر در درهم‌تنیدگی اجزا و فرایند تحویل گیر کند که هنگام انتشار، دیگر پاسخ‌گوی نیاز نباشد.
+
+حیدری تأکید می‌کند بخشی از این مسئله به فرایند، همکاری و شیوهٔ تحویل مربوط است و تمام آن به یک برنامه‌نویس یا یک فریم‌ورک محدود نمی‌شود. استقلال استقرار نیز در همین زمینه مطرح می‌شود. برای مطالعهٔ Spring، فعلاً کافی است ارتباط این هدف با کم‌کردن وابستگی‌های غیرضروری را ببینیم.
+
+</SourceBlock>
+
+## ۴. وابستگی، coupling و وارونگی کنترل [#dependency-and-control]
+
+<SourceBlock id="heydari-dependency" source="heydari" recording="heydari-03-thursday2" timestamp="03:00" summary="وابستگی به یک پیاده‌سازی مشخص، جایگزینی آن را دشوار می‌کند؛ وابستگی به قرارداد، انتخاب همکار را انعطاف‌پذیرتر می‌کند.">
+
+در پرسش‌وپاسخ، ابتدا باید دو سمت وابستگی را پیدا کنیم: **چه کلاسی برای انجام کار خود به چه همکار دیگری نیاز دارد؟** سپس سؤال جایگزینی مطرح می‌شود: اگر همکار دیگری همان کار را انجام دهد، برای استفاده از آن چقدر باید مصرف‌کننده را تغییر دهیم؟
+
+وابستگی به abstraction اجازه می‌دهد پیاده‌سازی‌های سازگار را جایگزین کنیم. این به معنی حذف همهٔ وابستگی‌ها نیست؛ مصرف‌کننده هنوز به قرارداد احتیاج دارد. زاویهٔ این مرور نسبت به سه‌شنبه، تشخیص وابستگی از روی امکان جایگزینی است. [تعریف و مثال DI](/concepts/dependency-injection/)
+
+در ادامه، IoC با جابه‌جایی مسئولیت ساخت توضیح داده می‌شود: لازم نیست کلاس مصرف‌کننده خودش همهٔ همکارها را بسازد. یک بخش بیرونی می‌تواند ساخت و تحویل را انجام دهد؛ DI مسیر مشخصی برای رساندن این وابستگی‌ها به مصرف‌کننده است.
+
+</SourceBlock>
+
+<GptNote id="gpt-dependency-timing" context="heydari-dependency">
+
+برای پیدا کردن وابستگی فقط به سازنده نگاه نکنید. در مثال همین دوره، `BankClient` ساخته می‌شود و سپس فیلدش مقدار می‌گیرد؛ نیاز واقعی هنگام استفاده از سرویس همچنان وجود دارد. سؤال درست این است که شیء برای انجام مسئولیت خود به چه چیزی نیاز دارد و چه زمانی باید آن را دریافت کرده باشد. [DI در Spring](https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html)
+
+</GptNote>
+
+<SourceBlock id="heydari-ioc-order" source="heydari" recording="heydari-03-thursday1" timestamp="24:30">
+
+در پرسش‌وپاسخ فایل اول، برای IoC تعبیر «اول از شیء استفاده می‌کنیم، بعد می‌سازیم» مطرح می‌شود. ادامهٔ بحث، مسئول بیرونی‌ای را توضیح می‌دهد که اشیا را می‌سازد، نگه می‌دارد و در زمان مناسب تحویل می‌دهد. تعبیر اولیه را باید با تفکیک زیر بخوانیم.
+
+</SourceBlock>
+
+<TechnicalCorrection id="correction-ioc-order" corrects="heydari-ioc-order" statement="وارونگی کنترل یعنی اول از شیء استفاده کنیم و بعد آن را بسازیم." correction="IoC مسئولیت و جهت کنترل را جابه‌جا می‌کند، نه ترتیب لازم برای استفاده از یک نمونهٔ واقعی را. نمونه باید پیش از اجرای رفتار موردنیاز روی آن آماده باشد؛ مصرف‌کننده لزوماً سازندهٔ آن نیست." reason="وگرنه ممکن است IoC با استفاده از مرجع null یا استفاده از شیئی که هنوز وجود ندارد اشتباه گرفته شود.">
+
+در مثال بانک نیز ابتدا سرویس ساخته و در مصرف‌کننده قرار داده می‌شود و سپس متد انتقال از آن استفاده می‌کند. می‌توان کد مصرف‌کننده را مستقل از جزئیات ساخت نوشت؛ این استقلال با اجرای متد پیش از وجود نمونه فرق دارد. [توضیح مسئولیت ساخت و DI](https://martinfowler.com/articles/injection.html)
+
+</TechnicalCorrection>
+
+## ۵. DI و Service Locator؛ چه کسی درخواست می‌دهد؟ [#service-locator]
+
+<SourceBlock id="heydari-service-locator" source="heydari" recording="heydari-03-thursday1" timestamp="28:40" summary="در مثال سازنده، CustomerService از بیرون تحویل داده می‌شود؛ در مثال Service Locator، مصرف‌کننده خودش هنگام نیاز آن را از context درخواست می‌کند.">
+
+برای مقایسه، وابستگی‌ای مانند `CustomerService` را در نظر می‌گیرند. در نسخهٔ تزریق از سازنده، نیاز در امضای سازنده دیده می‌شود و بخش بیرونی آن را تحویل می‌دهد. در نسخهٔ Service Locator، مصرف‌کننده یک context یا locator در اختیار دارد و داخل مسیر استفاده، سرویس موردنظر را از آن درخواست می‌کند.
+
+بحث بعدی صوت روی دو زمان متفاوت مکث می‌کند: **چه وقت شیء ساخته شده است؟** و **چه وقت مصرف‌کننده آن را دریافت می‌کند؟** ممکن است سرویس از قبل در کانتینر موجود باشد ولی مصرف‌کننده تازه آن را درخواست کند. پس دیرتر دریافت‌کردن، به‌تنهایی نشانهٔ دیرتر ساخته‌شدن نیست.
+
+حیدری یکی از هزینه‌های Service Locator را پنهان‌ترشدن نیازهای کلاس می‌داند: از روی سازنده‌ای که فقط context می‌گیرد، معلوم نیست مصرف‌کننده در ادامه دقیقاً چه سرویس‌هایی لازم دارد. این با سازنده‌ای که `CustomerService` را صریح دریافت می‌کند فرق دارد.
+
+</SourceBlock>
+
+<GptNote id="gpt-locator-lifecycle" context="heydari-service-locator">
+
+انتخاب DI یا Service Locator، به‌تنهایی تنظیم lazy یا eager بودن نیست. زمان ساخت به رفتار و تنظیمات کانتینر هم وابسته است؛ ممکن است `getBean` یک نمونهٔ موجود را برگرداند یا ساخت آن را آغاز کند. برای مقایسه، جهت درخواست را جدا از چرخهٔ عمر بررسی کنید. [توضیح DI و Service Locator از مارتین فاولر](https://martinfowler.com/articles/injection.html)
+
+</GptNote>
+
+## ۶. خواندن کانتینر دستی، خط‌به‌خط از دید مسئولیت [#read-the-container]
+
+<SourceBlock id="heydari-reflection" source="heydari" recording="heydari-03-thursday2" timestamp="18:00" summary="Reflection ساختار شیء را در زمان اجرا قابل بررسی می‌کند؛ injectIn از این امکان برای پیدا کردن فیلد وابستگی استفاده می‌کند.">
+
+حیدری از توضیح کلی کانتینر به خواندن کد `MyContext` برمی‌گردد. نقطهٔ شروع، شیء مصرف‌کننده‌ای است که به متد داده می‌شود؛ کد تزریق لازم نیست از قبل نام تمام فیلدهای آن کلاس را بداند. با `getClass()` اطلاعات نوع و با `getDeclaredFields()` فیلدهای تعریف‌شده روی آن را به دست می‌آورد.
+
+حلقه روی فیلدها به دنبال محل وابستگی می‌گردد. این همان نقش [Reflection](/concepts/reflection/) در مثال است: بررسی ساختار در زمان اجرا و استفاده از آن برای انجام یک کار. دیدن نام متدها کافی نیست؛ برای هر خط بپرسید ورودی چیست و کدام تصمیم را ممکن می‌کند.
+
+سپس مقدار `id` از annotation خوانده می‌شود و به `getBean` می‌رسد. متد، نگاشت موجود در فایل تنظیمات را می‌خواند، کلاس مناسب را پیدا می‌کند و نمونه می‌سازد. در توضیح صوت، مقداردهی با `Field.set` چند بار «استفاده از setter» نامیده می‌شود؛ تفاوت فنی آن در یادداشت زیر آمده است.
+
+برای تطبیق صوت با متن قابل کپی، [کد نسخه‌دار MyContext در سه‌شنبه](/tuesday/session-03/#code-manual-context) را کنار این توضیح باز کنید. این پیوند به کد استاد است؛ نمونهٔ جدیدی به گویندهٔ پنج‌شنبه نسبت داده نشده است.
+
+</SourceBlock>
+
+<TechnicalCorrection id="correction-field-set" corrects="heydari-reflection" statement="در توضیح کد، Field.set به‌عنوان صدا زدن setter وابستگی توصیف می‌شود." correction="Field.set مستقیماً مقدار فیلد را با Reflection تغییر می‌دهد؛ متد Java مانند setService را فراخوانی نمی‌کند." reason="اگر setter اعتبارسنجی یا رفتار دیگری داشته باشد، این مسیر آن رفتار را اجرا نمی‌کند و باید آن را تزریق فیلدی دانست.">
+
+در کد نسخه‌دار استاد، خط فعال `f.set(client, getBean(a.id()))` است. وجود متد `setService` در کلاس مصرف‌کننده، دلیل فراخوانی‌شدن آن نیست. [قرارداد Field.set در Java 21](<https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/reflect/Field.html#set(java.lang.Object,java.lang.Object)>)
+
+</TechnicalCorrection>
+
+## ۷. پرسش‌هایی که باید دربارهٔ کانتینر پاسخ دهیم [#container-questions]
+
+<SourceBlock id="heydari-container-questions" source="heydari" recording="heydari-03-thursday2" timestamp="13:45">
+
+پرسش محوری ادامهٔ مرور این است که `BeanFactory` و `ApplicationContext` چه هستند، چه رابطه‌ای دارند و هر کدام کجای برنامه کار می‌کنند. صرف استفاده از یک نمونهٔ XML یا annotation برای پاسخ به این پرسش کافی نیست؛ باید مسیر ساخت و دریافت Bean را فهمیده باشیم.
+
+برای مرور منظم، ابتدا [Bean](/concepts/bean/) را از تعریف آن جدا کنید و سپس [ApplicationContext](/concepts/application-context/) را بخوانید. [مقایسه و خروجی اجرای نمونه‌های سه‌شنبه](/tuesday/session-03/#factory-vs-context) مبنای عملی این بحث است.
+
+</SourceBlock>
+
+<SourceBlock id="heydari-container-sequence" source="heydari" recording="heydari-03-thursday2" timestamp="42:40" summary="در پایان صوت، نگاشت سادهٔ فایل مثال به BeanDefinition تشبیه می‌شود و مسیر شناسایی کلاس‌ها، ساخت Bean و اتصال وابستگی‌ها مرور می‌شود.">
+
+در جمع‌بندی پایانی، فایل سادهٔ `id → class` به‌عنوان تصویر اولیه‌ای از BeanDefinition استفاده می‌شود. سپس component scanning جای نوشتن دستی همهٔ تعریف‌ها را در مثال ذهنی می‌گیرد: نشانه‌های کلاس‌ها خوانده می‌شوند، تعریف‌ها شکل می‌گیرند و ساخت و اتصال اشیا از روی آن‌ها پیش می‌رود.
+
+در توضیح نقش‌ها، BeanFactory بیشتر با ساخت و چرخهٔ عمر و ApplicationContext با مدیریت مجموعه و ارتباط Beanها معرفی می‌شود؛ رویدادها هم جزو قابلیت‌های تکمیلی context مطرح می‌شوند. این تفکیک برای شروع مفید است، ولی مرز APIها را باید دقیق‌تر از دو مسئولیت کاملاً جدا بخوانیم.
+
+</SourceBlock>
+
+<GptNote id="gpt-container-boundaries" context="heydari-container-sequence">
+
+BeanFactory خودش ساخت و اتصال وابستگی‌ها را پشتیبانی می‌کند؛ ApplicationContext قابلیت‌های آن را در سطح بالاتر در اختیار می‌گذارد و راه‌اندازی کامل‌تری انجام می‌دهد. همچنین BeanDefinition فقط نام کلاس نیست؛ تنظیماتی مانند scope و روش مقداردهی را هم می‌تواند داشته باشد. [مقایسهٔ رسمی کانتینرها](https://docs.spring.io/spring-framework/reference/core/beans/beanfactory.html)
+
+برای اسکن پیش‌فرض Spring، `@Component` و مشتق‌های آن مانند `@Service`، `@Repository` و `@Controller` را در نظر بگیرید. `@Entity` به‌تنهایی همان نقش را ندارد. نام یکی از annotationهای فهرست‌شده در صوت روشن نیست و اینجا بازسازی نشده است. [قرارداد component scanning](https://docs.spring.io/spring-framework/reference/core/beans/classpath-scanning.html)
+
+</GptNote>
+
+## موضوعی که خوب است گفته شود [#supplement]
+
+<SourceBlock id="gpt-study-check" source="gpt">
+
+بدون نگاه‌کردن به متن، برای مثال بانک چهار جواب بنویسید: مصرف‌کننده کیست؟ قرارداد همکار چیست؟ پیاده‌سازی کجا انتخاب می‌شود؟ چه کدی وابستگی را تحویل می‌دهد؟ سپس جواب‌ها را در نسخهٔ دستی، Spring و Weld مقایسه کنید.
+
+اگر هنوز یک بخش مبهم است، همان بخش را در کد دنبال کنید. برای مثال، ابهام در انتخاب بانک به metadata مربوط می‌شود؛ ابهام در پیدا کردن فیلد به Reflection؛ و ابهام در زمان ساخت به رفتار کانتینر. این تفکیک، مطالعه را از حفظ‌کردن نام ابزارها به فهم جریان برنامه نزدیک می‌کند.
+
+</SourceBlock>
+
+## تاریخچهٔ تغییرات [#changelog]
+
+<ChangeLog />

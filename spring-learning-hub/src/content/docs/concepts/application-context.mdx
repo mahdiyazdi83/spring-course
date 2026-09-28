@@ -2,33 +2,40 @@
 title: 'ApplicationContext — کانتینر Spring'
 description: جایگاه کانتینر در پیکربندی برنامه و مدیریت وابستگی Beanها.
 sidebar:
-  hidden: true
   label: ApplicationContext
 kb:
   type: concept
   id: application-context
-  status: draft
-  demo: true
+  status: complete
+  demo: false
   createdAt: '2026-09-26'
-  updatedAt: '2026-09-26'
+  updatedAt: '2026-09-28'
   sources:
+    teacher:
+      repository:
+        location: ../teacher-files
+        commit: 8168a8b47b45a04a71920a144ea65daf09f906a2
+      references:
+        - ../teacher-files/session3
     gpt:
       references:
-        - https://docs.spring.io/spring-framework/reference/core/beans/introduction.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/beanfactory.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-lazy-init.html
   prerequisites: [bean]
   relatedConcepts: [bean, dependency-injection]
   changes:
     - date: '2026-09-26'
       type: initial
       summary: افزودن مرجع نمایشیِ مستند برای بررسی جست‌وجو و پیوندهای مفهومی.
+    - date: '2026-09-28'
+      type: concept-update
+      summary: جایگزینی محتوای نمایشی با مرجع مرتبط با کد واقعی جلسهٔ سوم و مستندات رسمی.
 ---
 
 import SourceBlock from '../../../components/source/SourceBlock.astro';
 import ConceptAppearances from '../../../components/documentation/ConceptAppearances.astro';
 import PrerequisiteList from '../../../components/documentation/PrerequisiteList.astro';
 import ChangeLog from '../../../components/documentation/ChangeLog.astro';
-
-این صفحهٔ نمایشی توسط GPT و با کمک مرجع رسمی نوشته شده؛ هنوز جمع‌بندی محتوای واقعی دوره نیست.
 
 ## پیش‌نیازها [#prerequisites]
 
@@ -38,15 +45,27 @@ import ChangeLog from '../../../components/documentation/ChangeLog.astro';
 
 <SourceBlock id="application-context-overview" source="gpt">
 
-`ApplicationContext` رابط اصلی کانتینر Spring است. پیکربندیِ معرفی‌شده به کانتینر مشخص می‌کند چه Beanهایی ساخته یا دریافت شوند و چگونه به هم متصل شوند.
+`ApplicationContext` کانتینر متداول برنامه‌های Spring است. قابلیت‌های پایهٔ `BeanFactory` برای ساخت، اتصال و دریافت Beanها را در اختیار دارد و امکاناتی مانند رویدادهای برنامه، دسترسی به پیام‌ها و راه‌اندازی خودکار processorها را اضافه می‌کند. [مقایسهٔ رسمی کانتینرها](https://docs.spring.io/spring-framework/reference/core/beans/beanfactory.html)
 
 </SourceBlock>
 
 ## رابطه با Dependency Injection [#dependencies]
 
-<SourceBlock id="application-context-dependencies" source="gpt">
+<SourceBlock id="application-context-dependencies" source="teacher">
 
-در Dependency Injection، کلاس نیازهایش را از بیرون دریافت می‌کند. کانتینر می‌تواند این اتصال را مدیریت کند؛ لازم نیست هر سرویس خودش به دنبال همکارهایش بگردد. جزئیات طراحیِ سازنده در [مرجع تزریق وابستگی](/concepts/dependency-injection/#java-example) آمده است.
+در پروژهٔ `dependencyInjection-spring6`، کلاس `Config` محدودهٔ اسکن `ir.digixo` را تعیین می‌کند. سپس `new AnnotationConfigApplicationContext(Config.class)` کانتینر را راه می‌اندازد و `getBean("bankClient")` مصرف‌کنندهٔ آماده را تحویل می‌دهد. انتخاب بانک و تزریق فیلد درون راه‌اندازی کانتینر انجام می‌شود.
+
+در پروژهٔ `SpringContextDemo`، نمونهٔ XML با `ClassPathXmlApplicationContext("config.xml")` ساخته می‌شود. تفاوت این دو ورودی، شیوهٔ ارائهٔ پیکربندی است؛ هر دو کانتینر Spring هستند. [مثال‌های جلسه](/tuesday/session-03/#containers)
+
+</SourceBlock>
+
+## زمان ساخت و processorها [#lifecycle]
+
+<SourceBlock id="application-context-lifecycle" source="gpt">
+
+در حالت معمول، ApplicationContext هنگام راه‌اندازی Beanهای singleton غیر lazy را آماده می‌کند. این جمله دربارهٔ همهٔ Beanها و همهٔ scopeها نیست. در مثال `DefaultListableBeanFactory` جلسه، خواندن تعریف XML به‌تنهایی Bean عادی را نمی‌سازد؛ درخواست `getBean` ساخت آن را آغاز می‌کند.
+
+`BeanFactoryPostProcessor` با تعریف‌ها و پیکربندی کانتینر کار می‌کند؛ `BeanPostProcessor` روی نمونه‌های Bean در مسیر مقداردهی اجرا می‌شود. ثبت یک processor و اجراشدن callback آن دو رخداد متفاوت‌اند. برای مشاهدهٔ این تفاوت به [بررسی خروجی کد جلسه](/tuesday/session-03/#post-processors) مراجعه کنید. [مرجع lazy initialization](https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-lazy-init.html)
 
 </SourceBlock>
 
@@ -54,13 +73,14 @@ import ChangeLog from '../../../components/documentation/ChangeLog.astro';
 
 <SourceBlock id="application-context-pitfalls" source="gpt">
 
-Bean یک شیء مدیریت‌شده است؛ ApplicationContext محیط مدیریت آن است. مشخص‌کردن این مرز هنگام خواندن پیکربندی و پیدا کردن منبع وابستگی‌ها کمک می‌کند.
+Bean شیء مدیریت‌شده است؛ ApplicationContext محیط مدیریت آن است. دریافت Bean با `getBean` در نقطهٔ شروع برنامه قابل فهم است، اما لازم نیست هر سرویس کانتینر را نگه دارد و همکارهایش را از آن پیدا کند؛ [تزریق وابستگی](/concepts/dependency-injection/#java-example) این نیازها را صریح‌تر می‌کند.
 
 </SourceBlock>
 
 ## مرجع توضیح [#references]
 
-- [مستندات رسمی Spring](https://docs.spring.io/spring-framework/reference/core/beans/introduction.html)
+- [مقایسهٔ BeanFactory و ApplicationContext](https://docs.spring.io/spring-framework/reference/core/beans/beanfactory.html)
+- [Lazy initialization](https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-lazy-init.html)
 
 ## این مفهوم کجا مطرح شده؟ [#appearances]
 

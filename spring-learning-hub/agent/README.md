@@ -1,13 +1,15 @@
 # Agent entry point
 
 This folder is operational memory for maintaining the Spring knowledge base.
-Current scope: the Phase 5 template plus user-authorized documentation of session 2.
+Current scope: the Phase 5 template plus user-authorized documentation of sessions 2 and 3.
 Use `PROCESSING-CHECKLIST.md` for each real session and `workflows/local-transcription.md`
-for authorized local ASR. The session-2 processing log records completed coverage and source limits;
+for authorized local ASR. The session-specific processing logs record coverage and source limits;
 do not infer completion from the presence of a recording in frontmatter.
 The simulated Tuesday/Thursday session-01 pages are native drafts, retained only as
 authoring examples. They are excluded from the built site, navigation and search;
 published lessons currently start at session 02. Do not republish fake session 01.
+The four former concept fixtures (dependency-injection, bean, application-context and
+reflection) now contain real session-3 documentation and must not be relabeled as demos.
 
 ## Read only what the task needs
 

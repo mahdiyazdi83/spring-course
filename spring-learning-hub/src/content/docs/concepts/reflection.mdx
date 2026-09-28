@@ -2,25 +2,34 @@
 title: 'Reflection — بررسی ساختار کلاس'
 description: آشنایی با بررسی اعضای کلاس در Java و تفاوت آن با تزریق وابستگی.
 sidebar:
-  hidden: true
   label: Reflection
 kb:
   type: concept
   id: reflection
-  status: draft
-  demo: true
+  status: complete
+  demo: false
   createdAt: '2026-09-26'
-  updatedAt: '2026-09-26'
+  updatedAt: '2026-09-28'
   sources:
+    teacher:
+      repository:
+        location: ../teacher-files
+        commit: 8168a8b47b45a04a71920a144ea65daf09f906a2
+      references:
+        - ../teacher-files/session3
     gpt:
       references:
-        - https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/Class.html
+        - https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html
+        - https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/reflect/Field.html
   prerequisites: []
   relatedConcepts: [dependency-injection]
   changes:
     - date: '2026-09-26'
       type: initial
       summary: افزودن مرجع نمایشیِ مستند برای بررسی جست‌وجو و پیوندهای مفهومی.
+    - date: '2026-09-28'
+      type: concept-update
+      summary: جایگزینی محتوای نمایشی با مرجع مرتبط با کد واقعی جلسهٔ سوم و مستندات رسمی.
 ---
 
 import SourceBlock from '../../../components/source/SourceBlock.astro';
@@ -28,35 +37,21 @@ import ConceptAppearances from '../../../components/documentation/ConceptAppeara
 import PrerequisiteList from '../../../components/documentation/PrerequisiteList.astro';
 import ChangeLog from '../../../components/documentation/ChangeLog.astro';
 
-این صفحهٔ نمایشی توسط GPT و با کمک مرجع رسمی نوشته شده؛ هنوز جمع‌بندی محتوای واقعی دوره نیست.
-
 ## Reflection چیست؟ [#overview]
 
 <SourceBlock id="reflection-overview" source="gpt">
 
-Reflection امکان بررسی اطلاعات نوع‌ها و اعضای آن‌ها را در زمان اجرا می‌دهد. برای نمونه، با یک شیء از نوع `Class` می‌توان اطلاعات متدهای تعریف‌شده روی همان کلاس را خواند.
+Reflection امکان بررسی نوع‌ها، سازنده‌ها، فیلدها و متدها را در زمان اجرا می‌دهد. همچنین با رعایت قواعد دسترسی می‌توان سازنده یا متد را اجرا کرد و مقدار فیلد را خواند یا نوشت. این ابزار زیربنایی را باید از الگوی طراحی [تزریق وابستگی](/concepts/dependency-injection/) جدا دانست.
 
 </SourceBlock>
 
-## یک مثال کوچک در Java [#java-example]
+## مسیر Reflection در مثال جلسه [#java-example]
 
-<SourceBlock id="reflection-java-example" source="gpt">
+<SourceBlock id="reflection-java-example" source="teacher">
 
-این نمونهٔ مستقل توسط GPT نوشته شده است:
+در `MyContext`، نام کلاس از فایل تنظیمات خوانده می‌شود؛ `Class.forName(className)` نوع را پیدا می‌کند و `getConstructor().newInstance()` سازندهٔ public بدون آرگومان را اجرا می‌کند. سپس `injectIn` فیلدهای تعریف‌شده روی کلاس مصرف‌کننده را می‌گیرد، annotation سفارشی `@Autowired(id="bank")` را می‌خواند و شیء ساخته‌شده را با `Field.set` قرار می‌دهد.
 
-```java title="InspectMethods.java · GPT Example"
-import java.lang.reflect.Method;
-
-class InspectMethods {
-    public static void main(String[] args) {
-        for (Method method : String.class.getDeclaredMethods()) {
-            System.out.println(method.getName());
-        }
-    }
-}
-```
-
-`getDeclaredMethods()` اعضای تعریف‌شده روی همان کلاس را برمی‌گرداند؛ با فهرست همهٔ متدهای public به‌ارث‌رسیده یکی نیست.
+این annotation متعلق به پکیج `ir.digixo` است، نه Spring. نگه‌داری آن با `RetentionPolicy.RUNTIME` اجازه می‌دهد کد Reflection در زمان اجرا آن را بخواند. [کد کامل و توضیح مسیر تزریق](/tuesday/session-03/#manual-container)
 
 </SourceBlock>
 
@@ -64,13 +59,16 @@ class InspectMethods {
 
 <SourceBlock id="reflection-pitfalls" source="gpt">
 
-دیدن اطلاعات یک سازنده یا متد، به معنی ساختن وابستگی یا اجرای خودکار آن نیست. Reflection ابزار بررسی ساختار است؛ [Dependency Injection](/concepts/dependency-injection/) دربارهٔ نحوهٔ دریافت همکارهای یک شیء صحبت می‌کند.
+`getDeclaredFields()` فیلدهای تعریف‌شده روی همان کلاس را می‌گیرد؛ فیلدهای ارث‌رسیده را به‌طور خودکار پیمایش نمی‌کند. همچنین نام اشتباه کلاس، نبود سازندهٔ مناسب، ناسازگاری نوع فیلد یا محدودیت دسترسی می‌تواند اجرای این مسیر را شکست دهد.
+
+`setAccessible(true)` تضمین دسترسی به هر عضو در هر ماژول نیست؛ قواعد ماژول‌های Java همچنان اهمیت دارند. در نمونهٔ آموزشی، Reflection ابزار پیاده‌سازی تزریق است؛ خود DI الزاماً به Reflection یا annotation احتیاج ندارد. [Java 21 — Class](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html)، [Java 21 — Field](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/reflect/Field.html)
 
 </SourceBlock>
 
 ## مرجع توضیح [#references]
 
-- [Java API — Class](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/Class.html)
+- [Java 21 — Class](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html)
+- [Java 21 — Field](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/reflect/Field.html)
 
 ## این مفهوم کجا مطرح شده؟ [#appearances]
 

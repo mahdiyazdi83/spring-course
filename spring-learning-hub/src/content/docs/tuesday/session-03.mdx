@@ -1,0 +1,626 @@
+---
+title: 'جلسهٔ سوم — از تزریق وابستگی تا کانتینر Spring'
+description: از coupling و کانتینر دستی Java تا DI در Spring و Weld، تعریف Bean با XML و تفاوت BeanFactory با ApplicationContext.
+sidebar:
+  label: جلسهٔ ۳ — تزریق وابستگی و کانتینر
+  order: 3
+kb:
+  type: tuesday
+  id: tuesday-03
+  sessionNumber: 3
+  status: complete
+  demo: false
+  createdAt: '2026-09-28'
+  updatedAt: '2026-09-28'
+  sources:
+    teacher:
+      recordings:
+        - id: teacher-03-part1
+          location: ../records/tuesday-class-recordings/session3/2026-08-25 17-22-00.mp4
+          kind: video
+          durationSeconds: 5224
+        - id: teacher-03-part2
+          location: ../records/tuesday-class-recordings/session3/2026-08-25 19-13-54.mp4
+          kind: video
+          durationSeconds: 4970
+      repository:
+        location: ../teacher-files
+        commit: 8168a8b47b45a04a71920a144ea65daf09f906a2
+      references:
+        - ../teacher-files/session3/dependencyInjection
+        - ../teacher-files/session3/dependencyInjection-spring6
+        - ../teacher-files/session3/dependencyInjection-weld17
+        - ../teacher-files/session3/BeanFactoryVSApplicationContext
+        - ../teacher-files/session3/SpringContextDemo
+    gpt:
+      references:
+        - https://docs.spring.io/spring-framework/reference/core/beans/basics.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/beanfactory.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/definition.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-lazy-init.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-properties-detailed.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/autowired-qualifiers.html
+        - https://docs.jboss.org/weld/reference/6.0.3.Final/en-US/html_single/
+        - https://docs.spring.io/spring-framework/reference/web/webmvc.html
+        - https://jakarta.ee/specifications/cdi/4.1/jakarta-cdi-spec-4.1
+  prerequisites: [maven-build]
+  prerequisiteSessions: [tuesday-02]
+  relatedSessions: [thursday-03]
+  concepts:
+    - id: dependency-injection
+      relation: used-in-code
+      anchor: spring-di
+    - id: reflection
+      relation: used-in-code
+      anchor: manual-container
+    - id: bean
+      relation: introduced
+      anchor: bean-definition
+    - id: application-context
+      relation: used-in-code
+      anchor: containers
+  timeline:
+    - topic: coupling در طراحی، ساخت و زمان اجرا؛ شروع مثال وابستگی سرویس‌ها
+      source: teacher
+      recording: teacher-03-part1
+      start: '00:00'
+      approximate: true
+    - topic: interface، Factory و سپردن تزریق وابستگی به بیرون کلاس
+      source: teacher
+      recording: teacher-03-part1
+      start: '06:00'
+      approximate: true
+    - topic: IoC، مفهوم context و مدیریت اشیا
+      source: teacher
+      recording: teacher-03-part1
+      start: '17:30'
+      approximate: true
+    - topic: مرور اکوسیستم Spring و جایگاه DI، AOP و Spring Boot
+      source: teacher
+      recording: teacher-03-part1
+      start: '26:30'
+      approximate: true
+    - topic: مقایسهٔ تاریخی با EJB و تأکید بر یادگیری اصول مشترک فریم‌ورک‌ها
+      source: teacher
+      recording: teacher-03-part1
+      start: '36:00'
+      approximate: true
+    - topic: لایه‌های برنامه، تفاوت specification و API و معرفی Jersey و Weld
+      source: teacher
+      recording: teacher-03-part1
+      start: '43:30'
+      approximate: true
+    - topic: شروع کانتینر دستی، Reflection و مثال بانک
+      source: teacher
+      recording: teacher-03-part1
+      start: '01:00:00'
+      approximate: true
+    - topic: metadata و معرفی اشیای برنامه؛ نقش ApplicationContext در Boot
+      source: teacher
+      recording: teacher-03-part1
+      start: '01:05:00'
+      approximate: true
+    - topic: ساخت پروژهٔ Maven و افزودن وابستگی Spring Context
+      source: teacher
+      recording: teacher-03-part1
+      start: '01:12:00'
+      approximate: true
+    - topic: خواندن تنظیمات، ساخت با Reflection و تزریق annotation سفارشی
+      source: teacher
+      recording: teacher-03-part1
+      start: '01:18:00'
+      approximate: true
+    - topic: ادامهٔ مثال Weld، Inject و Named؛ سپس مقایسه با Spring
+      source: teacher
+      recording: teacher-03-part2
+      start: '00:00'
+      approximate: true
+    - topic: Component، Autowired و معرفی پیکربندی اسکن
+      source: teacher
+      recording: teacher-03-part2
+      start: '06:30'
+      approximate: true
+    - topic: ClassPathXmlApplicationContext و معرفی Beanها در XML
+      source: teacher
+      recording: teacher-03-part2
+      start: '12:30'
+      approximate: true
+    - topic: getBean، نام Bean و پرسش دربارهٔ singleton
+      source: teacher
+      recording: teacher-03-part2
+      start: '19:30'
+      approximate: true
+    - topic: رابطهٔ ApplicationContext با BeanFactory و قابلیت‌های کانتینر
+      source: teacher
+      recording: teacher-03-part2
+      start: '27:00'
+      approximate: true
+    - topic: انواع context، مسیر فایل و پیکربندی Java با Bean
+      source: teacher
+      recording: teacher-03-part2
+      start: '32:00'
+      approximate: true
+    - topic: اجرای مثال lazy و eager؛ اشاره به ثبت خودکار processorها
+      source: teacher
+      recording: teacher-03-part2
+      start: '45:30'
+      approximate: true
+    - topic: نام و alias، getBeansOfType و بازگشت به Stream جلسهٔ قبل
+      source: teacher
+      recording: teacher-03-part2
+      start: '52:00'
+      approximate: true
+    - topic: نام‌های تکراری و Convention over Configuration
+      source: teacher
+      recording: teacher-03-part2
+      start: '01:01:00'
+      approximate: true
+    - topic: BeanDefinition به‌عنوان دستور ساخت و شروع مثال سازنده
+      source: teacher
+      recording: teacher-03-part2
+      start: '01:07:00'
+      approximate: true
+    - topic: constructor-arg، property و کوتاه‌نویسی با namespaceهای c و p
+      source: teacher
+      recording: teacher-03-part2
+      start: '01:14:00'
+      approximate: true
+  changes:
+    - date: '2026-09-28'
+      type: initial
+      summary: مستندسازی جلسهٔ سوم با ضبط‌های استاد، کدهای نسخه‌دار و بررسی اجرای مثال‌ها.
+    - date: '2026-09-28'
+      type: correction
+      summary: ثبت خروجی واقعی processorها و اصلاح نسبت Spring MVC با Jersey؛ تکمیل خط زمانی هر دو ضبط.
+---
+
+import SourceBlock from '../../../components/source/SourceBlock.astro';
+import SourceFilter from '../../../components/source/SourceFilter.astro';
+import GptNote from '../../../components/source/GptNote.astro';
+import TechnicalCorrection from '../../../components/source/TechnicalCorrection.astro';
+import CodeExample from '../../../components/code/CodeExample.astro';
+import PrerequisiteList from '../../../components/documentation/PrerequisiteList.astro';
+import SessionTimeline from '../../../components/documentation/SessionTimeline.astro';
+import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+import * as examples from '../../../data/course/session3';
+
+مسیر این جلسه از یک پرسش شروع می‌شود: **چه کسی باید همکارهای یک کلاس را بسازد و به آن تحویل دهد؟** ابتدا یک کانتینر کوچک با Java می‌سازیم، سپس نقش Spring و Weld را در همان مسئله می‌بینیم و به تعریف و مدیریت Beanها می‌رسیم.
+
+**پوشش منابع:** متن حاصل از سراسر دو ویدیو، حدود ۲ ساعت و ۵۰ دقیقه، با تبدیل محلی گفتار به متن مرور شده و مثال‌ها با کد مخزن تطبیق داده شده‌اند. این متن رونوشت کلمه‌به‌کلمه یا ادعای بررسی همهٔ فریم‌های ویدیو نیست. فایل دوم از میانهٔ مثال Weld شروع می‌شود؛ بخش‌های ضبط‌نشده یا نامفهوم حدس زده نشده‌اند. [مرور مستقل پنج‌شنبه](/thursday/session-03/) نیز در دسترس است.
+
+## پیش‌نیاز مطالعه [#prerequisites]
+
+<PrerequisiteList />
+
+## ترتیب مباحث در ضبط‌ها [#timeline]
+
+زمان هر بخش از ابتدای همان فایل محاسبه می‌شود. خط زمانی، ترتیب کلاس را حفظ می‌کند؛ بدنهٔ درس برای مطالعه، از مسئله به پیاده‌سازی و سپس جزئیات کانتینر مرتب شده است.
+
+<SessionTimeline />
+
+<SourceFilter />
+
+<section data-source-group>
+
+## ۱. مسئله: وابستگی کجا شکل می‌گیرد؟ [#coupling]
+
+<SourceBlock id="teacher-coupling" source="teacher" recording="teacher-03-part1" timestamp="00:00" summary="وابستگی فقط یک import نیست؛ تغییر طراحی، نیازهای build و در دسترس‌بودن سرویس در زمان اجرا می‌توانند اجزای برنامه را به هم وابسته کنند.">
+
+استاد coupling را از سه زاویه باز می‌کند:
+
+| زاویه      | پرسش اصلی                                               | مثال مطرح‌شده                                                |
+| ---------- | ------------------------------------------------------- | ------------------------------------------------------------ |
+| زمان طراحی | تغییر یک جزء چه تغییری در طراحی مصرف‌کننده لازم می‌کند؟ | سرویس A مستقیماً پیاده‌سازی سرویس B را می‌شناسد.             |
+| زمان ساخت  | ساخت و بسته‌بندی یک ماژول به چه چیزهایی نیاز دارد؟      | وابستگی‌هایی که ابزار build مانند Maven مدیریت می‌کند.       |
+| زمان اجرا  | اجرا یا خرابی یک جزء چطور روی جزء دیگر اثر می‌گذارد؟    | پایین‌بودن درگاه پرداخت، مسیر درخواست برنامه را مختل می‌کند. |
+
+در ادامهٔ درس، تمرکز روی کاهش وابستگی طراحی در مثال Java است. ابتدا کلاس مصرف‌کننده مستقیماً پیاده‌سازی را می‌سازد. قدم بعدی استفاده از interface است؛ سپس ساخت شیء به Factory سپرده می‌شود. این قدم‌ها محل وابستگی را تغییر می‌دهند، اما هنوز باید مشخص کنیم چه کسی همکار موردنیاز را به مصرف‌کننده می‌رساند.
+
+</SourceBlock>
+
+<GptNote id="gpt-coupling" context="teacher-coupling">
+
+استفاده از interface تضمین نمی‌کند که هیچ تغییری به مصرف‌کننده سرایت نکند؛ تغییر قرارداد یا رفتار سرویس همچنان مهم است. همچنین DI به‌تنهایی مشکل قطع‌شدن درگاه پرداخت را حل نمی‌کند. موضوع این بخش، جداکردن **انتخاب و ساخت پیاده‌سازی** از **منطق استفاده از آن** است.
+
+</GptNote>
+
+</section>
+
+<section data-source-group>
+
+## ۲. DI و IoC؛ جابه‌جایی مسئولیت ساخت [#dependency-injection]
+
+<SourceBlock id="teacher-di" source="teacher" recording="teacher-03-part1" timestamp="09:00" summary="در تزریق وابستگی، مصرف‌کننده نیازش را مشخص می‌کند و یک بخش بیرونی شیء مناسب را ساخته و در اختیارش می‌گذارد.">
+
+در [Dependency Injection](/concepts/dependency-injection/)، مصرف‌کننده منتظر دریافت همکار است؛ مسئولیت انتخاب، ساخت و اتصال آن به بخش بیرونی منتقل می‌شود. استاد این مسئله و راه‌حل را به‌عنوان یک الگوی طراحی توضیح می‌دهد و تأکید می‌کند که می‌توان آن را با Java معمولی هم پیاده کرد.
+
+تفاوت با Factory از دید مصرف‌کننده روشن می‌شود: در حالت Factory، کلاس خودش سراغ سازندهٔ اشیا می‌رود و درخواست می‌دهد؛ در حالت DI، وابستگی به کلاس تحویل داده می‌شود. بحث IoC یا وارونگی کنترل نیز همین جابه‌جایی جهت کنترل را توضیح می‌دهد: تمام کارها از داخل مصرف‌کننده آغاز نمی‌شوند.
+
+استاد برای تصویرسازی context، محلی را در نظر می‌گیرد که اشیا را با شناسه نگه می‌دارد و امکان دسترسی و اتصال آن‌ها را فراهم می‌کند. تعبیر «context pattern» در این بخش، نام‌گذاری آموزشی خود اوست؛ نباید آن را نام قطعی یک الگوی GoF تلقی کرد.
+
+</SourceBlock>
+
+<GptNote id="gpt-injection-shapes" context="teacher-di">
+
+سازنده و setter دو مسیر اصلی و روشن برای دریافت وابستگی‌اند. در همین کدهای جلسه، تزریق روی **فیلد** هم دیده می‌شود: نمونهٔ دستی با Reflection فیلد را مقداردهی می‌کند و نمونهٔ Spring از `@Autowired` روی فیلد استفاده می‌کند. پس DI را به وجود setter یا annotation خاص محدود نکنید.
+
+</GptNote>
+
+<SourceBlock id="teacher-ecosystem" source="teacher" recording="teacher-03-part1" timestamp="26:30">
+
+در مرور اکوسیستم، DI و AOP به‌عنوان دو پایهٔ مهم Spring مطرح می‌شوند؛ پروژه‌هایی مانند Data و Security هر کدام مسئلهٔ مشخصی را دنبال می‌کنند. سپس در مقایسهٔ تاریخی با EJB، سادگی کار با اشیای معمولی Java و کاهش کارهای تکراری برجسته می‌شود.
+
+هدف این مرور، توضیح علت شروع دوره با Spring Framework است: قبل از راحتی راه‌اندازی و تنظیمات خودکار Spring Boot، باید بفهمیم کانتینر چه می‌کند. اشاره‌های کلاس به رقبا و سرعت آن‌ها، بحث مقایسه‌ای کلاس است و در این درس به‌عنوان نتیجهٔ benchmark بازنشر نمی‌شود.
+
+</SourceBlock>
+
+<SourceBlock id="teacher-standards" source="teacher" recording="teacher-03-part1" timestamp="43:30" summary="در مقایسهٔ لایه‌های برنامه، استاد بر شناخت استاندارد، API و پیاده‌سازی تأکید می‌کند و Spring MVC را در این بخش به‌صورت wrapper روی Jersey توصیف می‌کند.">
+
+مرور لایه‌های داده، سرویس و وب به تفکیک **استاندارد، API و پیاده‌سازی** می‌رسد. متن specification قرارداد را برای پیاده‌ساز مشخص می‌کند و API سطح استفادهٔ برنامه‌نویس است؛ برای نمونه، Jersey در بحث Jakarta REST و Weld در بحث CDI معرفی می‌شوند. در همین مقایسه، Spring MVC به‌صورت wrapper روی Jersey توصیف می‌شود؛ این بخش به اصلاح زیر نیاز دارد.
+
+</SourceBlock>
+
+<TechnicalCorrection id="correction-mvc-jersey" corrects="teacher-standards" statement="Spring MVC یک wrapper است که درون آن Jersey قرار دارد." correction="Spring MVC فریم‌ورک وب Spring بر پایهٔ Servlet API است؛ پیاده‌سازی آن wrapper روی Jersey نیست." reason="مشترک‌بودن بعضی نیازها یا زیرساخت Servlet به معنی یکی‌بودن مدل برنامه‌نویسی و پیاده‌سازی این دو نیست.">
+
+برای فهم نقش Spring در این درس، روی قراردادهای مشترک و مسئولیت هر لایه تمرکز کنید و این قیاس را به رابطهٔ وابستگی کتابخانه‌ها تعمیم ندهید. [معرفی رسمی Spring Web MVC](https://docs.spring.io/spring-framework/reference/web/webmvc.html)
+
+</TechnicalCorrection>
+
+</section>
+
+<section data-source-group>
+
+## ۳. کانتینر دستی؛ پشت صحنهٔ تزریق [#manual-container]
+
+<SourceBlock id="teacher-manual" source="teacher" summary="MyContext نام پیاده‌سازی بانک را از فایل می‌خواند، شیء می‌سازد و آن را در فیلد علامت‌خوردهٔ BankClient قرار می‌دهد.">
+
+پروژهٔ `dependencyInjection` عمداً بدون Spring نوشته شده است. `BankClient` به `ITransferService` نیاز دارد؛ `MeliImpl` و `MellatImpl` دو پیاده‌سازی آموزشی‌اند. متد انتقال این کلاس‌ها فقط پیام چاپ می‌کند و تراکنش واقعی بانکی انجام نمی‌دهد.
+
+در نسخهٔ فعال کد، مصرف‌کننده به‌جای ساخت مستقیم بانک، فیلد خود را با annotation سفارشی مشخص می‌کند. بخش‌های کامنت‌شدهٔ همان فایل، مسیر قبلیِ ساخت مستقیم و Factory را نگه داشته‌اند.
+
+</SourceBlock>
+
+<CodeExample
+  id="code-manual-client"
+  source="teacher"
+  lang="java"
+  filename="BankClient.java"
+  repositoryPath="session3/dependencyInjection/src/ir/digixo/BankClient.java"
+  code={examples.manualClient}
+  caption="نسخهٔ واقعی فایل؛ مسیرهای قبلی در کامنت‌ها باقی مانده‌اند."
+/>
+
+<CodeExample
+  id="code-manual-config"
+  source="teacher"
+  lang="properties"
+  filename="my-context.txt"
+  repositoryPath="session3/dependencyInjection/src/ir/digixo/my-context.txt"
+  code={examples.manualConfig}
+/>
+
+<SourceBlock id="teacher-manual-steps" source="teacher">
+
+جریان `MyContext` را در دو مرحله بخوانید:
+
+1. `getBean("bank")` فایل تنظیمات را می‌خواند، نام کلاس را پیدا می‌کند و با `Class.forName` و سازندهٔ بدون آرگومان نمونه می‌سازد.
+2. `injectIn(client)` فیلدهای تعریف‌شدهٔ کلاس را بررسی می‌کند؛ اگر annotation سفارشی وجود داشته باشد، مقدار `id` آن را می‌گیرد و با `Field.set` نمونهٔ ساخته‌شده را در فیلد می‌گذارد.
+
+بنابراین annotation فقط نشانه است؛ کدی که آن را می‌خواند، رفتار تزریق را اجرا می‌کند. نام `Autowired` در این پروژه نباید ما را گمراه کند: import آن از `ir.digixo` است و annotation خود Spring نیست. برای خواندن آن در زمان اجرا، retention روی `RUNTIME` تنظیم شده است. [مرجع Reflection](/concepts/reflection/)
+
+</SourceBlock>
+
+<CodeExample
+  id="code-manual-annotation"
+  source="teacher"
+  lang="java"
+  filename="Autowired.java"
+  repositoryPath="session3/dependencyInjection/src/ir/digixo/Autowired.java"
+  code={examples.manualAnnotation}
+/>
+
+<CodeExample
+  id="code-manual-context"
+  source="teacher"
+  lang="java"
+  filename="MyContext.java"
+  repositoryPath="session3/dependencyInjection/src/ir/digixo/MyContext.java"
+  code={examples.manualContext}
+/>
+
+<GptNote id="gpt-manual-limits" context="teacher-manual">
+
+این نمونه برای فهم سازوکار است، نه جایگزین آمادهٔ Spring. مسیر فایل به پوشهٔ اجرای برنامه وابسته است؛ stream فایل بسته نمی‌شود؛ مدیریت خطا ممکن است به تحویل `null` منتهی شود؛ و هر درخواست دوباره شیء می‌سازد. همچنین مدیریت scope، چرخهٔ عمر و پیمایش فیلدهای ارث‌رسیده در آن پیاده‌سازی نشده است.
+
+نسخهٔ ذخیره‌شده با JDK 21 اجرا شد و پیام بانک ملی را بین `Before transfer...` و `After transfer...` چاپ کرد. برای اجرای همین نسخه، working directory باید ریشهٔ پروژهٔ `dependencyInjection` باشد تا مسیر نسبی تنظیمات پیدا شود.
+
+</GptNote>
+
+</section>
+
+<section data-source-group>
+
+## ۴. همان مسئله با Spring [#spring-di]
+
+<SourceBlock id="teacher-spring-di" source="teacher" summary="در نمونهٔ Spring، BankClient یک Component است و Qualifier با مقدار bank1 پیاده‌سازی MellatImpl را برای فیلد سرویس انتخاب می‌کند.">
+
+پروژهٔ `dependencyInjection-spring6` از **Spring Context 6.2.9** و تنظیم کامپایل **Java 21** استفاده می‌کند. این بار annotationها از Spring می‌آیند و کانتینر، کد دستی ساخت و اتصال را جایگزین می‌کند.
+
+- `@Component("bankClient")` مصرف‌کننده را برای اسکن معرفی می‌کند.
+- `MellatImpl` با نام `bank1` و `MeliImpl` با نام `bank2` ثبت می‌شوند.
+- `@Autowired` محل تزریق را مشخص می‌کند و `@Qualifier("bank1")` انتخاب این نمونه را روشن می‌کند.
+- `@ComponentScan(basePackages = "ir.digixo")` دامنهٔ جست‌وجوی کلاس‌ها را مشخص می‌کند.
+
+</SourceBlock>
+
+<CodeExample
+  id="code-spring-client"
+  source="teacher"
+  lang="java"
+  filename="BankClient.java"
+  repositoryPath="session3/dependencyInjection-spring6/src/main/java/ir/digixo/BankClient.java"
+  code={examples.springClient}
+/>
+
+<CodeExample
+  id="code-spring-config"
+  source="teacher"
+  lang="java"
+  filename="Config.java"
+  repositoryPath="session3/dependencyInjection-spring6/src/main/java/ir/digixo/Config.java"
+  code={examples.springConfig}
+/>
+
+<CodeExample
+  id="code-spring-start"
+  source="teacher"
+  lang="java"
+  filename="Start.java"
+  repositoryPath="session3/dependencyInjection-spring6/src/main/java/ir/digixo/Start.java"
+  code={examples.springStart}
+/>
+
+<GptNote id="gpt-qualifier" context="teacher-spring-di">
+
+در اجرای این نسخه، خروجی بانک ملت دیده شد. این انتخاب فقط از روی نام interface ممکن نیست، چون دو پیاده‌سازی سازگار داریم. Qualifier دامنهٔ نامزدهای مناسب را محدود می‌کند؛ آن را به یک قانون عمومی «تزریق همیشه فقط با نام انجام می‌شود» تبدیل نکنید. [مستندات Qualifier](https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/autowired-qualifiers.html)
+
+</GptNote>
+
+</section>
+
+<section data-source-group>
+
+## ۵. همان ایده با Weld و CDI [#weld]
+
+<SourceBlock id="teacher-weld" source="teacher" summary="نمونهٔ Weld وابستگی بانک را با Inject و Named مشخص می‌کند و با راه‌اندازی WeldContainer، BankClient آماده را دریافت می‌کند.">
+
+پروژهٔ `dependencyInjection-weld17` همان ایدهٔ DI را با Weld نشان می‌دهد. نسخهٔ فعال وابستگی در POM، **Weld SE 6.0.3.Final** است و compiler روی **Java 21** تنظیم شده؛ عدد `17` در نام پوشه، نسخهٔ واقعی تنظیم‌شدهٔ این پروژه نیست.
+
+در `bank.BankClient`، ترکیب `@Inject` و `@Named("MeliImpl")` بانک ملی را انتخاب می‌کند. `MainHello` کانتینر را initialize می‌کند، نمونهٔ `BankClient` را با `select(...).get()` می‌گیرد و در پایان آن را shutdown می‌کند. این APIها متعلق به مسیر CDI/Weld هستند، نه API کانتینر Spring.
+
+</SourceBlock>
+
+<CodeExample
+  id="code-weld-client"
+  source="teacher"
+  lang="java"
+  filename="BankClient.java"
+  repositoryPath="session3/dependencyInjection-weld17/src/main/java/ir/digixo/bank/BankClient.java"
+  code={examples.weldClient}
+/>
+
+<CodeExample
+  id="code-weld-start"
+  source="teacher"
+  lang="java"
+  filename="MainHello.java"
+  repositoryPath="session3/dependencyInjection-weld17/src/main/java/ir/digixo/bank/MainHello.java"
+  code={examples.weldStart}
+/>
+
+<CodeExample
+  id="code-weld-discovery"
+  source="teacher"
+  lang="xml"
+  filename="beans.xml"
+  repositoryPath="session3/dependencyInjection-weld17/src/main/resources/META-INF/beans.xml"
+  code={examples.weldDiscovery}
+/>
+
+<GptNote id="gpt-weld-discovery" context="teacher-weld">
+
+فایل `META-INF/beans.xml` این پروژه حالت کشف `all` را صریح تعیین کرده است؛ صرفاً به پیش‌فرض یک نسخهٔ قدیمی اتکا نکنید. در حالت `annotated`، کشف کلاس‌ها قواعد دیگری دارد و وجود `@Named` به‌تنهایی جای bean-defining annotation را نمی‌گیرد. [مستندات Weld 6.0.3](https://docs.jboss.org/weld/reference/6.0.3.Final/en-US/html_single/)
+
+DI یک روش طراحی است؛ **Jakarta CDI مشخصات استاندارد** مربوط به تزریق و مدیریت context است و **Weld پیاده‌سازی** آن است. این سه سطح را با هم یکی نگیریم. [مشخصات Jakarta CDI 4.1](https://jakarta.ee/specifications/cdi/4.1/jakarta-cdi-spec-4.1)
+
+هر دو نقطهٔ شروع پروژه اجرا شدند: نمونهٔ بانک، پیام بانک ملی را چاپ کرد و نمونهٔ `weld.MainHello` خروجی `Salam Ali` داد. این تأیید برای نسخهٔ ذخیره‌شده و پیکربندی همین پروژه است.
+
+</GptNote>
+
+</section>
+
+<section data-source-group>
+
+## ۶. کانتینر و مسیر پیکربندی [#containers]
+
+<SourceBlock id="teacher-containers" source="teacher" summary="پروژهٔ SpringContextDemo نمونهٔ فعال ClassPathXmlApplicationContext و یک پیکربندی Java با Configuration و Bean را نگه داشته است.">
+
+در پروژهٔ `SpringContextDemo` نسخهٔ **Spring 7.0.9** استفاده شده است. کد فعال `C01Container` فایل `config.xml` را با `ClassPathXmlApplicationContext` می‌خواند. گزینه‌های دیگری مثل `FileSystemXmlApplicationContext` و `AnnotationConfigApplicationContext` در کامنت‌های فایل دیده می‌شوند.
+
+تفاوت مهم برای اجرای مثال، محل منبع است: مسیر classpath نسبت به منابع برنامه پیدا می‌شود؛ مسیر فایل باید در سیستم شما واقعاً وجود داشته باشد. بعضی مثال‌های زیرپوشه‌ها مسیر مطلق دستگاه نویسنده را دارند و پیش از اجرا باید مسیر را متناسب با محل پروژه تنظیم کنید.
+
+کلاس `C02Config` نیز روش Java را نشان می‌دهد: متد علامت‌خورده با `@Bean` یک `BeanOne` می‌سازد و آن را به مدیریت کانتینر می‌سپارد. این کلاس باید به کانتینر معرفی شود؛ صرف حضور فایل در پروژه باعث اجرای متد نمی‌شود.
+
+</SourceBlock>
+
+<CodeExample
+  id="code-java-config"
+  source="teacher"
+  lang="java"
+  filename="C02Config.java"
+  repositoryPath="session3/SpringContextDemo/src/main/java/ir/digixo/p01container/C02Config.java"
+  code={examples.javaConfig}
+/>
+
+<GptNote id="gpt-container-resources" context="teacher-containers">
+
+فایل‌های داخل `src/main/resources` در build معمول Maven وارد classpath می‌شوند؛ XMLهای قرارگرفته زیر `src/main/java` الزاماً resource خروجی نیستند. هنگام تغییر یک مثال از مسیر فایل به classpath، فقط نام سازنده را عوض نکنید؛ محل کپی‌شدن منبع را هم بررسی کنید. [پیکربندی و راه‌اندازی کانتینر](https://docs.spring.io/spring-framework/reference/core/beans/basics.html)
+
+</GptNote>
+
+</section>
+
+<section data-source-group>
+
+## ۷. تعریف Bean، نام و مقداردهی [#bean-definition]
+
+<SourceBlock id="teacher-bean-definition" source="teacher" summary="در XML می‌توان چند تعریف از یک کلاس داشت، برای Bean نام گذاشت و ورودی سازنده و propertyهای آن را جدا پیکربندی کرد.">
+
+[Bean](/concepts/bean/) را از کلاس و تعریف آن جدا کنید. در `config.xml` زیر، دو تعریف مستقل از `BeanOne` وجود دارد؛ یک تعریف دیگر نیز `BeanTwo` را با نام `two` معرفی می‌کند. اجرای کانتینر این فایل، سه بار پیام سازنده‌ها را چاپ کرد.
+
+وقتی نام صریح نداده‌ایم، کانتینر برای تعریف نام تولید می‌کند. این با alias متفاوت است: چند alias می‌توانند به یک Bean اشاره کنند، اما دو تعریف مستقل لزوماً یک شیء نیستند.
+
+</SourceBlock>
+
+<CodeExample
+  id="code-xml-beans"
+  source="teacher"
+  lang="xml"
+  filename="config.xml"
+  repositoryPath="session3/SpringContextDemo/src/main/resources/config.xml"
+  code={examples.xmlBeans}
+/>
+
+<SourceBlock id="teacher-aliases" source="teacher" recording="teacher-03-part2" timestamp="52:00">
+
+در ضبط، چند نام برای یک Bean امتحان می‌شود و سپس با `getBeansOfType` و `getAliases` نتیجه بررسی می‌شود. پیمایش Map با Stream و `forEach` نیز به مباحث جلسهٔ قبل برمی‌گردد. کاربرد مورد بحث alias این است که همان شیء در نقاط مختلف با نام معنادار مناسب آن بخش قابل دریافت باشد؛ قرار نیست برای هر نام یک نمونهٔ تازه بسازیم.
+
+نسخهٔ نهایی `p03beanNames/config.xml` فقط یک Bean بدون نام صریح نگه داشته است؛ حالت‌های آزمایش‌شدهٔ alias در ویدیو را نباید عین کد نهایی مخزن معرفی کرد. کلاس `Context` همچنان دریافت Beanها بر اساس نوع و چاپ نام و alias را نشان می‌دهد.
+
+تولید نام پیش‌فرض در پایان این بخش با اصل Convention over Configuration توضیح داده می‌شود: وقتی تنظیم صریحی ندهیم، قرارداد پیش‌فرض بخشی از کار را انجام می‌دهد. برای نام‌های مورد استفادهٔ برنامه، نام‌گذاری روشن و پرهیز از برخورد نام‌ها همچنان مهم است.
+
+</SourceBlock>
+
+<GptNote id="gpt-bean-capabilities" context="teacher-bean-definition">
+
+مدیریت‌شدن یک شیء در کانتینر، زمینهٔ استفاده از قابلیت‌های Spring را فراهم می‌کند؛ اما Bean شدن به‌تنهایی همهٔ قابلیت‌های امنیت، تراکنش و ثبت رخداد را خودکار فعال نمی‌کند. هر قابلیت، وابستگی و پیکربندی متناسب خودش را می‌خواهد. در این مثال‌های کوچک، فعلاً ساخت و اتصال اشیا را مشاهده می‌کنیم.
+
+همچنین singleton در Spring به هر **تعریف Bean در هر کانتینر** مربوط است؛ دو تعریف از یک کلاس یا دو کانتینر مستقل می‌توانند نمونه‌های جدا داشته باشند. چند بار چاپ‌شدن سازنده در این وضعیت، پیش‌فرض singleton را نقض نمی‌کند. [مرجع scopeها](https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html)
+
+</GptNote>
+
+<SourceBlock id="teacher-bean-properties" source="teacher">
+
+در مثال `p04beanDefinition`، `BeanOne` سازنده‌ای با ورودی `name` و یک setter برای همان ویژگی دارد. XML فعال از `c:name="nahid"` برای آرگومان سازنده و `p:name="nahid1"` برای property استفاده می‌کند. ابتدا شیء ساخته می‌شود و سپس setter مقدار را عوض می‌کند؛ در بررسی اجرا با مسیر فایلِ متناسب با این دستگاه، خروجی نهایی `nahid1` بود.
+
+این دو namespace شکل کوتاه‌تر پیکربندی سازنده و property هستند؛ نمونه‌های بلندتر `constructor-arg` و `property` در کامنت‌های فایل حفظ شده‌اند. بخش `p02annotationxml` در snapshot این جلسه فقط یک کلاس خالی دارد؛ هنوز مثال کامل آن روش نیست.
+
+</SourceBlock>
+
+<CodeExample
+  id="code-bean-with-name"
+  source="teacher"
+  lang="java"
+  filename="BeanOne.java"
+  repositoryPath="session3/SpringContextDemo/src/main/java/ir/digixo/p04beanDefinition/p01xmlBeanOne/BeanOne.java"
+  code={examples.beanWithName}
+/>
+
+<CodeExample
+  id="code-bean-properties"
+  source="teacher"
+  lang="xml"
+  filename="config.xml"
+  repositoryPath="session3/SpringContextDemo/src/main/java/ir/digixo/p04beanDefinition/p01xmlBeanOne/config.xml"
+  code={examples.beanProperties}
+/>
+
+</section>
+
+<section data-source-group>
+
+## ۸. BeanFactory و ApplicationContext چه تفاوتی دارند؟ [#factory-vs-context]
+
+<SourceBlock id="teacher-factory" source="teacher" summary="نمونهٔ BeanFactoryVSApplicationContext زمان آماده‌شدن Product را پس از خواندن XML و پس از درخواست Bean مقایسه می‌کند.">
+
+پروژهٔ `BeanFactoryVSApplicationContext` با **Spring Context 6.1.3** دو مسیر را مقایسه می‌کند. در مسیر اول، `XmlBeanDefinitionReader` تعریف‌ها را وارد `DefaultListableBeanFactory` می‌کند؛ در مسیر دوم، `ClassPathXmlApplicationContext` راه‌اندازی کامل‌تری را انجام می‌دهد.
+
+فیلد boolean در کلاس `Product` ابتدا `false` است و در متد `init()` به `true` تبدیل می‌شود. XML این متد را به‌عنوان `init-method` معرفی کرده است. پس آنچه چاپ می‌شود مستقیماً اجرای callback مقداردهی را نشان می‌دهد، نه یک شمارندهٔ مستقل برای فراخوانی سازنده.
+
+</SourceBlock>
+
+<CodeExample
+  id="code-factory"
+  source="teacher"
+  lang="java"
+  filename="C01BeanFactoryDemo.java"
+  repositoryPath="session3/BeanFactoryVSApplicationContext/src/main/java/ir/digixo/p01LazyLoadingVSEagerLoading/C01BeanFactoryDemo.java"
+  code={examples.factory}
+/>
+
+<CodeExample
+  id="code-context"
+  source="teacher"
+  lang="java"
+  filename="C02ApplicationContextDemo.java"
+  repositoryPath="session3/BeanFactoryVSApplicationContext/src/main/java/ir/digixo/p01LazyLoadingVSEagerLoading/C02ApplicationContextDemo.java"
+  code={examples.context}
+/>
+
+<GptNote id="gpt-factory-output" context="teacher-factory">
+
+خروجی تأییدشدهٔ نمونهٔ Factory، ابتدا `false` و بعد از `getBean` مقدار `true` است؛ نمونهٔ Context، بعد از ساخت کانتینر `true` چاپ می‌کند. نتیجه را به همین حالت معمول محدود کنید: ApplicationContext به‌طور پیش‌فرض singletonهای غیر lazy را در زمان راه‌اندازی آماده می‌کند، نه هر Bean با هر scope و هر تنظیمی را. [مرجع lazy initialization](https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-lazy-init.html)
+
+</GptNote>
+
+</section>
+
+<section data-source-group>
+
+## ۹. ثبت processor با اجرای callback یکی نیست [#post-processors]
+
+<SourceBlock id="teacher-processors" source="teacher" summary="مثال دوم دو processor را در XML تعریف می‌کند و booleanهایی را چاپ می‌کند که داخل callbackهای آن‌ها تغییر می‌کنند.">
+
+مثال دوم پروژه برای بررسی رفتار خودکار processorهاست. `C01MyBeanFactoryPostProcessor` در `postProcessBeanFactory` پرچم خود را تغییر می‌دهد و `C02MyBeanPostProcessor` این کار را در `postProcessBeforeInitialization` انجام می‌دهد. نام پرچم‌ها شامل `Registered` است، اما محل تغییر مقدارشان، **داخل callback** است.
+
+XML ذخیره‌شده فقط همین دو processor را معرفی می‌کند. کد `C04ApplicationContextDemo` پس از ساخت کانتینر، هر دو را با `getBean` می‌گیرد و پرچم‌ها را چاپ می‌کند.
+
+</SourceBlock>
+
+<CodeExample
+  id="code-processors"
+  source="teacher"
+  lang="xml"
+  filename="p02myContext.xml"
+  repositoryPath="session3/BeanFactoryVSApplicationContext/src/main/resources/p02myContext.xml"
+  code={examples.processors}
+/>
+
+<TechnicalCorrection id="correction-processor-flag" corrects="teacher-processors" statement="نام پرچم isBeanPostProcessorRegistered در مثال، false را ظاهراً به معنی ثبت‌نشدن پردازشگر نشان می‌دهد." correction="این پرچم اجرای postProcessBeforeInitialization را اندازه می‌گیرد، نه ثبت پردازشگر را. در این XML، پردازشگر ثبت شده ولی هنوز Bean عادی‌ای از مسیر آن نگذشته است." reason="نباید خروجی false را نشانهٔ ناتوانی ApplicationContext در ثبت خودکار BeanPostProcessor بدانیم.">
+
+در اجرای دقیق نمونه با Spring 6.1.3، مسیر Factory خروجی `false / false` و مسیر Context خروجی `true / false` داد. بررسی مستقل فهرست processorهای کانتینر، حضور `C02MyBeanPostProcessor` را تأیید کرد؛ ساخت یک Bean عادی از طریق `createBean(Object.class)` نیز پرچم دوم را به `true` تغییر داد. این بررسی تکمیلی توسط GPT انجام شده و بخشی از کد استاد نیست.
+
+در یک Factory ساده، processorها با صرف خواندن تعریف XML خودکار فعال نمی‌شوند. ApplicationContext راه‌اندازی و ثبت خودکار را انجام می‌دهد؛ `BeanFactoryPostProcessor` با تعریف‌ها کار می‌کند و `BeanPostProcessor` با نمونه‌های در حال مقداردهی. [مقایسهٔ رسمی BeanFactory و ApplicationContext](https://docs.spring.io/spring-framework/reference/core/beans/beanfactory.html)
+
+</TechnicalCorrection>
+
+</section>
+
+<section data-source-group>
+
+## موضوعی که خوب است گفته شود [#supplement]
+
+<SourceBlock id="gpt-exercise" source="gpt">
+
+برای تمرین، پیش از اجرای هر نسخه پیش‌بینی کنید کدام بانک انتخاب می‌شود: در نمونهٔ دستی، فایل تنظیمات را بخوانید؛ در Spring، مقدار Qualifier و نام Componentها را کنار هم بگذارید؛ در Weld، Named و پیکربندی کشف Bean را بررسی کنید. نتیجهٔ درست، فهم محل تصمیم است؛ صرف دیدن پیام خروجی کافی نیست.
+
+سپس یک نسخهٔ مستقل با تزریق از سازنده بنویسید و یک پیاده‌سازی آزمایشی به آن بدهید که نتیجهٔ مشخصی برگرداند. اگر بدون راه‌اندازی کانتینر توانستید منطق مصرف‌کننده را بررسی کنید، مرز بین طراحی DI و ابزار اجرای آن را درست تشخیص داده‌اید. [مثال مستقل با سازنده](/concepts/dependency-injection/#java-example)
+
+</SourceBlock>
+
+</section>
+
+## تاریخچهٔ تغییرات [#changelog]
+
+<ChangeLog />

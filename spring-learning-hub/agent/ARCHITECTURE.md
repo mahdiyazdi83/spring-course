@@ -133,10 +133,11 @@ KnowledgeFooter derives related sessions/concepts and a link back to the corresp
 index. The concept index is server-rendered; ConceptExplorer adds a small text filter.
 No client graph store, synonym mapping, external search service or database exists.
 
-Real session-2 documentation is tracked separately from the template fixtures.
+Real session-2 and session-3 documentation is tracked separately from the template fixtures.
 `demo:` recording locators are accepted only for
-demo pages, never rendered as media links. Phase 4 adds four explicitly generated concept
-fixtures with official references for search/discovery QA, not actual course content.
+demo pages, never rendered as media links. The four Phase 4 concept fixtures were replaced
+with real, source-backed session-3 concepts on 2026-09-28; their routes and heading anchors
+remain stable. Unrelated demos remain explicitly labeled.
 No service worker or browser offline cache is promised. Without internet, keep serving
 `dist/` over local HTTP; direct `file://` loading is not supported. `verify:build` checks
 internal URLs/fragments, duplicate HTML IDs, external runtime assets and the Persian

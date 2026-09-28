@@ -1,18 +1,26 @@
 ---
 title: تزریق وابستگی — Dependency Injection
-description: نمونهٔ مرجع یک مفهوم؛ مسئله، روش کار و نکته‌های رایج تزریق وابستگی.
+description: تزریق وابستگی از مثال بانک جلسهٔ سوم تا Spring، همراه تفاوت interface، Factory و DI.
 sidebar:
-  hidden: true
-  label: تزریق وابستگی (نمونه)
+  label: تزریق وابستگی
 kb:
   type: concept
   id: dependency-injection
-  status: draft
-  demo: true
+  status: complete
+  demo: false
   createdAt: '2026-09-26'
-  updatedAt: '2026-09-26'
+  updatedAt: '2026-09-28'
   sources:
-    gpt: {}
+    teacher:
+      repository:
+        location: ../teacher-files
+        commit: 8168a8b47b45a04a71920a144ea65daf09f906a2
+      references:
+        - ../teacher-files/session3
+    gpt:
+      references:
+        - https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html
+        - https://martinfowler.com/articles/injection.html
   prerequisites: []
   relatedConcepts:
     - bean
@@ -30,28 +38,31 @@ kb:
     - date: '2026-09-26'
       type: concept-update
       summary: افزودن پیوندهای مفهومی و نشانی‌های پایدار برای مرور و جست‌وجو.
+    - date: '2026-09-28'
+      type: concept-update
+      summary: جایگزینی محتوای نمایشی با مرجع مرتبط با کد واقعی جلسهٔ سوم و مستندات رسمی.
 ---
 
-import ReadingNote from '../../../components/documentation/ReadingNote.astro';
 import SourceBlock from '../../../components/source/SourceBlock.astro';
 import ConceptAppearances from '../../../components/documentation/ConceptAppearances.astro';
+import PrerequisiteList from '../../../components/documentation/PrerequisiteList.astro';
 import ChangeLog from '../../../components/documentation/ChangeLog.astro';
-
-این توضیح کوتاه و کد همراه آن توسط GPT برای نمایش قالب مرجع مفاهیم نوشته شده‌اند؛ هنوز جمع‌بندی محتوای واقعی دوره نیستند.
 
 ## معرفی [#overview]
 
 <SourceBlock id="concept-overview" source="gpt">
 
-تزریق وابستگی یا `Dependency Injection` یعنی شیء، همکار موردنیازش را از بیرون دریافت کند. به جای اینکه هر کلاس مسئول ساخت همهٔ اشیای موردنیاز خودش باشد، می‌توان مسئولیت ساختن و متصل‌کردن آن‌ها را در جای دیگری قرار داد.
+تزریق وابستگی یعنی شیء، همکار موردنیازش را از بیرون دریافت کند. مثلاً سرویس انتقال وجه به یک پیاده‌سازی بانک نیاز دارد؛ اگر خودش بانک مشخصی را بسازد، تصمیم انتخاب بانک به منطق سرویس گره می‌خورد. با DI، ساخت و انتخاب این همکار به بخش دیگری از برنامه سپرده می‌شود.
 
 </SourceBlock>
 
 ## چرا به آن نیاز داریم؟ [#why]
 
-<SourceBlock id="concept-purpose" source="gpt">
+<SourceBlock id="concept-purpose" source="teacher">
 
-وقتی یک سرویس فقط به قرارداد موردنیازش وابسته باشد، می‌توان در شرایط مختلف همکار متفاوتی به آن داد. برای نمونه، در زمان آزمایش می‌توان از یک پیاده‌سازی ساده استفاده کرد که پیام را واقعاً ارسال نمی‌کند. در نتیجه، بررسی منطق سرویس از بررسی سامانهٔ ارسال پیام جدا می‌شود.
+در نسخهٔ دستی جلسهٔ سوم، `BankClient` به قرارداد `ITransferService` متکی است. دو کلاس `MeliImpl` و `MellatImpl` این قرارداد را پیاده‌سازی می‌کنند؛ پیاده‌سازی‌های آموزشی فقط پیام چاپ می‌کنند. در نسخهٔ دستی، `MyContext.injectIn(client)` فیلد را مقداردهی می‌کند؛ در نسخه‌های Spring و Weld، نام رابط `ITransfer` است و کانتینر مسئولیت اتصال را بر عهده دارد.
+
+فایل `my-context.txt` نام پیاده‌سازی را مشخص می‌کند. در پروژهٔ `dependencyInjection-spring6` نیز `@Qualifier("bank1")`، Bean متعلق به `MellatImpl` را انتخاب می‌کند. جزئیات کد در [جلسهٔ سوم سه‌شنبه](/tuesday/session-03/#spring-di) آمده است.
 
 </SourceBlock>
 
@@ -59,25 +70,27 @@ import ChangeLog from '../../../components/documentation/ChangeLog.astro';
 
 <SourceBlock id="concept-example" source="gpt">
 
-در این مثال، وابستگی با سازنده دریافت می‌شود. `Sender` فقط یک interface کوچک است و نمونه بدون نیاز به پیکربندی Spring، ایده را نشان می‌دهد.
+این مثال مستقل، همان مرز مسئولیت را با تزریق از سازنده نشان می‌دهد؛ بازنویسی عین کد استاد نیست:
 
-```java title="Notifier.java · GPT Example"
-interface Sender {
-    void send(String message);
+```java title="BankClient.java · GPT Example"
+interface TransferService {
+    boolean transfer(long account, double amount);
 }
 
-final class Notifier {
-    private final Sender sender;
+final class BankClient {
+    private final TransferService service;
 
-    Notifier(Sender sender) {
-        this.sender = sender;
+    BankClient(TransferService service) {
+        this.service = java.util.Objects.requireNonNull(service);
     }
 
-    void notify(String message) {
-        sender.send(message);
+    boolean transfer(long account, double amount) {
+        return service.transfer(account, amount);
     }
 }
 ```
+
+مصرف‌کننده می‌تواند یک پیاده‌سازی واقعی یا یک بدل آزمایشی دریافت کند. برای فهم DI به Spring نیاز نداریم؛ Spring ساخت و اتصال مجموعهٔ بزرگ‌تری از اشیا را مدیریت می‌کند. [مستندات DI در Spring](https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html)
 
 </SourceBlock>
 
@@ -85,16 +98,24 @@ final class Notifier {
 
 <SourceBlock id="concept-pitfalls" source="gpt">
 
-<ReadingNote title="مفهوم را به annotation محدود نکنید">
-  تزریق وابستگی یک روش طراحی است. ابتدا می‌توان آن را در Java معمولی فهمید و بعد نقش Spring در ساخت
-  و اتصال اشیا را بررسی کرد.
-</ReadingNote>
-
-ساختن یک interface به‌تنهایی به معنای تزریق وابستگی نیست. پرسش اصلی این است که شیء موردنیاز کجا ساخته می‌شود و چگونه به کلاس مصرف‌کننده می‌رسد.
+- **interface به‌تنهایی DI نیست:** در `TransferService service = new MeliImpl()` هنوز خود مصرف‌کننده پیاده‌سازی را انتخاب می‌کند.
+- **Factory به‌تنهایی DI نیست:** اگر مصرف‌کننده از Factory درخواست شیء کند، هنوز منطق یافتن وابستگی داخل مصرف‌کننده است؛ در DI وابستگی به آن داده می‌شود.
+- **annotation به‌تنهایی کاری اجرا نمی‌کند:** باید کدی مانند کانتینر آن را بخواند و اتصال را انجام دهد. ساخت `new BankClient()` در بیرون کانتینر الزاماً تزریق Spring را فعال نمی‌کند.
+- **DI تمام وابستگی‌ها را حذف نمی‌کند:** برنامه همچنان به قرارداد و رفتار همکار خود وابسته است؛ هدف، روشن‌کردن و کنترل این وابستگی است.
 
 </SourceBlock>
 
-## ارتباط با جلسه‌ها [#appearances]
+## تفاوت با Service Locator [#service-locator]
+
+<SourceBlock id="concept-locator" source="gpt">
+
+در DI، وابستگی به مصرف‌کننده تحویل داده می‌شود؛ در Service Locator، مصرف‌کننده خودش از یک واسطه درخواست سرویس می‌کند. اولی نیازها را مثلاً در پارامترهای سازنده نشان می‌دهد؛ در دومی باید بدنهٔ کلاس را بخوانیم تا درخواست‌های آن را پیدا کنیم.
+
+این مقایسه دربارهٔ **جهت درخواست** است، نه تضمین زمان ساخت. سرویس درخواست‌شده از locator ممکن است از قبل موجود باشد؛ DI نیز می‌تواند با روش‌های دسترسی تنبل ترکیب شود. [مقایسهٔ دو الگو از مارتین فاولر](https://martinfowler.com/articles/injection.html) و [پرسش‌وپاسخ پنج‌شنبه](/thursday/session-03/#service-locator)
+
+</SourceBlock>
+
+## این مفهوم کجا مطرح شده؟ [#appearances]
 
 <ConceptAppearances />
 
