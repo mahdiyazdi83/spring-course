@@ -11,9 +11,29 @@ const entries = (await getCollection('docs')).map(({ id, data }) => ({
   draft: data.draft,
 }));
 const concepts = entries.filter((entry) => !entry.draft && entry.knowledge.type === 'concept');
+const courseConcepts = concepts.filter(
+  (entry) => entry.knowledge.type === 'concept' && !entry.knowledge.demo,
+);
 ---
 
 <concept-explorer>
+  <aside class="kb-concept-guide" aria-labelledby="concept-guide-title">
+    <span class="kb-icon-tile">
+      <HubIcon name="book" />
+    </span>
+    <div>
+      <h2 id="concept-guide-title">اولین بار است اینجا می‌آیید؟</h2>
+      <p>
+        جلسه‌ها را به‌ترتیب بخوانید؛ هر وقت اصطلاحی نیاز به توضیح داشت، به این مرجع برگردید. هر
+        کارت، یک موضوع است و داخل آن می‌توانید جلسه‌های مرتبط را پیدا کنید.
+      </p>
+      <a href="/tuesday/">
+        شروع از کلاس‌های دوره <HubIcon name="arrow" />
+      </a>
+    </div>
+  </aside>
+  <h2 class="kb-concepts-title">مفاهیم تدریس‌شده در دوره</h2>
+  <p class="kb-caption">نام یک اصطلاح را جست‌وجو کنید یا کارت آن را برای توضیح و مثال باز کنید.</p>
   <div class="kb-explorer-toolbar">
     <label for="concept-query">
       <HubIcon name="concept" />
@@ -21,15 +41,23 @@ const concepts = entries.filter((entry) => !entry.draft && entry.knowledge.type 
       <input id="concept-query" type="search" placeholder="نام فارسی یا انگلیسی مفهوم…" disabled />
     </label>
     <p class="kb-caption" role="status" aria-live="polite" data-concept-count>
-      {persianNumber(concepts.length)} مفهوم
+      {persianNumber(courseConcepts.length)} مفهوم
     </p>
   </div>
+  <label class="kb-demo-toggle">
+    <input type="checkbox" data-show-demos disabled /> نمایش نمونه‌های قالب (جزو محتوای کلاس نیستند)
+  </label>
   <ul class="kb-concept-grid">
     {concepts.map((entry) => {
       if (entry.knowledge.type !== 'concept') return null;
       const count = conceptAppearances(entries, entry.knowledge).length;
       return (
-        <li data-concept-card data-search-text={entry.title + ' ' + (entry.description ?? '')}>
+        <li
+          data-concept-card
+          data-demo={String(entry.knowledge.demo)}
+          hidden={entry.knowledge.demo}
+          data-search-text={entry.title + ' ' + (entry.description ?? '')}
+        >
           <div class="kb-path-card-top">
             <span class="kb-icon-tile">
               <HubIcon name="concept" />
@@ -45,6 +73,7 @@ const concepts = entries.filter((entry) => !entry.draft && entry.knowledge.type 
           <div class="kb-card-bottom">
             <span>{count ? `در ${persianNumber(count)} جلسه` : 'مطالعهٔ مستقل'}</span>
             <a href={entry.route} aria-label={`مطالعهٔ ${entry.title}`}>
+              توضیح و مثال
               <HubIcon name="arrow" />
             </a>
           </div>
@@ -62,23 +91,28 @@ const concepts = entries.filter((entry) => !entry.draft && entry.knowledge.type 
     connectedCallback() {
       this.#events?.abort();
       this.#events = new AbortController();
-      const input = this.querySelector<HTMLInputElement>('input');
+      const input = this.querySelector<HTMLInputElement>('input[type="search"]');
+      const demos = this.querySelector<HTMLInputElement>('[data-show-demos]');
       const count = this.querySelector<HTMLElement>('[data-concept-count]');
       const empty = this.querySelector<HTMLElement>('[data-concept-empty]');
       const cards = [...this.querySelectorAll<HTMLElement>('[data-concept-card]')];
-      if (!input || !count || !empty) return;
+      if (!input || !count || !empty || !demos) return;
       input.disabled = false;
+      demos.disabled = false;
       const filter = () => {
         const term = input.value.trim().toLocaleLowerCase();
         let matches = 0;
         cards.forEach((card) => {
-          card.hidden = !card.dataset.searchText?.toLocaleLowerCase().includes(term);
+          card.hidden =
+            (!demos.checked && card.dataset.demo === 'true') ||
+            !card.dataset.searchText?.toLocaleLowerCase().includes(term);
           if (!card.hidden) matches++;
         });
         count.textContent = `${new Intl.NumberFormat('fa-IR').format(matches)} مفهوم`;
         empty.hidden = matches > 0;
       };
       input.addEventListener('input', filter, { signal: this.#events.signal });
+      demos.addEventListener('change', filter, { signal: this.#events.signal });
       filter();
     }
     disconnectedCallback() {

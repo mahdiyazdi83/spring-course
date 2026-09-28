@@ -69,6 +69,10 @@ their desktop/mobile TOC links. Opening a filtered-out anchor restores sources.
 Pagefind UI is styled with tokens, compact filters and result cards. Type and session
 number appear in result titles. UI-only metadata must not pollute excerpts.
 ConceptExplorer uses SSR cards plus one local text input; no user state or client framework.
+It opens with a first-visit guide and real course concepts; a separate opt-in checkbox
+reveals template demos. Demo concepts stay out of the native sidebar but retain their routes.
+Desktop header columns are symmetric around search. Navigation group labels use weight 800.
+Short entry and hover animations run only with `prefers-reduced-motion: no-preference`.
 
 ## Responsive behavior and accessibility
 
