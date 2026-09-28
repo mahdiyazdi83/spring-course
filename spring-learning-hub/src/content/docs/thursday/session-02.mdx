@@ -1,0 +1,264 @@
+---
+title: 'جلسهٔ دوم پنج‌شنبه — رفتار، کلاس بی‌نام و Lambda'
+description: مرور مستقل حیدری دربارهٔ برنامه‌نویسی توصیفی و انتقال رفتار در Java.
+sidebar:
+  label: جلسهٔ ۲ — مرور برنامه‌نویسی تابعی
+  order: 2
+kb:
+  type: thursday
+  id: thursday-02
+  sessionNumber: 2
+  status: complete
+  demo: false
+  createdAt: '2026-09-26'
+  updatedAt: '2026-09-28'
+  sources:
+    heydari:
+      recordings:
+        - id: heydari-02-thursday
+          location: ../records/mr.heydari-thursday-audio/session2/Functional programming.m4a
+          kind: audio
+          durationSeconds: 2126
+    gpt:
+      references:
+        - https://docs.oracle.com/javase/specs/jls/se21/html/jls-15.html#jls-15.27
+        - https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/package-summary.html
+  relatedSessions:
+    - tuesday-02
+  concepts:
+    - id: functional-interface
+      relation: reviewed
+      anchor: behavior-contract
+    - id: stream-pipeline
+      relation: reviewed
+      anchor: filter-contract
+    - id: method-reference
+      relation: mentioned
+      anchor: behavior-contract
+    - id: optional
+      relation: mentioned
+      anchor: behavior-contract
+  timeline:
+    - topic: نگاه توصیفی به پردازش داده و مثال filter و map
+      source: heydari
+      recording: heydari-02-thursday
+      start: '00:35'
+      approximate: true
+    - topic: جایگاه رفتار در Java و ارتباط امکانات برنامه‌نویسی تابعی
+      source: heydari
+      recording: heydari-02-thursday
+      start: '02:29'
+      approximate: true
+    - topic: تعریف کلاس بی‌نام و ساخت هم‌زمان نمونه
+      source: heydari
+      recording: heydari-02-thursday
+      start: '05:35'
+      approximate: true
+    - topic: انتساب پیاده‌سازی به نوع رابط و ارسال رفتار به متد
+      source: heydari
+      recording: heydari-02-thursday
+      start: '09:00'
+      approximate: true
+    - topic: کوتاه‌کردن مثال تشخیص عدد مثبت با Lambda
+      source: heydari
+      recording: heydari-02-thursday
+      start: '15:00'
+      approximate: true
+    - topic: رابط تابعی به‌عنوان قرارداد یک رفتار
+      source: heydari
+      recording: heydari-02-thursday
+      start: '16:55'
+      approximate: true
+    - topic: چهار خانوادهٔ Predicate، Function، Consumer و Supplier
+      source: heydari
+      recording: heydari-02-thursday
+      start: '21:00'
+      approximate: true
+    - topic: مثال حساب و بیان رفتار با Consumer
+      source: heydari
+      recording: heydari-02-thursday
+      start: '24:35'
+      approximate: true
+    - topic: Stream API و کنار هم قراردادن رفتارها
+      source: heydari
+      recording: heydari-02-thursday
+      start: '27:00'
+      approximate: true
+    - topic: چرا filter یک Predicate می‌گیرد؟
+      source: heydari
+      recording: heydari-02-thursday
+      start: '29:20'
+      approximate: true
+    - topic: پرسش پایانی دربارهٔ Container و اولویت مطالعه
+      source: heydari
+      recording: heydari-02-thursday
+      start: '32:35'
+      approximate: true
+  changes:
+    - date: '2026-09-26'
+      type: initial
+      summary: ایجاد مستند مستقل پنج‌شنبه از صوت واقعی جلسهٔ دوم.
+    - date: '2026-09-27'
+      type: source-added
+      summary: تکمیل موضوع‌های صوت پنج‌شنبه، مثال انتقال رفتار و ارتباط رابط‌های آماده با Stream.
+    - date: '2026-09-27'
+      type: correction
+      summary: توضیح مرز قیاس Lambda با کلاس بی‌نام، همراه ارجاع به مشخصات زبان Java.
+    - date: '2026-09-28'
+      type: content-update
+      summary: پایان بازبینی سراسر صوت و پردازش دوبارهٔ بخش‌های مبهم؛ تکمیل پوشش منابع موجود.
+---
+
+import SourceBlock from '../../../components/source/SourceBlock.astro';
+import GptNote from '../../../components/source/GptNote.astro';
+import TechnicalCorrection from '../../../components/source/TechnicalCorrection.astro';
+import CodeExample from '../../../components/code/CodeExample.astro';
+import SessionTimeline from '../../../components/documentation/SessionTimeline.astro';
+import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+
+این صفحه مربوط به صوت مستقل حیدری در پوشهٔ پنج‌شنبهٔ جلسهٔ دوم است. ضبط حدود ۳۵ دقیقه و ۲۵ ثانیه دارد و از میانهٔ توضیح شروع می‌شود. متن، بازنویسی آموزشی با کمک تبدیل محلی گفتار به متن است؛ رونوشت کلمه‌به‌کلمه یا ادعای مشاهدهٔ کد روی صفحه نیست. تاریخ ثبت مستند با تاریخ برگزاری کلاس یکی فرض نشده است.
+
+**پوشش منابع:** متن حاصل از سراسر صوت مرور شده و بخش‌های مبهم با تنظیم دقیق‌تر دوباره پردازش شده‌اند. عبارت‌های نامفهوم و گفت‌وگوهای غیرآموزشی بازسازی نشده‌اند؛ کد تکمیلی پایین صفحه صریحاً نمونهٔ GPT است.
+
+پیش‌نیاز: مفهوم کلاس، شیء، interface و پیاده‌سازی متد در Java. [درس سه‌شنبهٔ جلسهٔ دوم](/tuesday/session-02/) مثال‌های مخزن و مسیر کامل Lambda تا Stream را در اختیار می‌گذارد؛ این صفحه بر زاویهٔ توضیح و پرسش‌های همین صوت تمرکز دارد.
+
+## ترتیب موضوع‌ها در ضبط [#timeline]
+
+زمان‌ها تقریبی و مربوط به همین فایل صوتی‌اند.
+
+<SessionTimeline />
+
+## توصیف نتیجه در برابر نوشتن جزئیات پیمایش [#declarative]
+
+<SourceBlock id="heydari-declarative" source="heydari" recording="heydari-02-thursday" timestamp="00:35">
+
+در آغاز صوت، تفاوت دو نگاه به حل مسئله مرور می‌شود: نوشتن جزئیات چگونگی انجام کار و توصیف پردازشی که می‌خواهیم اتفاق بیفتد. مثال، مسیری است که داده را می‌گیرد، فیلتر می‌کند، تبدیل می‌کند و در پایان نتیجه را به شکل فهرست تحویل می‌دهد.
+
+وقتی زنجیرهٔ `filter` و `map` را می‌خوانیم، مراحل موردنظر قابل تشخیص‌اند، بدون اینکه حلقه و مدیریت پیمایش را در همان نقطه نوشته باشیم. شرط فیلتر و رفتار تبدیل هنوز باید مشخص شوند؛ پنهان‌شدن جزئیات پیمایش به معنی حذف آن‌ها از اجرای برنامه نیست.
+
+</SourceBlock>
+
+<GptNote id="gpt-paradigm-boundary">
+
+«توصیفی» و «تابعی» را مترادف کامل نگیرید. زنجیرهٔ Stream می‌تواند شیوهٔ بیان توصیفی داشته باشد، ولی وجود Lambda یا Stream به‌تنهایی کد را به برنامه‌ای با توابع خالص و بدون اثر جانبی تبدیل نمی‌کند. Java همچنان امکان ترکیب سبک‌های مختلف را دارد.
+
+</GptNote>
+
+## رفتار چگونه ورودی یک متد می‌شود؟ [#behavior-contract]
+
+<SourceBlock id="heydari-behavior" source="heydari" recording="heydari-02-thursday" timestamp="02:29">
+
+پرسش مرکزی توضیح این است که چگونه رفتاری را که معمولاً در متد یک شیء تعریف می‌کنیم، به بخش دیگری از برنامه بدهیم. در مرور امکانات Java، نام‌های Lambda، Functional Interface، Method Reference، Stream API و Optional کنار هم مطرح می‌شوند؛ مسیر توضیح از شناخت قرارداد رفتار شروع می‌شود.
+
+در مثال کلاسی، می‌توان یک پیاده‌سازی را به متغیری از نوع رابط نسبت داد و آن را به متدی فرستاد که همان رابط را به‌عنوان پارامتر می‌گیرد. متد دریافت‌کننده به قرارداد تکیه می‌کند؛ رفتار واقعی را پیاده‌سازی ارسال‌شده تعیین می‌کند. این همان مسئله‌ای است که در [رابط تابعی](/concepts/functional-interface/) و تمرین شرط برنامه‌نویسانِ سه‌شنبه دیده می‌شود.
+
+</SourceBlock>
+
+## کلاس بی‌نام؛ تعریف پیاده‌سازی در محل استفاده [#anonymous-class]
+
+<SourceBlock id="heydari-anonymous" source="heydari" recording="heydari-02-thursday" timestamp="05:35">
+
+کلاس بی‌نام به‌عنوان راهی برای تعریف پیاده‌سازی در محل نیاز مرور می‌شود. در توضیح صوت، تعریف کلاس و ساختن نمونه در یک عبارت کنار هم قرار می‌گیرند. لازم نیست برای این رفتار کوتاه، ابتدا یک کلاس نام‌دار جدا تعریف و بعد در نقطه‌ای دیگر از آن نمونه ساخته شود.
+
+سپس روی انتساب آن شیء به نوع رابط و ارسالش به یک متد دیگر تأکید می‌شود. از دید استفاده‌کننده، قرارداد رابط همچنان ثابت است؛ محل نوشتن پیاده‌سازی تغییر کرده است. این بخش زمینهٔ مقایسه با Lambda را فراهم می‌کند.
+
+</SourceBlock>
+
+## از پیاده‌سازی طولانی به Lambda [#lambda]
+
+<SourceBlock id="heydari-lambda-purpose" source="heydari" recording="heydari-02-thursday" timestamp="15:00">
+
+برای رفتاری ساده مانند بررسی مثبت‌بودن یک عدد، بدنهٔ اصلی تصمیم بسیار کوتاه است، اما شکل کلاس بی‌نام خطوط بیشتری می‌خواهد. Lambda در این مقایسه راهی است تا توجه خواننده روی ورودی و بدنهٔ همان رفتار بماند.
+
+در ادامهٔ بحث، دلیل انتخاب رابط تک‌متد روشن می‌شود: وقتی نوع مقصد تنها یک قرارداد abstract مؤثر دارد، مشخص است بدنهٔ Lambda پیاده‌سازی کدام رفتار است. در صوت، متدهای default از آن قراردادی که باید پیاده‌سازی شود جدا می‌شوند. هدف اصلی، صرفه‌جویی در تعداد خط‌ها نیست؛ مشخص‌شدن رفتار قابل انتقال است.
+
+</SourceBlock>
+
+<GptNote id="gpt-lambda-target">
+
+Lambda در Java به نوع مقصد نیاز دارد. `@FunctionalInterface` شرط رابط تابعی را بررسی می‌کند، اما اجباری نیست. یک کلاس بی‌نامِ عمومی با چند متد یا با ارث‌بری از کلاس، الزاماً قابل جایگزینی با Lambda نیست. پیش از کوتاه‌کردن کد، قرارداد رابط مقصد را بخوانید.
+
+</GptNote>
+
+<SourceBlock id="heydari-lambda-comparison" source="heydari" recording="heydari-02-thursday" timestamp="16:00">
+
+در مقایسهٔ شفاهی، Lambda معادل کوتاه‌شدهٔ پیاده‌سازی با کلاس بی‌نام توضیح داده می‌شود و انجام کارهای پشت‌صحنه به کامپایلر نسبت داده می‌شود. این قیاس به فهمِ ارسال همان رفتار کوتاه کمک می‌کند، اما برای توضیح دقیق مدل زبان و نحوهٔ ترجمه کافی نیست.
+
+</SourceBlock>
+
+<TechnicalCorrection id="gpt-lambda-not-anonymous" corrects="heydari-lambda-comparison" statement="Lambda در توضیح شفاهی معادل کوتاه‌شدهٔ کلاس بی‌نام معرفی می‌شود." correction="در مثال ساده می‌توان رفتار یکسانی نوشت، اما Lambda همان سازهٔ کلاس بی‌نام نیست و نباید نحوهٔ ترجمهٔ آن‌ها را یکسان فرض کرد." reason="برای نمونه، this در Lambda به زمینهٔ پیرامونی اشاره می‌کند، ولی در کلاس بی‌نام به نمونهٔ همان کلاس. مشخصات زبان برای نحوهٔ ساخت یا استفادهٔ مجدد از شیء Lambda به پیاده‌سازی آزادی می‌دهد.">
+
+[قرارداد بدنهٔ Lambda](https://docs.oracle.com/javase/specs/jls/se21/html/jls-15.html#jls-15.27.2) و [ارزیابی آن در زمان اجرا](https://docs.oracle.com/javase/specs/jls/se21/html/jls-15.html#jls-15.27.4)
+
+</TechnicalCorrection>
+
+## نمونهٔ تکمیلی برای اجرای مستقل [#example]
+
+<SourceBlock id="gpt-behavior-example-intro" source="gpt">
+
+نمونهٔ زیر برای روشن‌کردن مثال صوتیِ تشخیص عدد مثبت نوشته شده است. نام‌ها و کد، بازسازی آموزشی GPT هستند؛ فایل اصلی یا تصویر کد این توضیحِ پنج‌شنبه در منابع ارائه‌شده وجود ندارد. هر دو پیاده‌سازی به متد `evaluate` فرستاده می‌شوند و آن متد فقط قرارداد `Check` را می‌شناسد.
+
+</SourceBlock>
+
+<CodeExample
+  id="gpt-check-example"
+  source="gpt"
+  filename="BehaviorExample.java"
+  lang="java"
+  caption="GPT Example؛ خروجی این برنامه به‌ترتیب true و false است."
+  code={
+    'public class BehaviorExample {\n    @FunctionalInterface\n    interface Check {\n        boolean test(int value);\n    }\n\n    static boolean evaluate(Check behavior, int value) {\n        return behavior.test(value);\n    }\n\n    public static void main(String[] args) {\n        Check anonymous = new Check() {\n            @Override\n            public boolean test(int value) {\n                return value > 0;\n            }\n        };\n        Check lambda = value -> value > 0;\n\n        System.out.println(evaluate(anonymous, 3));\n        System.out.println(evaluate(lambda, -1));\n    }\n}'
+  }
+/>
+
+## رابط‌های آماده و مثال Consumer [#builtins]
+
+<SourceBlock id="heydari-builtins" source="heydari" recording="heydari-02-thursday" timestamp="21:00">
+
+بعد از رابط‌های تک‌رفتار، چهار خانوادهٔ آمادهٔ `Predicate`، `Function`، `Consumer` و `Supplier` مرور می‌شوند. محور دسته‌بندی، ورودی و خروجی رفتار است: آیا مقداری می‌گیرد؟ آیا نتیجه‌ای می‌دهد؟ نتیجه از چه نوعی است؟ لازم نیست برای هر رفتار کوتاه، رابط جدیدی با نام دیگری ساخته شود.
+
+برای `Consumer` مثال عملیاتی روی حساب مطرح می‌شود: یک حساب دریافت می‌شود و عملیاتی روی آن انجام می‌گیرد، بدون اینکه مقدار بازگشتی داشته باشد. مراحل بررسی و تغییر وضعیت حساب برای نشان‌دادن تفاوت جزئیات پیاده‌سازی با نام‌گذاری یک رفتار بزرگ‌تر به‌کار می‌روند. این مثال، طرح یک سامانهٔ بانکی یا دستور اجرایی کامل آن نیست.
+
+</SourceBlock>
+
+<GptNote id="gpt-builtins-recap">
+
+برای مرور قراردادها: `Predicate<T>` ورودی را با `test` به `boolean` تبدیل می‌کند؛ `Function<T,R>` با `apply` مقدار تبدیل‌شده می‌دهد؛ `Consumer<T>` با `accept` مقدار را مصرف می‌کند و خروجی `void` دارد؛ `Supplier<T>` بدون ورودی با `get` مقدار تولید می‌کند. `void` به معنی «هیچ کاری انجام نمی‌شود» نیست؛ چاپ یا تغییر وضعیت می‌تواند اثر رفتار باشد. جدول کامل‌تر در [درس سه‌شنبه](/tuesday/session-02/#functional-interfaces) آمده است.
+
+</GptNote>
+
+## کاربرد قرارداد در filter و Stream [#filter-contract]
+
+<SourceBlock id="heydari-filter" source="heydari" recording="heydari-02-thursday" timestamp="29:20">
+
+پرسش اصلی پایان مرور این است: `filter` خودش یک متد است، پس چرا از ما رفتار دیگری می‌خواهد؟ سازوکار عمومی فیلترکردن در API وجود دارد، ولی شرط انتخاب هر عنصر مخصوص مسئلهٔ استفاده‌کننده است. برنامه‌نویس آن شرط را در قالب `Predicate` به متد می‌دهد.
+
+با این نگاه، ارسال Lambda به `filter` صرفاً یک شکل نوشتاری کوتاه نیست؛ بخش متغیرِ تصمیم‌گیری از سازوکار عمومی پردازش جدا شده است. برای خواندن سایر متدهای Stream نیز ابتدا نوع رابطی را که می‌گیرند بررسی کنید و بعد بپرسید رفتار ارسال‌شده در کدام مرحله استفاده می‌شود. مسیر کامل این مثال‌ها در [Stream Pipeline](/concepts/stream-pipeline/) آمده است.
+
+</SourceBlock>
+
+<GptNote id="gpt-chain-vs-stream">
+
+هر زنجیرهٔ فراخوانی متد، Stream API نیست. شکل فرضیِ «انتقال مانده و سپس بستن حساب» برای توضیح ترکیب مراحل کمک می‌کند، اما باید نوع و قرارداد هر متد واقعی را جدا بررسی کرد. در Stream، `filter` انتخاب را بیان می‌کند، `map` تبدیل را و عملیات نهایی مصرف نتیجه را.
+
+</GptNote>
+
+## پرسش پایانی و مرور پیشنهادی [#review]
+
+<SourceBlock id="heydari-study-priority" source="heydari" recording="heydari-02-thursday" timestamp="32:35">
+
+در پایان، پرسشی دربارهٔ Container در Spring و Jakarta مطرح می‌شود و نام‌های IoC Container و Servlet Container از هم تفکیک می‌شوند. صوت وارد آموزش تفصیلی سازوکار آن‌ها نمی‌شود؛ گفت‌وگو بیشتر دربارهٔ تعیین اولویت مطالعه و تفاوت «شناخت تعریف» با «نیاز به تمرین عملی» است.
+
+جمع‌بندی مرور برنامه‌نویسی تابعی نیز این است که امکانات آشنای API را با درک قراردادشان استفاده کنیم: اگر متدی Consumer یا Function می‌خواهد، بدانیم چه رفتاری را به آن می‌سپاریم. این صفحه، بحث Container را به‌عنوان موضوع تدریس‌شدهٔ کامل معرفی نمی‌کند.
+
+</SourceBlock>
+
+<SourceBlock id="gpt-thursday-review" source="gpt">
+
+برای مرور، نمونهٔ `BehaviorExample` را با یک `IntPredicate` بازنویسی کنید و توضیح دهید چه بخش‌هایی حذف و چه قراردادی حفظ می‌شود. سپس شرط فیلتر خودروهای سه‌شنبه را عوض کنید، بدون آنکه سازوکار پیمایش را از نو بنویسید. این تمرین پیشنهادی GPT است.
+
+</SourceBlock>
+
+## تاریخچهٔ تغییرات [#changelog]
+
+<ChangeLog />

@@ -1,0 +1,52 @@
+---
+title: 'Optional — نمایش نبودن نتیجه'
+description: تفسیر نتیجهٔ خالی، میانگین و دریافت امن مقدار در مثال‌های جلسهٔ دوم.
+kb:
+  type: concept
+  id: optional
+  status: complete
+  createdAt: '2026-09-26'
+  updatedAt: '2026-09-26'
+  sources:
+    gpt:
+      references:
+        - https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Optional.html
+        - ../teacher-files/session2/functional/src/p04stream/p01optional/OptionalDemo.java
+  relatedConcepts: [stream-pipeline]
+  changes:
+    - date: '2026-09-26'
+      type: initial
+      summary: توضیح نتیجهٔ اختیاری بر پایهٔ مثال میانگین جلسهٔ دوم.
+---
+
+import SourceBlock from '../../../components/source/SourceBlock.astro';
+import ConceptAppearances from '../../../components/documentation/ConceptAppearances.astro';
+import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+
+## نبودن مقدار با صفر فرق دارد [#absence]
+
+<SourceBlock id="gpt-optional-absence" source="gpt">
+
+`Optional<T>` ممکن است یک مقدار غیرnull داشته باشد یا خالی باشد. برای میانگین یک مجموعهٔ خالی، «نتیجه‌ای وجود ندارد» با میانگین صفر یکسان نیست. متد `avg` در کد جلسهٔ دوم همین تفاوت را با `Optional.empty()` و `Optional.of(value)` بیان می‌کند.
+
+`of(null)` مجاز نیست؛ برای مقداری که ممکن است null باشد، `ofNullable` مناسب است. خود متغیر Optional نیز بهتر است null نباشد، وگرنه قرارداد نبودن نتیجه دوباره مبهم می‌شود.
+
+</SourceBlock>
+
+## تصمیم دربارهٔ نتیجه [#handling]
+
+<SourceBlock id="gpt-optional-handling" source="gpt">
+
+`ifPresent` عملی را فقط در صورت وجود مقدار اجرا می‌کند؛ `orElse` مقدار جایگزین می‌دهد؛ `orElseGet` تولید جایگزین را به زمان نیاز موکول می‌کند؛ `orElseThrow` نبودن مقدار را به خطای صریح تبدیل می‌کند. `get()` روی Optional خالی خطا می‌دهد.
+
+در مثال جلسه، غیرخالی‌بودن آرایه پیش از دریافت میانگین بررسی شده است. هنگام بررسی ایمنی کد باید شرط‌های قبل از دریافت مقدار را نیز بخوانیم. [مرجع رسمی Optional](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Optional.html)
+
+</SourceBlock>
+
+## کاربرد در جلسات [#appearances]
+
+<ConceptAppearances />
+
+## تاریخچهٔ تغییرات [#changelog]
+
+<ChangeLog />

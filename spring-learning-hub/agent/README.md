@@ -1,9 +1,10 @@
 # Agent entry point
 
 This folder is operational memory for maintaining the Spring knowledge base.
-Current delivered scope: Phase 5 hardening of the complete educational dashboard and documentation template.
-Use `PROCESSING-CHECKLIST.md` when the user supplies the first real session.
-No real sessions have been processed.
+Current scope: the Phase 5 template plus user-authorized documentation of session 2.
+Use `PROCESSING-CHECKLIST.md` for each real session and `workflows/local-transcription.md`
+for authorized local ASR. The session-2 processing log records completed coverage and source limits;
+do not infer completion from the presence of a recording in frontmatter.
 
 ## Read only what the task needs
 

@@ -1,0 +1,74 @@
+---
+title: 'Maven — ساخت پروژه و مدیریت وابستگی'
+description: نقش POM، مختصات وابستگی، مخزن محلی و تفاوت package و install.
+kb:
+  type: concept
+  id: maven-build
+  status: complete
+  createdAt: '2026-09-26'
+  updatedAt: '2026-09-26'
+  sources:
+    gpt:
+      references:
+        - https://maven.apache.org/guides/introduction/introduction-to-the-pom.html
+        - https://maven.apache.org/guides/introduction/introduction-to-repositories.html
+        - https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html
+        - https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html
+        - ../teacher-files/session2/maven_demo/pom.xml
+  changes:
+    - date: '2026-09-26'
+      type: initial
+      summary: افزودن مرجع خواندن پروژهٔ Maven همراه جلسهٔ دوم.
+---
+
+import SourceBlock from '../../../components/source/SourceBlock.astro';
+import ConceptAppearances from '../../../components/documentation/ConceptAppearances.astro';
+import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+
+## POM چه چیزی را توصیف می‌کند؟ [#pom]
+
+<SourceBlock id="gpt-maven-pom" source="gpt">
+
+فایل `pom.xml` مدل پروژهٔ Maven است: هویت پروژه، وابستگی‌ها و تنظیمات ساخت در آن توصیف می‌شود. سه بخش `groupId`، `artifactId` و `version` مختصات معمول یک artifact را مشخص می‌کنند. نسخهٔ پروژه با نسخهٔ یک وابستگی دو دادهٔ متفاوت‌اند.
+
+در کد جلسهٔ دوم، پروژه با مختصات `ir.digixo:maven_demo:1.0-SNAPSHOT` معرفی شده ولی وابستگی آن `org.springframework:spring-core:7.0.8` است. نام نهایی بستهٔ خروجی نیز از `finalName` می‌آید؛ تغییر نام فایل خروجی، هویت وابستگی را عوض نمی‌کند. [راهنمای رسمی POM](https://maven.apache.org/guides/introduction/introduction-to-the-pom.html)
+
+</SourceBlock>
+
+## وابستگی از کجا می‌آید؟ [#repositories]
+
+<SourceBlock id="gpt-maven-repositories" source="gpt">
+
+Maven artifactها را از مخزن محلی و مخزن‌های remote پیدا می‌کند. مخزن محلی معمولاً زیر پوشهٔ `.m2/repository` کاربر است؛ هم فایل‌های دریافت‌شده را نگه می‌دارد و هم خروجی‌هایی را که با `install` در آن نصب کرده‌اید. یک سازمان می‌تواند مخزن یا mirror داخلی داشته باشد.
+
+این مخزن با مخزن Git متفاوت است: Git تاریخچهٔ فایل‌های منبع را نگه می‌دارد، ولی مخزن Maven برای artifactها و اطلاعات وابستگی آن‌هاست. انتقال دستی یک JAR به پوشه‌ای دلخواه نیز همان ثبت درست آن در مخزن Maven نیست. [راهنمای رسمی مخزن‌ها](https://maven.apache.org/guides/introduction/introduction-to-repositories.html)
+
+</SourceBlock>
+
+## چرا یک وابستگی چند کتابخانه می‌آورد؟ [#transitive]
+
+<SourceBlock id="gpt-maven-transitive" source="gpt">
+
+کتابخانهٔ موردنیاز شما ممکن است خودش به کتابخانه‌های دیگری وابسته باشد. Maven اطلاعات POM آن را می‌خواند و وابستگی‌های گذرا را، مطابق قواعد scope و استثناها، وارد درخت وابستگی می‌کند. دستور `mvn dependency:tree` برای دیدن منشأ این رابطه‌ها مفید است.
+
+حل خودکار نسخه‌ها، تضمین سازگاری رفتاری تمام کتابخانه‌ها نیست. وقتی چند مسیر نسخه‌های متفاوتی درخواست می‌کنند، باید نسخهٔ انتخاب‌شده و تنظیمات مدیریت وابستگی را بررسی کرد. [راهنمای مکانیزم وابستگی Maven](https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html)
+
+</SourceBlock>
+
+## package با install چه فرقی دارد؟ [#lifecycle]
+
+<SourceBlock id="gpt-maven-lifecycle" source="gpt">
+
+در چرخهٔ ساخت معمول، `compile` کد اصلی را کامپایل می‌کند، `test` آزمون‌ها را اجرا می‌کند و `package` خروجی قابل توزیع، مانند JAR، می‌سازد. `install` علاوه بر گذر از مراحل قبلی، artifact را در مخزن محلی قرار می‌دهد تا پروژه‌های دیگر بتوانند به آن وابسته شوند. `deploy` برای انتشار در مخزن remote است؛ آن را صرفاً برای تمرین محلی اجرا نکنید.
+
+`clean` متعلق به چرخه‌ای جداگانه است و خروجی ساخت قبلی را پاک می‌کند؛ بنابراین `mvn clean package` دو درخواست را پشت سر هم انجام می‌دهد. موفقیت یک مرحله نیز به تنظیمات پروژه و وابستگی‌های موردنیاز آن وابسته است. [راهنمای چرخهٔ ساخت Maven](https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html)
+
+</SourceBlock>
+
+## کاربرد در جلسات [#appearances]
+
+<ConceptAppearances />
+
+## تاریخچهٔ تغییرات [#changelog]
+
+<ChangeLog />

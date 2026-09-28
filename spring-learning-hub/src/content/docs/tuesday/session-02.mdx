@@ -1,0 +1,872 @@
+---
+title: 'جلسهٔ دوم — Lambda، Stream و مقدمهٔ Maven'
+description: درس مستند جلسهٔ دوم از Lambda و رابط‌های تابعی تا Optional، Stream و Maven، همراه کد استاد، خط زمانی و اصلاح‌های فنی.
+sidebar:
+  label: جلسهٔ ۲ — برنامه‌نویسی تابعی
+  order: 2
+kb:
+  type: tuesday
+  id: tuesday-02
+  sessionNumber: 2
+  status: complete
+  demo: false
+  createdAt: '2026-09-26'
+  updatedAt: '2026-09-28'
+  sources:
+    teacher:
+      recordings:
+        - id: teacher-02-video
+          location: ../records/tuesday-class-recordings/session2/2.mp4
+          kind: video
+          durationSeconds: 12910
+      repository:
+        location: ../teacher-files
+        commit: 8168a8b47b45a04a71920a144ea65daf09f906a2
+      references:
+        - ../teacher-files/session2/functional/src
+        - ../teacher-files/session2/maven_demo/pom.xml
+    gpt:
+      references:
+        - https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Stream.html
+        - https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/IntStream.html
+        - https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/package-summary.html
+        - https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Optional.html
+        - https://maven.apache.org/guides/introduction/introduction-to-the-pom.html
+        - https://maven.apache.org/guides/introduction/introduction-to-repositories.html
+        - https://docs.oracle.com/javase/specs/jls/se21/html/jls-15.html#jls-15.27
+  concepts:
+    - id: functional-interface
+      relation: used-in-code
+      anchor: functional-interfaces
+    - id: optional
+      relation: used-in-code
+      anchor: optional
+    - id: method-reference
+      relation: used-in-code
+      anchor: method-reference
+    - id: stream-pipeline
+      relation: used-in-code
+      anchor: stream-pipeline
+    - id: maven-build
+      relation: used-in-code
+      anchor: maven
+  timeline:
+    - topic: انگیزهٔ مرور برنامه‌نویسی تابعی و مسیر Lambda تا Stream
+      source: teacher
+      recording: teacher-02-video
+      start: '01:05'
+      approximate: true
+    - topic: SAM، متد abstract و تفاوت متدهای default
+      source: teacher
+      recording: teacher-02-video
+      start: '19:09'
+      approximate: true
+    - topic: رکورد برنامه‌نویس، شرط تست و متد نمایش
+      source: teacher
+      recording: teacher-02-video
+      start: '28:17'
+      approximate: true
+    - topic: کلاس بی‌نام و تغییر شرط به توانایی مستندسازی
+      source: teacher
+      recording: teacher-02-video
+      start: '36:00'
+      approximate: true
+    - topic: تبدیل به Lambda و تمرین بازنویسی کد
+      source: teacher
+      recording: teacher-02-video
+      start: '41:30'
+      approximate: true
+    - topic: Method Reference و مثال‌های Human
+      source: teacher
+      recording: teacher-02-video
+      start: '47:30'
+      approximate: true
+    - topic: اشاره به Comparator و قرارداد compare
+      source: teacher
+      recording: teacher-02-video
+      start: '01:06:30'
+      approximate: true
+    - topic: رابط‌های آماده، Supplier و نقش generics
+      source: teacher
+      recording: teacher-02-video
+      start: '01:09:00'
+      approximate: true
+    - topic: Consumer و چاپ با ارجاع متد
+      source: teacher
+      recording: teacher-02-video
+      start: '01:16:00'
+      approximate: true
+    - topic: BiConsumer و درج زوج کلید و مقدار در Map
+      source: teacher
+      recording: teacher-02-video
+      start: '01:20:40'
+      approximate: true
+    - topic: Predicate و آزمون شرط روی یک شیء
+      source: teacher
+      recording: teacher-02-video
+      start: '01:25:50'
+      approximate: true
+    - topic: BiPredicate و آزمون رابطهٔ دو ورودی
+      source: teacher
+      recording: teacher-02-video
+      start: '01:29:00'
+      approximate: true
+    - topic: Function و BiFunction؛ ورودی‌ها و نتیجهٔ تبدیل
+      source: teacher
+      recording: teacher-02-video
+      start: '01:31:00'
+      approximate: true
+    - topic: UnaryOperator و BinaryOperator به‌عنوان حالت‌های هم‌نوع
+      source: teacher
+      recording: teacher-02-video
+      start: '01:37:00'
+      approximate: true
+    - topic: رابط‌های primitive و تکلیف مطالعهٔ متدهای ترکیبی
+      source: teacher
+      recording: teacher-02-video
+      start: '01:43:40'
+      approximate: true
+    - topic: Stream با تشبیه خط تولید؛ منبع، مراحل میانی و عملیات نهایی
+      source: teacher
+      recording: teacher-02-video
+      start: '01:49:25'
+      approximate: true
+    - topic: یک‌بارمصرف‌بودن Stream و مقدمهٔ Optional
+      source: teacher
+      recording: teacher-02-video
+      start: '01:57:30'
+      approximate: true
+    - topic: میانگین با IntStream و مصرف نتیجهٔ Optional
+      source: teacher
+      recording: teacher-02-video
+      start: '02:01:00'
+      approximate: true
+    - topic: منبع‌های متناهی و نامتناهی؛ empty، of، Collection و generate
+      source: teacher
+      recording: teacher-02-video
+      start: '02:08:00'
+      approximate: true
+    - topic: اجرای تنبل، نقش عملیات نهایی و iterate شرط‌دار
+      source: teacher
+      recording: teacher-02-video
+      start: '02:16:35'
+      approximate: true
+    - topic: min، count، findFirst و خانوادهٔ match
+      source: teacher
+      recording: teacher-02-video
+      start: '02:24:45'
+      approximate: true
+    - topic: reduce، کاربرد map و جمع‌آوری در Set
+      source: teacher
+      recording: teacher-02-video
+      start: '02:30:30'
+      approximate: true
+    - topic: filter، distinct، skip، limit، map و تکلیف flatMap
+      source: teacher
+      recording: teacher-02-video
+      start: '02:36:00'
+      approximate: true
+    - topic: peek و مقایسهٔ چاپ میانی با forEach
+      source: teacher
+      recording: teacher-02-video
+      start: '02:41:10'
+      approximate: true
+    - topic: چرا sorted پیش از limit روی منبع نامتناهی پایان نمی‌یابد؟
+      source: teacher
+      recording: teacher-02-video
+      start: '02:43:15'
+      approximate: true
+    - topic: اشاره به اتصال Streamها و جریان‌های primitive
+      source: teacher
+      recording: teacher-02-video
+      start: '02:48:00'
+      approximate: true
+    - topic: ساخت کلاس Car و تمرین ترکیبی خودروها
+      source: teacher
+      recording: teacher-02-video
+      start: '02:49:35'
+      approximate: true
+    - topic: جمع قیمت BMWها با filter، map و reduce
+      source: teacher
+      recording: teacher-02-video
+      start: '02:57:00'
+      approximate: true
+    - topic: بازگشت به Spring؛ نقش framework و معرفی مجموعهٔ پروژه‌ها
+      source: teacher
+      recording: teacher-02-video
+      start: '03:01:35'
+      approximate: true
+    - topic: Build Tool، خودکارسازی ساخت و مدیریت وابستگی
+      source: teacher
+      recording: teacher-02-video
+      start: '03:05:20'
+      approximate: true
+    - topic: ساخت پروژهٔ Maven با archetype و قراردادهای پیش‌فرض
+      source: teacher
+      recording: teacher-02-video
+      start: '03:09:00'
+      approximate: true
+    - topic: مخزن عمومی، مخزن سازمانی و مخزن محلی .m2
+      source: teacher
+      recording: teacher-02-video
+      start: '03:14:45'
+      approximate: true
+    - topic: اجرای compile و package؛ مختصات artifact در POM
+      source: teacher
+      recording: teacher-02-video
+      start: '03:18:00'
+      approximate: true
+    - topic: finalName، clean package و افزودن وابستگی MySQL
+      source: teacher
+      recording: teacher-02-video
+      start: '03:21:00'
+      approximate: true
+    - topic: وابستگی‌های گذرا و مشاهدهٔ dependency:tree
+      source: teacher
+      recording: teacher-02-video
+      start: '03:24:00'
+      approximate: true
+    - topic: ماژول‌های Spring و انتخاب وابستگی موردنیاز
+      source: teacher
+      recording: teacher-02-video
+      start: '03:27:00'
+      approximate: true
+    - topic: برنامهٔ ادامهٔ دوره و روش مطالعهٔ مستندات رسمی
+      source: teacher
+      recording: teacher-02-video
+      start: '03:29:40'
+      approximate: true
+  changes:
+    - date: '2026-09-26'
+      type: initial
+      summary: مستندسازی نسخهٔ ثبت‌شدهٔ کدهای جلسهٔ دوم و ثبت اصلاح‌های اجرایی؛ پردازش ضبط در جریان است.
+    - date: '2026-09-26'
+      type: source-added
+      summary: تکمیل پوشش ضبط سه‌شنبه، خط زمانی، تمرین‌ها و مباحث Maven با کمک پیاده‌سازی محلی صوت و تطبیق با کد.
+    - date: '2026-09-26'
+      type: correction
+      summary: تفکیک توضیح استاد از خطاهای باقی‌ماندهٔ فایل‌ها و توضیح تفاوت IntStream با Stream<Integer>.
+    - date: '2026-09-28'
+      type: content-update
+      summary: نهایی‌سازی پوشش منابع و اتصال به مستند مستقل پنج‌شنبهٔ دوم.
+---
+
+import SourceBlock from '../../../components/source/SourceBlock.astro';
+import SourceFilter from '../../../components/source/SourceFilter.astro';
+import GptNote from '../../../components/source/GptNote.astro';
+import TechnicalCorrection from '../../../components/source/TechnicalCorrection.astro';
+import CodeExample from '../../../components/code/CodeExample.astro';
+import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+import SessionTimeline from '../../../components/documentation/SessionTimeline.astro';
+import ScrollableTable from '../../../components/documentation/ScrollableTable.astro';
+import * as examples from '../../../data/course/session2';
+
+**وضعیت پوشش:** کدهای جلسهٔ دوم و متن حاصل از تبدیل محلی سراسر ویدئوی ۳ ساعت و ۳۵ دقیقه‌ای بررسی و با کد و نمونه‌فریم‌های ضبط تطبیق داده شده‌اند. بازنویسی توضیح‌های ضبط با برچسب ویدئو و زمان مشخص است؛ بخش‌های بدون زمان، خوانش کدهای ثبت‌شده‌اند. متن آموزشی رونوشت کلمه‌به‌کلمه نیست و بخش‌های اداری کلاس در آن نیامده‌اند. تاریخ به‌روزرسانی صفحه، تاریخ برگزاری کلاس نیست.
+
+پیش‌نیاز مطالعه: کلاس و interface، وراثت، generics و Collection در Java. ترتیب زیر برای یادگیری تنظیم شده و ادعای ترتیب زمانی ویدئو ندارد. فایل مستقلی از توضیح حیدری در سه‌شنبهٔ جلسهٔ دوم یافت نشد؛ [جلسهٔ دوم پنج‌شنبه](/thursday/session-02/) صفحه‌ای مستقل دارد.
+
+## ترتیب ضبط و مسیر مطالعه [#timeline]
+
+زمان‌های زیر برای یافتن موضوع در فایل اصلی هستند و تقریبی‌اند. ترتیب خط زمانی مطابق ضبط و ترتیب بخش‌های آموزشی پایین صفحه برای یادگیری تنظیم شده است.
+
+<SessionTimeline />
+
+<SourceFilter />
+
+<section data-source-group>
+
+## نقشهٔ کدهای جلسه [#code-map]
+
+<SourceBlock id="teacher-code-map" source="teacher">
+
+پوشهٔ `session2` دو پروژهٔ جدا دارد. `functional` برای تمرین Java و جریان داده است؛ `maven_demo` ساختار یک پروژهٔ Maven را نشان می‌دهد. مسیرهای جدول نسبت به همین پوشه هستند و نمونه‌های پایین صفحه از نسخهٔ ثبت‌شدهٔ همین کدها استخراج شده‌اند.
+
+<ScrollableTable label="نقشهٔ پوشه‌ها و مثال‌های جلسهٔ دوم">
+
+| مسیر                                                 | موضوع و نقش فایل‌ها                                                                                     |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `functional/src/p01lambdaExpression`                 | قرارداد `C01CheckProgrammer`، رکورد `C02Programmer`، پیاده‌سازی نام‌دار، کلاس بی‌نام و نمونه‌های Lambda |
+| `functional/src/p02basic`                            | قراردادهای Human، کلاس SupperHuman، ارجاع به متد و سازنده؛ نمونهٔ کامنت‌شدهٔ مرتب‌سازی آرایه            |
+| `functional/src/p03BuildInFunctionalInterfaces`      | کلاس Human و مثال‌های رابط‌های آماده از Supplier تا Operator و BooleanSupplier                          |
+| `functional/src/p04stream/p01optional`               | محاسبهٔ میانگین با نتیجهٔ اختیاری                                                                       |
+| `functional/src/p04stream/p02source`                 | ساخت Stream از مقادیر، Collection و تولیدکننده‌ها                                                       |
+| `functional/src/p04stream/p03TerminalOperations`     | نمونه‌های عملیات نهایی و جمع‌آوری نتیجه                                                                 |
+| `functional/src/p04stream/p04intermediateOperations` | فیلتر، تبدیل، محدودسازی و مشاهدهٔ مراحل جریان                                                           |
+| `functional/src/p04stream/p05cars`                   | کلاس Car و تمرین ترکیبی انتخاب، مرتب‌سازی و جمع قیمت                                                    |
+| `functional/src/p04stream/Test.java`                 | ترتیب limit و sorted در منبع نامتناهی                                                                   |
+| `maven_demo`                                         | POM، برنامهٔ Hello World و فایل آزمون AppTest                                                           |
+
+</ScrollableTable>
+
+مجموعهٔ منبع شامل ۳۰ فایل Java در بخش functional و ۲ فایل Java در نمونهٔ Maven است. خط‌های کامنت‌شده بخشی از روند تدریس‌اند؛ برای اجرای مستقل، وضعیت فعال یا کامنت هر مثال را بررسی کنید.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## چرا این جلسه با برنامه‌نویسی تابعی شروع می‌شود؟ [#functional-motivation]
+
+<SourceBlock id="teacher-functional-motivation" source="teacher" recording="teacher-02-video" timestamp="01:05">
+
+در آغاز ضبط، استاد پس از مرور کوتاه بحث framework، رویکرد برنامه‌نویسی را از ابزارهای نوشتن کد جدا می‌کند: پارادایم بر نگاه ما به مسئله و سازمان‌دهی راه‌حل اثر می‌گذارد. سپس مسئلهٔ ارسال رفتار به یک متد را در برابر ارسال صرفِ داده مطرح می‌کند.
+
+مسیر آموزشی اعلام‌شده دو گام دارد: ابتدا خواندن و نوشتن Lambda، سپس استفاده از این قرارداد در Streamها. تأکید جلسه بر این است که برنامه‌نویس ابتدا رابط، متد abstract و پیاده‌سازی آن را بفهمد؛ کوتاه‌شدن کد بدون فهم این قرارداد کافی نیست. این متن بازنویسی آموزشی بخش آغازین ضبط است، نه رونوشت کلمه‌به‌کلمه.
+
+</SourceBlock>
+
+<GptNote id="gpt-behavior-parameter">
+
+«ارسال رفتار» در Java به معنای عبور دادن یک متد مستقل به‌عنوان مقدار نیست. Lambda و Method Reference در زمینهٔ یک نوع مقصد، معمولاً رابط تابعی، معنا پیدا می‌کنند. قبل از Java 8 نیز می‌شد رفتار را با شیء پیاده‌ساز رابط یا کلاس بی‌نام منتقل کرد؛ مثال‌های بعدی جلسه همین مسیر را نشان می‌دهند. [قرارداد زبان برای Lambda](https://docs.oracle.com/javase/specs/jls/se21/html/jls-15.html#jls-15.27)
+
+</GptNote>
+
+</section>
+
+<section data-source-group>
+
+## از کلاس پیاده‌ساز تا Lambda [#lambda]
+
+<SourceBlock id="teacher-sam-lesson" source="teacher" recording="teacher-02-video" timestamp="19:09">
+
+نقطهٔ شروع استاد، **SAM یا Single Abstract Method** است. سؤال کلاس این است: آیا اضافه‌کردن دو متد default، رابط را از حالت تابعی خارج می‌کند؟ خیر؛ شمارش مربوط به متد abstract است. در ادامه، annotationِ `@FunctionalInterface` با افزودن یک متد abstract دیگر آزمایش می‌شود تا خطای کامپایل، نقض قرارداد را نشان دهد.
+
+در مثال برنامه‌نویسان، یک‌بار شرط «توانایی تست» و بار دیگر شرط «توانایی مستندسازی» انتخاب می‌شود. حلقهٔ نمایش ثابت می‌ماند و تصمیم‌گیری به پیاده‌سازی رابط سپرده می‌شود. استاد سپس از هزینهٔ ساخت یک کلاس جدا برای رفتاری که فقط در همان نقطه استفاده می‌شود می‌پرسد؛ این پرسش زمینهٔ ورود به کلاس بی‌نام و بعد لامبداست.
+
+</SourceBlock>
+
+<SourceBlock id="teacher-lambda-reading" source="teacher" summary="در کد جلسه، متد show فهرست برنامه‌نویسان و یک شرط از نوع C01CheckProgrammer می‌گیرد؛ پیاده‌سازی شرط از حلقه جدا شده است.">
+
+**خوانش کدهای استاد، نه نقل‌قول از ضبط:** در بستهٔ `p01lambdaExpression`، رکورد `C02Programmer` نام و دو ویژگی بولی دارد. متد `show` روی فهرست حرکت می‌کند و فقط برنامه‌نویسی را چاپ می‌کند که `checker.test(programmer)` برایش درست باشد.
+
+مسیر مثال‌ها از کلاس `C03CkeckIfTester` و نمونه‌سازی آن در `C04Test1` شروع می‌شود؛ `C04Test2` همان قرارداد را با کلاس بی‌نام پیاده می‌کند؛ `C06Test3` شرط `canDoc()` را به شکل لامبدا می‌فرستد. در `C07Test4` شرط معکوس شده است: `!programmer.canDoc()`؛ پس خروجی آن الزاماً با مثال قبلی یکسان نیست.
+
+رابط `C01CheckProgrammer` یک متد abstract به نام `test` و دو متد default دارد. خواننده باید قرارداد ورودی و خروجی را از این رابط بگیرد: دریافت یک برنامه‌نویس و بازگرداندن `boolean`.
+
+</SourceBlock>
+
+<CodeExample
+  id="teacher-sam"
+  source="teacher"
+  lang="java"
+  filename="C01CheckProgrammer.java"
+  repositoryPath="session2/functional/src/p01lambdaExpression/C01CheckProgrammer.java"
+  code={examples.sam}
+  caption="قطعهٔ عیناً استخراج‌شده از نسخهٔ ثبت‌شدهٔ کد جلسهٔ دوم."
+/>
+
+<CodeExample
+  id="teacher-lambda"
+  source="teacher"
+  lang="java"
+  filename="C06Test3.java"
+  repositoryPath="session2/functional/src/p01lambdaExpression/C06Test3.java"
+  code={examples.lambda}
+  caption="همان فراخوانی show در C06Test3؛ تعریف فهرست و متد در فایل اصلی است."
+/>
+
+<GptNote id="gpt-lambda-contract" context="teacher-lambda-reading">
+
+لامبدا رفتار موردنیاز یک رابط تابعی را فراهم می‌کند. در این مثال، تغییر شرط نیازمند تغییر حلقهٔ `show` نیست. تعریف لامبدا به‌تنهایی بدنهٔ آن را اجرا نمی‌کند؛ اجرا هنگامی رخ می‌دهد که حلقه، `test` را صدا بزند. برای مرور قراردادها به [رابط تابعی](/concepts/functional-interface/) مراجعه کنید.
+
+</GptNote>
+
+<SourceBlock id="teacher-lambda-practice" source="teacher" recording="teacher-02-video" timestamp="41:30">
+
+در تبدیل کلاس بی‌نام به لامبدا، قرارداد رابط از قبل مشخص است؛ نام کلاس بی‌نام و نام متد تکرار نمی‌شود، پارامترها می‌مانند و `->` آن‌ها را به بدنه وصل می‌کند. نمونهٔ بعدی بدنهٔ بلوکی را به یک عبارت کوتاه تبدیل می‌کند و با `!` شرط را معکوس می‌کند.
+
+تمرین پیشنهادی کلاس، بازنویسی کد است: یک نمونهٔ قدیمی با کلاس پیاده‌ساز پیدا کنید، آن را به کلاس بی‌نام و سپس، در صورت وجود قرارداد تابعی، به لامبدا تبدیل کنید. فقط خواندن شکل نهایی جای تمرین تبدیل و بررسی خروجی را نمی‌گیرد.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## Method Reference و زمان فراخوانی [#method-reference]
+
+<SourceBlock id="teacher-reference-lesson" source="teacher" recording="teacher-02-video" timestamp="54:00">
+
+برای معرفی `::`، استاد کلاسی خارج از سلسله‌مراتب رابط `Human` می‌سازد. این کلاس رفتار آماده‌ای مثل `harfzadan` دارد. به‌جای نوشتن دوبارهٔ بدنه، ارجاع همان رفتار با قرارداد رابط سازگار می‌شود؛ نام متد آماده لازم نیست `speak` باشد.
+
+در حالت متد نمونه، ابتدا شیء `supperHuman` ساخته می‌شود. در حالت static، نام کلاس کافی است. سپس مثال `String::toUpperCase` تفاوت مهمی را نشان می‌دهد: رشتهٔ ورودی نقش گیرندهٔ متد را دارد. بنابراین دیدن نام کلاس قبل از `::` به‌تنهایی به معنی staticبودن متد نیست.
+
+</SourceBlock>
+
+<SourceBlock id="teacher-method-reading" source="teacher">
+
+در `p02basic`، رابط `C01Human` متد بدون ورودی و خروجی `speak()` دارد و `C03NewHuman` رشته می‌گیرد و رشته برمی‌گرداند. فایل `C02Test` چهار شکل ارجاع را کنار هم دارد: متد یک شیء با `supperHuman::harfzadan`، متد static با `C04SupperHuman::speak3`، متد نمونه از طریق نوع با `String::toUpperCase` و سازنده با `C04SupperHuman::new`.
+
+در همان فایل، `human4.speak()` اجرا می‌شود. نتیجهٔ `human5.speak("DDDD")` و `human6.speak("dddddd")` ذخیره یا چاپ نشده است. برای `human7` صرفاً ارجاع ساخته شده و هیچ `speak()`ای روی آن فراخوانی نشده است. `C05Test` فقط یک فراخوانی کامنت‌شدهٔ `Arrays.sort()` دارد و تمرین کامل مرتب‌سازی نیست.
+
+</SourceBlock>
+
+<CodeExample
+  id="teacher-references"
+  source="teacher"
+  lang="java"
+  filename="C02Test.java"
+  repositoryPath="session2/functional/src/p02basic/C02Test.java"
+  code={examples.references}
+  caption="ارجاع‌های متد و سازنده از C02Test؛ نام‌گذاری اصلی فایل حفظ شده است."
+/>
+
+<GptNote id="gpt-reference-result">
+
+در `String::toUpperCase` ورودی رابط، همان رشته‌ای است که متد روی آن اجرا می‌شود. در ارجاع سازندهٔ این مثال، قرارداد خروجی رابط `void` است؛ هنگام فراخوانی، شیء ساخته می‌شود اما به فراخواننده بازگردانده نمی‌شود. خود سازنده نوع بازگشتی ندارد؛ این را با `void` بودن متد رابط یکی نگیرید. [مرجع Method Reference](/concepts/method-reference/) تفاوت تعریف ارجاع و اجرای آن را جمع‌بندی می‌کند.
+
+</GptNote>
+
+</section>
+
+<section data-source-group>
+
+## رابط‌های آمادهٔ java.util.function [#functional-interfaces]
+
+<SourceBlock id="teacher-builtins-lesson" source="teacher" recording="teacher-02-video" timestamp="01:09:00">
+
+پس از اشاره به `Comparator` و متد `compare`، استاد سراغ بستهٔ `java.util.function` می‌رود. روش خواندن هر رابط ثابت است: ابتدا امضای متد abstract و نوع‌های generic را پیدا کنید، سپس بدنه یا متد آمادهٔ سازگار را انتخاب کنید. هدف حفظ‌کردن شکل ظاهری مثال‌ها نیست؛ باید از روی قرارداد بفهمید چه ورودی‌ای می‌گیرید و چه نتیجه‌ای می‌دهید.
+
+در مثال `Supplier`، تولید رشته با لامبدا، تاریخ با `LocalDate::now` و فهرست با `ArrayList::new` مقایسه می‌شوند. `Consumer` یک `Human` می‌گیرد و چاپ می‌کند؛ ارجاع `System.out::println` همان نقش را کوتاه‌تر بیان می‌کند. `BiConsumer` با دو ورودی به مثال زوج کلید و مقدار در `Map` می‌رسد. در `Predicate`، سؤال از حالت کلیِ مصرف‌کردن شیء به یک تصمیم بولی، مثل سن بیشتر از ۱۸، تغییر می‌کند.
+
+</SourceBlock>
+
+<SourceBlock id="teacher-interfaces-reading" source="teacher">
+
+بستهٔ `p03BuildInFunctionalInterfaces` ده مثال دارد. جدول زیر قرارداد و کاربرد موجود در همان فایل‌ها را خلاصه می‌کند؛ بعضی متغیرها فقط تعریف شده‌اند و متدشان در `main` فراخوانی نمی‌شود.
+
+<ScrollableTable label="قرارداد رابط‌های تابعی در کد جلسهٔ دوم">
+
+| رابط                | متد اصلی                 | مثال موجود                                      |
+| ------------------- | ------------------------ | ----------------------------------------------- |
+| `Supplier<T>`       | `T get()`                | رشتهٔ ثابت، `LocalDate::now` و `ArrayList::new` |
+| `Consumer<T>`       | `void accept(T)`         | چاپ `Human`                                     |
+| `BiConsumer<T,U>`   | `void accept(T,U)`       | ترکیب نام‌ها و `HashMap::put`                   |
+| `Predicate<T>`      | `boolean test(T)`        | سن بیشتر از ۱۸ و `String::isEmpty`              |
+| `BiPredicate<T,U>`  | `boolean test(T,U)`      | `String::startsWith`                            |
+| `Function<T,R>`     | `R apply(T)`             | افزودن hello به نام                             |
+| `BiFunction<T,U,R>` | `R apply(T,U)`           | `String::concat`                                |
+| `UnaryOperator<T>`  | `T apply(T)`             | بازگرداندن همان Human                           |
+| `BinaryOperator<T>` | `T apply(T,T)`           | اتصال دو رشته                                   |
+| `BooleanSupplier`   | `boolean getAsBoolean()` | پیاده‌سازی با خروجی false                       |
+
+</ScrollableTable>
+
+برای انتخاب رابط، ابتدا تعداد ورودی‌ها و نوع نتیجه را مشخص کنید. نمونهٔ `Human` یک کلاس با `age`، `name`، سازنده و `toString` است؛ در این بسته از رکورد برنامه‌نویس استفاده نشده است.
+
+</SourceBlock>
+
+<SourceBlock id="teacher-functions-lesson" source="teacher" recording="teacher-02-video" timestamp="01:31:00">
+
+با رسیدن به `Function`، نوع generic اول ورودی و دومی خروجی است. مثال ساده یک نام می‌گیرد و رشتهٔ سلام را برمی‌گرداند. `BiFunction` دو ورودی و یک نتیجه دارد؛ در مثال اتصال رشته‌ها، یکی از ورودی‌ها گیرندهٔ `concat` و دیگری آرگومان آن است.
+
+سپس استاد تعریف خود `UnaryOperator` را باز می‌کند: این رابط از `Function<T,T>` ارث می‌برد و متد abstract مؤثرش از همان‌جا می‌آید. نتیجه لزوماً همان شیء ورودی نیست؛ باید از همان نوع باشد. در `BinaryOperator` نیز دو ورودی و خروجی هم‌نوع‌اند. این تمایز برای فهم تابع کاهش در مثال‌های Stream بعدی لازم است.
+
+</SourceBlock>
+
+<SourceBlock id="teacher-builtins-practice" source="teacher" recording="teacher-02-video" timestamp="01:43:40">
+
+بخش پایانی معرفی رابط‌ها به گونه‌های primitive، مانند `BooleanSupplier`، اختصاص دارد. در کد این نمونه، متد `getAsBoolean()` نتیجهٔ `boolean` می‌دهد و رابط پارامتر generic ندارد.
+
+تکلیف مطالعهٔ اعلام‌شده، بررسی خانواده‌های `Int`، `Long` و `Double` و متدهای کمکی رابط‌هاست. در نمایش `Function` به `andThen` و `identity` اشاره می‌شود؛ همهٔ این متدها در پروژهٔ نمونه پیاده یا آزمایش نشده‌اند. برای تمرین، علاوه بر نام متد، قرارداد ورودی، خروجی و ترتیب اجرای تبدیل‌ها را بخوانید.
+
+</SourceBlock>
+
+<GptNote id="gpt-interface-choice">
+
+`UnaryOperator<T>` حالت هم‌نوعِ `Function<T,T>` و `BinaryOperator<T>` حالت هم‌نوعِ `BiFunction<T,T,T>` است. نام Operator به معنی محاسبهٔ عددی نیست؛ مثال اتصال رشته‌ها نیز معتبر است. در نمونهٔ `HashMap::put`، مقدار بازگشتی متد کنار گذاشته می‌شود تا با قرارداد `BiConsumer` سازگار باشد.
+
+</GptNote>
+
+</section>
+
+<section data-source-group>
+
+## Optional و نتیجه‌ای که شاید وجود نداشته باشد [#optional]
+
+<SourceBlock id="teacher-optional-lesson" source="teacher" recording="teacher-02-video" timestamp="01:58:47">
+
+استاد برای توضیح نبودن نتیجه از مثال هدیه و جعبه استفاده می‌کند: جعبه ممکن است پر یا خالی باشد، اما دریافت‌کننده قرارداد روشنی برای بررسی آن دارد. سپس متد محاسبهٔ میانگین مطرح می‌شود؛ برای آرایهٔ بدون نمره، به‌جای ساختن یک میانگین خیالی، نتیجهٔ خالی برمی‌گردد.
+
+هدف این مثال، مشخص‌کردن وضعیت نتیجه در نوع بازگشتی متد است. خوانندهٔ متد `avg` از روی `Optional<Double>` متوجه می‌شود که همیشه مقدار میانگین در اختیار نخواهد داشت.
+
+</SourceBlock>
+
+<SourceBlock id="teacher-optional-reading" source="teacher">
+
+متد `avg(int... numbers)` در `OptionalDemo` برای ورودی خالی، `Optional.empty()` برمی‌گرداند. در شاخهٔ غیرخالی، میانگین را از `IntStream` می‌گیرد و داخل `Optional.of` قرار می‌دهد. فراخوانی `sum()` در این شاخه نتیجه‌ای دارد که مصرف نمی‌شود؛ محاسبهٔ میانگین به آن وابسته نیست. `main` نتیجهٔ `avg(1, 2, 3)` را می‌گیرد اما چاپ نمی‌کند.
+
+</SourceBlock>
+
+<CodeExample
+  id="teacher-optional"
+  source="teacher"
+  lang="java"
+  filename="OptionalDemo.java"
+  repositoryPath="session2/functional/src/p04stream/p01optional/OptionalDemo.java"
+  code={examples.optional}
+  caption="متد avg از OptionalDemo؛ خروجی خالی قبل از محاسبهٔ میانگین بررسی شده است."
+/>
+
+<GptNote id="gpt-optional-safe">
+
+در این کد، `getAsDouble()` بعد از بررسی غیرخالی‌بودن آرایه اجرا می‌شود؛ بنابراین نباید آن را بدون توجه به شرط قبلی خطا بنامیم. در کد عمومی، دریافت مستقیم مقدار Optional خالی خطرناک است. برای انتخاب میان مقدار جایگزین، اجرای مشروط یا خطای صریح، [مرجع Optional](/concepts/optional/) را ببینید.
+
+</GptNote>
+
+<SourceBlock id="teacher-optional-consumption" source="teacher" recording="teacher-02-video" timestamp="02:06:00">
+
+در ادامهٔ ضبط، دو شیوهٔ مصرف نتیجه مقایسه می‌شود: `isPresent()` فقط یک نتیجهٔ بولی می‌دهد و هنوز می‌توان آن را در شرط `if` استفاده کرد؛ `ifPresent` یک `Consumer` می‌گیرد تا رفتار موردنظر در صورت وجود مقدار اجرا شود. به `ifPresentOrElse` نیز برای رفتار جایگزین در حالت خالی اشاره می‌شود.
+
+در مثال میانگین، `IntStream.of(numbers).average()` محاسبه را انجام می‌دهد؛ برخلاف نوشتن حلقهٔ دستی، جزئیات پیمایش در استفاده از API پنهان شده‌اند. نسخهٔ موجود برای هماهنگی با نوع بازگشتی `Optional<Double>`، مقدار `OptionalDouble` را با `getAsDouble()` دریافت و دوباره بسته‌بندی می‌کند.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## منبع Stream و عملیات میانی [#stream-pipeline]
+
+<SourceBlock id="teacher-pipeline-lesson" source="teacher" recording="teacher-02-video" timestamp="01:49:25">
+
+Stream در ضبط با خط تولید کارخانه مقایسه می‌شود: داده از یک منبع وارد می‌شود، چند مرحلهٔ پردازش روی آن انجام می‌گیرد و در پایان نتیجه یا اثر نهایی حاصل می‌شود. Collection بیشتر مسئول نگهداری داده است؛ Stream مسیر پردازش آن را بیان می‌کند. منبع و عملیات را نباید یکی گرفت.
+
+نام‌گذاری اجزای این مسیر در کلاس اهمیت دارد: **Source of Data**، **Intermediate Operations** و **Terminal Operation**. عملیات میانی Stream دیگری در اختیار ادامهٔ زنجیره قرار می‌دهند؛ عملیات نهایی مسیر را به نتیجه یا اثری مانند چاپ ختم می‌کند. نمونهٔ محاسبهٔ وضعیت دانشجو از روی نمره‌ها نیز برای توضیح این جریان مطرح می‌شود.
+
+</SourceBlock>
+
+<SourceBlock id="teacher-stream-reading" source="teacher">
+
+`SourceOfData` منبع‌های `Stream.empty()`، `Stream.of`، `List.stream()` و `parallelStream()` را نشان می‌دهد. برای تولید داده نیز `generate` و شکل سه‌آرگومانی `iterate` آمده است. `iterate(1, integer -> integer < 100, integer -> integer + 2)` اعداد فرد ۱ تا ۹۹ را تولید می‌کند؛ با وجود قرارگرفتن زیر کامنت infinite، این نمونه شرط پایان دارد.
+
+در `p04intermediateOperations/Demo`، مثال‌های کامنت‌شده برای `filter`، `distinct`، `skip`، `limit` و `map` وجود دارند. خط فعال، `peek` و سپس `forEach` را برای چاپ هر عنصر به‌کار می‌گیرد. کامنت‌بودن مثال‌ها را هنگام مقایسهٔ خروجی در نظر بگیرید.
+
+</SourceBlock>
+
+<CodeExample
+  id="teacher-sources"
+  source="teacher"
+  lang="java"
+  filename="SourceOfData.java"
+  repositoryPath="session2/functional/src/p04stream/p02source/SourceOfData.java"
+  code={examples.sources}
+  caption="منابع داده و iterate شرط‌دار در فایل اصلی."
+/>
+
+<CodeExample
+  id="teacher-intermediate"
+  source="teacher"
+  lang="java"
+  filename="Demo.java"
+  repositoryPath="session2/functional/src/p04stream/p04intermediateOperations/Demo.java"
+  code={examples.intermediate}
+  caption="مثال‌های کامنت‌شده و خط فعال به همان صورت مخزن حفظ شده‌اند."
+/>
+
+<GptNote id="gpt-stream-model">
+
+برای خواندن [خط لولهٔ Stream](/concepts/stream-pipeline/)، منبع، تبدیل‌ها و عملیات نهایی را جدا کنید. `filter` عناصر را انتخاب می‌کند و `map` مقدار هر عنصر را تبدیل می‌کند. `peek` را جایگزین منطق ضروری برنامه نکنید؛ اجرای عوارض جانبی مراحل میانی در همهٔ مسیرهای بهینه‌سازی تضمین عمومی ندارد.
+
+</GptNote>
+
+<SourceBlock id="teacher-stream-sources-lesson" source="teacher" recording="teacher-02-video" timestamp="02:08:00">
+
+استاد منبع‌ها را به متناهی و نامتناهی تقسیم می‌کند. `empty()`، `of(...)` و Stream ساخته‌شده از یک Collection موجود، مثال‌های متناهی‌اند. `generate` با دریافت یک `Supplier` می‌تواند دنباله‌ای بدون حد پایان بسازد؛ در مثال، تولید عدد تصادفی انتخاب می‌شود.
+
+به `parallelStream()` نیز اشاره می‌شود، اما بحث تفصیلی هم‌زمانی، blocking/non-blocking و Reactor به ادامهٔ دوره موکول می‌شود. وجود این نام‌ها در ضبط به معنی تدریس کامل آن مباحث در این جلسه نیست.
+
+</SourceBlock>
+
+<SourceBlock id="teacher-lazy-iterate" source="teacher" recording="teacher-02-video" timestamp="02:16:35">
+
+در پرسش «چرا چیزی چاپ نشد؟»، استاد میان ساختن مسیر پردازش و اجرای آن فرق می‌گذارد. ساختن منبع `generate` و افزودن عملیات میانی، به‌تنهایی چاپی ایجاد نمی‌کند؛ با اضافه‌کردن `forEach`، تولید و مصرف داده آغاز می‌شود. وجود عملیات میانی الزامی نیست، اما در این مثال عملیات نهایی لازم است.
+
+در ادامه، `iterate` از مقدار اولیهٔ ۱ با گام ۲ معرفی می‌شود. سپس شرط کمتر از ۱۰۰ به آن اضافه می‌شود و استاد صریحاً توضیح می‌دهد که دنباله از نامتناهی به متناهی تبدیل شده است. بنابراین کامنت infinite در فایل نهایی، باقی‌ماندهٔ مرحلهٔ قبلی مثال است.
+
+</SourceBlock>
+
+<SourceBlock id="teacher-intermediate-lesson" source="teacher" recording="teacher-02-video" timestamp="02:36:00">
+
+تمرین عملیات میانی با `filter` و یک `Predicate` شروع می‌شود؛ چون نتیجه هنوز Stream است، می‌توان شرط دیگری به زنجیره افزود. سپس `distinct` برای حذف تکرار، `skip(1)` برای ردکردن یک عنصر و `limit(2)` برای محدودکردن تعداد عناصر نشان داده می‌شود. در نمونهٔ `map(String::length)`، هر رشته به طولش تبدیل می‌شود.
+
+برای مرتب‌سازی به `sorted` اشاره می‌شود. در پایان، `peek` و `forEach` هر دو برای چاپ به‌کار می‌روند و هر عنصر دو بار دیده می‌شود: یک بار در مرحلهٔ میانی و یک بار در مصرف نهایی. مطالعهٔ تفاوت `map` و `flatMap` به‌عنوان تمرین هفتهٔ بعد تعیین می‌شود؛ پیاده‌سازی کامل `flatMap` جزو کد این جلسه نیست.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## عملیات نهایی و مصرف دوبارهٔ Stream [#terminal-operations]
+
+<SourceBlock id="teacher-terminal-lesson" source="teacher" recording="teacher-02-video" timestamp="02:24:45">
+
+برای `min` روی نام خودروها، ابتدا باید معیار مقایسه را مشخص کرد؛ در کلاس طول رشته معیار قرار می‌گیرد و نتیجه به‌صورت `Optional` مصرف می‌شود. `count` تعداد عناصر را با نوع `long` می‌دهد. اجرای دومین عملیات نهایی روی همان Stream عمداً به خطا می‌رسد و قاعدهٔ یک‌بارمصرف‌بودن دوباره مرور می‌شود.
+
+`findFirst` و `findAny` برای یافتن عنصر مطرح می‌شوند؛ نمونهٔ `findFirst().ifPresent(...)` بدون دریافت مستقیم مقدار خالی، نتیجه را چاپ می‌کند. خانوادهٔ `allMatch`، `anyMatch` و `noneMatch` نیز برای آزمون شرط معرفی و مقایسهٔ آن‌ها به مطالعه واگذار می‌شود.
+
+</SourceBlock>
+
+<SourceBlock id="teacher-reduction-lesson" source="teacher" recording="teacher-02-video" timestamp="02:30:30">
+
+در مثال `reduce`، رشته‌ها با `String::concat` ترکیب می‌شوند. استاد برای توضیح همکاری `map` و `reduce`، جمع حقوق کارکنان را مثال می‌زند: ابتدا هر کارمند به فیلد حقوق نگاشت می‌شود و سپس مبلغ‌ها با هم جمع می‌شوند. لازم نیست کل شیء کارمند در مرحلهٔ جمع حضور داشته باشد.
+
+سپس `collect` برای تبدیل نتیجه به Collection بررسی می‌شود؛ مثال `Collectors.toCollection(TreeSet::new)` از یک `Supplier` برای ساخت مجموعه استفاده می‌کند و تکراری‌ها در مجموعه باقی نمی‌مانند. به شکل ساده‌تر `Collectors.toSet()` هم اشاره می‌شود. این مثال‌ها همان قراردادهای Supplier، Function، Predicate و Consumer را در یک کاربرد عملی کنار هم قرار می‌دهند.
+
+</SourceBlock>
+
+<SourceBlock id="teacher-terminal-reading" source="teacher">
+
+در `TerminalOperationDemo`، مثال‌های `forEach`، `min`، `count` و `findFirst` کامنت شده‌اند. مسیر فعال با `reduce("", String::concat)` رشته‌ها را ترکیب و چاپ می‌کند، سپس روی همان متغیر `cars`، عملیات `collect` را فراخوانی می‌کند. این توصیف وضعیت فایل ثبت‌شده است.
+
+</SourceBlock>
+
+<SourceBlock id="teacher-stream-lifecycle" source="teacher" recording="teacher-02-video" timestamp="01:57:30">
+
+در خودِ ضبط، استاد صریحاً تذکر می‌دهد که هر Stream فقط یک‌بار مصرف می‌شود. بنابراین اصلاح پایین، برای اجرای مستقل فایلِ موجود است و نباید به‌عنوان ادعای آموزش نادرست این قاعده در کلاس خوانده شود. فایل آموزشی چند حالت را کنار هم نگه داشته، اما دو عملیات نهایی آن همچنان فعال‌اند.
+
+</SourceBlock>
+
+<CodeExample
+  id="teacher-terminal"
+  source="teacher"
+  lang="java"
+  filename="TerminalOperationDemo.java"
+  repositoryPath="session2/functional/src/p04stream/p03TerminalOperations/TerminalOperationDemo.java"
+  code={examples.terminal}
+  caption="نسخهٔ اصلی؛ اجرای این فایل بعد از چاپ رشته با خطا پایان می‌یابد."
+/>
+
+<TechnicalCorrection id="gpt-stream-reuse" corrects="teacher-terminal" statement="در فایل، collect پس از reduce روی همان cars اجرا می‌شود." correction="Stream مصرف‌شده را دوباره استفاده نکنید؛ برای جمع‌آوری نتیجه، از منبع اصلی Stream جدید بسازید یا فقط یک عملیات نهایی انتخاب کنید." reason="اجرای همین نسخه روی JDK 17 پس از چاپ BMVTOYOTABENZ با IllegalStateException متوقف شد.">
+
+[قرارداد رسمی Stream دربارهٔ مصرف مجدد](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Stream.html)
+
+</TechnicalCorrection>
+
+</section>
+
+<section data-source-group>
+
+## تمرین خودروها و اصلاح تابع reduce [#cars]
+
+<SourceBlock id="teacher-cars-lesson" source="teacher" recording="teacher-02-video" timestamp="02:49:35">
+
+تمرین ترکیبی با ساخت کلاس `Car` و فهرستی از خودروها آغاز می‌شود. پرسش‌ها مرحله‌به‌مرحله سخت‌تر می‌شوند: خودروهای سفید را انتخاب کنید؛ همان‌ها را براساس مدل مرتب کنید؛ سپس شرط سال مدل را اضافه کنید. در فایل نهایی، این شرط `model > 2000` است. استاد توضیح می‌دهد که برای تمرکز بر Stream، جزئیات طراحی کلاس و getter/setter را در این نمونه ساده کرده است.
+
+در مرحلهٔ بعد، هدف جمع قیمت BMWهاست. ابتدا نام خودرو فیلتر می‌شود، سپس هر `Car` به قیمتش تبدیل می‌شود و در پایان `reduce` نتیجه را می‌سازد. پس از `map` دیگر Stream از خودروها نداریم؛ عناصر جریان، قیمت‌های عددی‌اند. در پرسش پایانی، استفاده از جمع آماده نیز مطرح می‌شود، اما هدف این تمرین شناخت مسیر map/reduce است.
+
+</SourceBlock>
+
+<SourceBlock id="teacher-cars-reading" source="teacher">
+
+در `p05cars`، کلاس `Car` دارای نام، قیمت، مدل و رنگ است. فهرست تمرین شش BMW و یک Benz دارد. مثال‌های کامنت‌شده، خودروهای سفید را فیلتر و با مدل مرتب می‌کنند؛ یک حالت، شرط مدل بیشتر از ۲۰۰۰ را نیز اضافه می‌کند.
+
+مسیر فعال فقط BMWها را برمی‌دارد، قیمت را با `map` استخراج می‌کند و `reduce` را انجام می‌دهد. مقدار محاسبه‌شده با `ifPresent` چاپ می‌شود.
+
+</SourceBlock>
+
+<CodeExample
+  id="teacher-cars"
+  source="teacher"
+  lang="java"
+  filename="Test.java"
+  repositoryPath="session2/functional/src/p04stream/p05cars/Test.java"
+  code={examples.cars}
+  caption="عبارت اصلی reduce عیناً حفظ شده تا تفاوت آن با جمع صحیح روشن باشد."
+/>
+
+<TechnicalCorrection id="gpt-car-sum" corrects="teacher-cars" statement="تابع reduce در نسخهٔ موجود، integer + integer را برمی‌گرداند و integer2 را مصرف نمی‌کند." correction="برای مجموع قیمت‌ها، از Integer::sum یا جمع دو آرگومان متمایز استفاده کنید." reason="قیمت‌های BMW برابر 1000، 4555، 5454، 1000، 7889 و 1000 هستند؛ جمع درست 20898 است، ولی نسخهٔ اصلی در اجرای ترتیبی 32000 چاپ می‌کند.">
+
+هدف بیان‌شده در ضبط، جمع قیمت BMWهاست. در بخش بررسی‌شدهٔ این تمرین، توضیحی دربارهٔ نادیده‌گرفتن آرگومان دوم پیدا نشد؛ مبنای این اصلاح، عبارت ثبت‌شده در مخزن و نتیجهٔ اجرای آن است.
+
+</TechnicalCorrection>
+
+<CodeExample
+  id="gpt-car-fix"
+  source="gpt"
+  filename="CorrectedReduction.java"
+  lang="java"
+  code={
+    'int total = list.stream().filter(car -> car.name.equals("bmw")).mapToInt(car -> car.price).sum();'
+  }
+  caption="GPT Example؛ جایگزین پیشنهادی داخل همان محدوده‌ای که list و فیلدهای Car در دسترس‌اند."
+/>
+
+</section>
+
+<section data-source-group>
+
+## منبع نامتناهی و جای limit [#infinite-stream]
+
+<SourceBlock id="teacher-infinite-lesson" source="teacher" recording="teacher-02-video" timestamp="02:43:15">
+
+استاد از کلاس می‌خواهد خروجی زنجیرهٔ تولید `Rana`، فیلتر طول چهار، مرتب‌سازی، محدودسازی و چاپ را پیش‌بینی کند. در نسخهٔ نخست، `sorted` قبل از `limit` است؛ خروجی مورد انتظار ظاهر نمی‌شود و مصرف حافظه مسئله‌ساز می‌شود. مرتب‌سازیِ کل منبعی که پایان ندارد نمی‌تواند مرحلهٔ نخستِ مرتب‌شده را تحویل بدهد.
+
+با جابه‌جایی این دو متد، ابتدا دو عنصر انتخاب و سپس همان دو عنصر مرتب می‌شوند. نسخهٔ ثبت‌شدهٔ مخزن، همین حالت اصلاح‌شده است. نکتهٔ تمرین این است که جابه‌جایی دو عملیات ظاهراً ساده، روی پایان‌پذیری و مصرف حافظهٔ برنامه اثر دارد.
+
+</SourceBlock>
+
+<SourceBlock id="teacher-infinite-reading" source="teacher">
+
+فایل `p04stream/Test` دائماً رشتهٔ `Rana` تولید می‌کند، طول چهار را بررسی می‌کند، دو عنصر می‌گیرد، مرتب می‌کند و چاپ می‌کند. در این نمونه، شرط برای همهٔ عناصر درست است و `limit(2)` پیش از `sorted()` قرار دارد؛ خروجی دو سطر `Rana` است.
+
+</SourceBlock>
+
+<CodeExample
+  id="teacher-infinite"
+  source="teacher"
+  lang="java"
+  filename="Test.java"
+  repositoryPath="session2/functional/src/p04stream/Test.java"
+  code={examples.infinite}
+  caption="مثال فعال منبع نامتناهی که پیش از مرتب‌سازی محدود شده است."
+/>
+
+<GptNote id="gpt-infinite-limit">
+
+اگر `sorted()` را پیش از محدودکردن این منبع نامتناهی بگذارید، مرتب‌سازی باید منتظر پایان منبع بماند. همچنین اگر `filter` هیچ عنصری را نپذیرد، وجود `limit(2)` بعد از آن لزوماً برنامه را پایان نمی‌دهد؛ دو عنصر پذیرفته‌شده هرگز تولید نمی‌شوند.
+
+</GptNote>
+
+<SourceBlock id="teacher-primitive-stream-claim" source="teacher" recording="teacher-02-video" timestamp="02:49:00">
+
+پس از تمرین، بررسی امکان اتصال دو Stream به مطالعه واگذار می‌شود. در توضیح کوتاه جریان‌های عددی، `IntStream` به Stream با generic از نوع Integer تشبیه می‌شود. این تشبیه برای شناخت کاربرد عددی قابل فهم است، اما رابطهٔ نوع‌ها را دقیق بیان نمی‌کند.
+
+</SourceBlock>
+
+<TechnicalCorrection id="gpt-primitive-stream-type" corrects="teacher-primitive-stream-claim" statement="IntStream مانند Stream با generic از نوع Integer معرفی می‌شود." correction="IntStream یک رابط تخصصی برای عناصر primitive از نوع int است؛ همان Stream<Integer> نیست و از آن ارث نمی‌برد." reason="API، نوع عنصر و عملیات عددی آن متفاوت‌اند. برای رفتن به Stream<Integer> می‌توان boxed() و برای تبدیل یک Stream شیء به IntStream می‌توان mapToInt(...) را به‌کار برد.">
+
+[تعریف رسمی IntStream و متد boxed](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/IntStream.html)
+
+</TechnicalCorrection>
+
+</section>
+
+<section data-source-group>
+
+## از مرور Java به پروژه‌های Spring [#framework-scope]
+
+<SourceBlock id="teacher-framework-scope" source="teacher" recording="teacher-02-video" timestamp="03:01:35">
+
+استاد پس از تمرین‌ها توضیح می‌دهد که مرور برنامه‌نویسی تابعی مقدمه‌ای برای خواندن کدهای ادامهٔ دوره است. سپس به نقش framework برمی‌گردد: بخشی از نیازهای مشترک و زیرساختی را فراهم می‌کند تا برنامه‌نویس روی منطق مخصوص مسئله تمرکز کند.
+
+در معرفی مجموعهٔ Spring، نام Spring Framework، Spring Boot، Spring Data و Reactor مطرح می‌شود. بحث تفصیلی IoC و AOP به جلسات بعد موکول می‌شود. پرسش این جلسه در این نقطه عملی‌تر است: کد این کتابخانه‌ها کجاست و چگونه آن را به پروژهٔ خود اضافه کنیم؟ این پرسش، ورود به بحث Maven و وابستگی‌ها را توضیح می‌دهد.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## ساختار Maven و وابستگی واقعی نمونه [#maven]
+
+<SourceBlock id="teacher-build-tools" source="teacher" recording="teacher-02-video" timestamp="03:05:20">
+
+Maven و Gradle به‌عنوان Build Tool معرفی می‌شوند. در پرسش‌وپاسخ کلاس، تعریف به خودکارسازی فرایند ساخت می‌رسد: کامپایل، اجرای آزمون‌ها، آماده‌سازی بسته و مدیریت وابستگی‌ها. استاد تصحیح می‌کند که این ابزارها کد کتابخانهٔ وابسته را تولید نمی‌کنند؛ وابستگی موجود را پیدا و در اختیار پروژه قرار می‌دهند.
+
+برای توضیح فرایند، مسیر فایل Java تا فایل class و بستهٔ JAR مطرح می‌شود. Maven بر قراردادهای شناخته‌شده تکیه می‌کند تا برای هر پروژه مجبور نباشیم تمام مسیرها و مراحل را از صفر معرفی کنیم؛ این ایده در کلاس با عبارت **Convention over Configuration** بیان می‌شود.
+
+</SourceBlock>
+
+<SourceBlock id="teacher-maven-archetype" source="teacher" recording="teacher-02-video" timestamp="03:09:00">
+
+پروژهٔ `maven_demo` با کمک IDE و یک Maven archetype ایجاد می‌شود. archetype در این بحث، الگوی اولیهٔ ساخت پروژه است؛ قرار نیست هر بار پوشه‌ها و فایل‌های ابتدایی دستی ساخته شوند. هنگام ایجاد نمونه، JDK 21 انتخاب می‌شود.
+
+پس از ایجاد پروژه، پرسش اصلی این است که ابزار از کجا محل کد اصلی، آزمون و خروجی را می‌فهمد. پاسخ به ساختار قراردادی پروژه و اطلاعات `pom.xml` برمی‌گردد. برای مرجع یکپارچهٔ اصطلاح‌ها و تفاوت مراحل ساخت، [مفهوم Maven](/concepts/maven-build/) را ببینید.
+
+</SourceBlock>
+
+<SourceBlock id="teacher-maven-repositories" source="teacher" recording="teacher-02-video" timestamp="03:14:45">
+
+برای یافتن کتابخانه‌ها، مخزن عمومی نمایش داده می‌شود و مثال‌هایی مانند Spring، Hibernate و درایور JDBC مطرح می‌شوند. سپس مخزن سازمانی، مانند استفاده از Nexus، برای نگهداری artifactهای داخلی یا دسترسی کنترل‌شده به وابستگی‌ها توضیح داده می‌شود. نسخه‌های دریافت‌شده در مخزن محلی زیر `.m2` نگه‌داری می‌شوند تا هر بار دوباره دریافت نشوند.
+
+در مثال کلاس، IDE فرمان ساخت پروژه از الگو را اجرا کرده و بخش‌هایی را از مخزن دریافت می‌کند. این دانلود با تولید کد خود کتابخانه متفاوت است. جای اعلام وابستگی‌های موردنیاز پروژه، بخش مربوط به آن‌ها در `pom.xml` است.
+
+</SourceBlock>
+
+<SourceBlock id="teacher-maven-lifecycle" source="teacher" recording="teacher-02-video" timestamp="03:18:00">
+
+فهرست مراحل Maven در IDE نمایش داده می‌شود و `compile` برای ساخت خروجی کامپایل اجرا می‌شود. سپس `package` بستهٔ JAR را می‌سازد. در POM، سه مقدار `groupId`، `artifactId` و `version` برای شناسایی artifact معرفی می‌شوند و `packaging` نوع بسته را مشخص می‌کند.
+
+در ادامه، `finalName` روی `test` تنظیم می‌شود و اجرای `clean package` نام جدید بسته را نشان می‌دهد. قراردادهای پیش‌فرض مانع تغییر تنظیمات نیستند؛ لازم نیست برای یک تغییر کوچک، تمام فرایند ساخت دوباره تعریف شود.
+
+</SourceBlock>
+
+<GptNote id="gpt-maven-repository-order">
+
+ترتیب «محلی، سازمانی، عمومی» مدل توضیحی مثال کلاس است. وجود مخزن سازمانی و ترتیب دسترسی به مخزن‌های remote به تنظیمات repository و mirror وابسته است؛ Maven به‌صورت خودکار مخزن داخلی هر سازمانی را پیدا نمی‌کند. [مرجع مخزن‌ها و تنظیمات آن‌ها](https://maven.apache.org/guides/introduction/introduction-to-repositories.html)
+
+</GptNote>
+
+<SourceBlock id="teacher-transitive-dependencies" source="teacher" recording="teacher-02-video" timestamp="03:23:30">
+
+در ضبط، وابستگی MySQL Connector به POM اضافه می‌شود. کلاس متوجه می‌شود که با درخواست یک وابستگی، بیش از یک JAR وارد پروژه شده است؛ خود کتابخانه نیز به کتابخانه‌های دیگری نیاز دارد. برای دیدن این رابطه، دستور `mvn dependency:tree` اجرا می‌شود.
+
+این قسمت علت اهمیت مدیریت وابستگی را روشن می‌کند: برنامه‌نویس فقط با نام یک فایل JAR سروکار ندارد؛ زنجیرهٔ نیازمندی‌های آن و سازگاری نسخه‌ها نیز مطرح است. MySQL یک مرحله از نمایش زندهٔ کلاس است؛ وابستگی نهاییِ ثبت‌شده در مخزن را باید جداگانه از POM زیر خواند.
+
+</SourceBlock>
+
+<SourceBlock id="teacher-spring-dependency" source="teacher" recording="teacher-02-video" timestamp="03:27:00">
+
+در بخش پایانی، استاد سورس پروژهٔ Spring و artifact قابل استفادهٔ آن را از هم جدا می‌کند: برای استفادهٔ معمول از کتابخانه، قرار نیست کد مخزن Git را دستی وارد پروژه کنیم. باید ماژول مناسب را به‌عنوان وابستگی Maven انتخاب کنیم. در نمایش کلاس نام‌های `spring-context` و `spring-core` مطرح می‌شوند و وابستگی‌های همراه نیز دیده می‌شوند؛ این بخش مقدمهٔ انتخاب ماژول در جلسات بعد است.
+
+</SourceBlock>
+
+<SourceBlock id="teacher-maven-reading" source="teacher">
+
+پروژهٔ `maven_demo` دارای `pom.xml`، کلاس اجرایی `src/main/java/ir/digixo/App.java` و آزمون `src/test/java/ir/digixo/AppTest.java` است. برنامه فقط `Hello World!` چاپ می‌کند. مختصات پروژه `ir.digixo:maven_demo:1.0-SNAPSHOT`، نوع بسته‌بندی `jar` و نام نهایی خروجی `test` است.
+
+تنها وابستگی اعلام‌شده `org.springframework:spring-core:7.0.8` است. کامنت بالای آن به MySQL اشاره می‌کند، اما وابستگی واقعی MySQL در POM وجود ندارد. فایل آزمون از `junit.framework` استفاده می‌کند و `assertTrue(true)` دارد؛ وابستگی JUnit در همین POM اعلام نشده است.
+
+</SourceBlock>
+
+<CodeExample
+  id="teacher-pom"
+  source="teacher"
+  lang="xml"
+  filename="pom.xml"
+  repositoryPath="session2/maven_demo/pom.xml"
+  code={examples.pom}
+  caption="POM واقعی جلسه؛ نسخه‌ها و حتی کامنت ناسازگار برای حفظ سابقه تغییر داده نشده‌اند."
+/>
+
+<GptNote id="gpt-maven-scope">
+
+از روی وجود `spring-core` نمی‌توان نتیجه گرفت این نمونه یک برنامهٔ Spring Boot است. فایل POM نیز نسخهٔ compiler یا release جاوا را صریح تعیین نمی‌کند. تنظیم IDE بخش functional به JDK 21 اشاره می‌کند؛ کامپایل آن بخش با JDK 17 در این بررسی موفق بود، اما این نتیجه تأیید build کامل Maven یا سازگاری همهٔ وابستگی‌ها نیست. [راهنمای POM](https://maven.apache.org/guides/introduction/introduction-to-the-pom.html) ساختار این مشخصات را توضیح می‌دهد.
+
+</GptNote>
+
+</section>
+
+<section data-source-group>
+
+## تکلیف‌ها و مسیر ادامه [#practice]
+
+<SourceBlock id="teacher-study-tasks" source="teacher" recording="teacher-02-video" timestamp="03:29:40">
+
+در جمع‌بندی، استاد مطالعهٔ مستندات رسمی و دنبال‌کردن کلیدواژه‌های مطرح‌شده در کلاس را توصیه می‌کند. برنامهٔ اعلام‌شده در همین ضبط، ادامهٔ دوره با Spring Framework 7 و Spring Boot 4 است؛ این گزارش برنامهٔ کلاس است، نه ادعای پوشش این دو چارچوب در جلسهٔ دوم. تکمیل مبانی Java و Jakarta نیز پیش از ادامه یادآوری می‌شود.
+
+تمرین‌ها و موضوع‌های مطالعاتی مطرح‌شده در طول جلسه:
+
+- پیاده‌سازی یک رفتار با کلاس نام‌دار، کلاس بی‌نام و Lambda و توضیح رابطهٔ هر سه با رابط تابعی.
+- مطالعهٔ گونه‌های primitive و متدهای کمکی رابط‌های آماده، از جمله ترکیب Functionها.
+- مقایسهٔ روش‌های یافتن عنصر و خانوادهٔ match در Stream.
+- بررسی تفاوت `map` و `flatMap` و مطالعهٔ اتصال دو Stream.
+- تمرین فیلتر، مرتب‌سازی و محاسبهٔ قیمت روی فهرست خودروها و ثبت تمرین‌ها در Git.
+- دنبال‌کردن بخش‌های مشخص‌شدهٔ مستندات رسمی؛ بحث تفصیلی IoC، AOP و موضوعات پیشرفتهٔ جریان داده به ادامه موکول شده است.
+
+</SourceBlock>
+
+<GptNote id="gpt-review-exercise">
+
+برای سنجش فهم همین جلسه، سه خروجی را پیش‌بینی و سپس اجرا کنید: میانگین آرایهٔ خالی، اجرای دو عملیات نهایی روی یک Stream و مجموع قیمت BMWها با تابع کاهش صحیح. در هر مورد، علاوه بر خروجی، نوع نتیجه و دلیل پایان‌پذیری یا خطا را توضیح دهید. این پیشنهاد تمرین از GPT است.
+
+</GptNote>
+
+</section>
+
+## تاریخچهٔ تغییرات [#changelog]
+
+<ChangeLog />

@@ -1,0 +1,78 @@
+---
+title: 'Stream Pipeline — مسیر پردازش داده'
+description: منبع، عملیات میانی و نهایی؛ خواندن مثال خودروها و جلوگیری از مصرف دوبارهٔ Stream.
+kb:
+  type: concept
+  id: stream-pipeline
+  status: complete
+  createdAt: '2026-09-26'
+  updatedAt: '2026-09-26'
+  sources:
+    gpt:
+      references:
+        - https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Stream.html
+        - https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/IntStream.html
+        - ../teacher-files/session2/functional/src/p04stream
+  prerequisites: [functional-interface]
+  changes:
+    - date: '2026-09-26'
+      type: initial
+      summary: افزودن مرجع خط لوله برای مثال‌ها و اصلاح‌های کد جلسهٔ دوم.
+---
+
+import SourceBlock from '../../../components/source/SourceBlock.astro';
+import ConceptAppearances from '../../../components/documentation/ConceptAppearances.astro';
+import PrerequisiteList from '../../../components/documentation/PrerequisiteList.astro';
+import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+
+## پیش‌نیاز [#prerequisites]
+
+<PrerequisiteList />
+
+## خواندن خط لوله [#pipeline]
+
+<SourceBlock id="gpt-stream-pipeline" source="gpt">
+
+Stream مسیر پردازش عناصر را توصیف می‌کند: منبع، صفر یا چند عملیات میانی، و یک عملیات نهایی. عملیات میانی مانند `filter` و `map` تنبل هستند؛ پردازش با عملیات نهایی آغاز می‌شود. Stream مخزن داده نیست و برای پیمایش دوباره باید Stream تازه‌ای از منبع بسازید.
+
+در تمرین خودروهای جلسهٔ دوم، فهرست منبع است، فیلتر نام خودرو محدودهٔ محاسبه را تعیین می‌کند، تبدیل به قیمت دادهٔ لازم را جدا می‌کند و جمع‌زدن نتیجه را می‌سازد. بررسی هر مرحله به‌تنهایی، خطای تابع کاهش را آشکار می‌کند.
+
+</SourceBlock>
+
+## منبع نامتناهی و ترتیب عملیات [#infinite]
+
+<SourceBlock id="gpt-stream-infinite" source="gpt">
+
+`generate` می‌تواند بدون پایان عنصر بسازد. عملیاتی مانند `sorted` برای مرتب‌کردن کل ورودی به پایان آن نیاز دارند؛ بنابراین محدودکردن منبع پیش از مرتب‌سازی مهم است. با این حال، `limit` تضمین عمومی پایان برنامه نیست: اگر `filter` پیش از آن هر عنصر را رد کند، تعداد عناصر لازم برای حد تعیین‌شده هیچ‌گاه فراهم نمی‌شود.
+
+در مثال `Rana` جلسهٔ دوم، شرط طول چهار برقرار است و دو عنصر به `limit(2)` می‌رسند؛ سپس همان دو عنصر مرتب و چاپ می‌شوند. پرسش درست فقط «چه متدهایی استفاده شده‌اند؟» نیست؛ باید ترتیب آن‌ها و متناهی‌بودن دادهٔ ورودی هر مرحله را هم بررسی کرد.
+
+</SourceBlock>
+
+## جریان‌های عددی [#primitive-streams]
+
+<SourceBlock id="gpt-stream-numbers" source="gpt">
+
+`IntStream` جریان تخصصی عناصر `int` است و با `Stream<Integer>` یک نوع واحد نیست. برای نمونه، تبدیل قیمت خودرو با `mapToInt` امکان استفادهٔ مستقیم از `sum()` را می‌دهد. `boxed()` جهت دیگر را طی می‌کند و `Stream<Integer>` می‌سازد.
+
+این تفاوت در نوع نتیجه نیز دیده می‌شود: `IntStream.average()` مقدار `OptionalDouble` برمی‌گرداند. برای ورودی خالی، میانگینی وجود ندارد؛ خالی‌بودن نتیجه را با عدد صفر یکی نگیرید. [مرجع IntStream](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/IntStream.html)
+
+</SourceBlock>
+
+## دام‌های مثال جلسه [#pitfalls]
+
+<SourceBlock id="gpt-stream-pitfalls" source="gpt">
+
+نسخهٔ ثبت‌شدهٔ مثال عملیات نهایی، یک Stream را بعد از `reduce` دوباره برای `collect` به کار می‌گیرد؛ اصلاح آن در صفحهٔ جلسه آمده است. در مثال خودروها نیز اشتباه در استفاده از دو آرگومان تابع کاهش، نتیجه را عوض می‌کند. این‌ها دو خطای مستقل‌اند: اولی چرخهٔ مصرف Stream و دومی منطق محاسبه است.
+
+[قرارداد رسمی Stream](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Stream.html)
+
+</SourceBlock>
+
+## کاربرد در جلسات [#appearances]
+
+<ConceptAppearances />
+
+## تاریخچهٔ تغییرات [#changelog]
+
+<ChangeLog />

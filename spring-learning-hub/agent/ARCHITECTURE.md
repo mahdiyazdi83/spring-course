@@ -34,11 +34,15 @@ React, backend, database, CMS, user accounts or external runtime services are ad
 - `src/styles/documentation.css`: behavior component styles using the same design tokens.
 - `src/styles/dashboard.css`: dashboard, cards, relationship and native search presentation.
 - `src/data/fixtures/`: explicitly generated code and a simulated teacher snapshot.
+- `src/data/course/`: verified excerpts of real course code, with immutable repository
+  pins and original paths in comments; builds do not depend on ignored raw inputs.
 - `scripts/`: development-time validation using the same schemas as Astro.
 - `tests/`: Node's built-in test runner; no separate test framework.
 - `public/`: local public assets only. Never copy private/raw sources here by default.
 - `agent/`: maintenance instructions, decisions, workflows and concise logs.
-- `../records/`, `../teacher-files/`: existing external source folders; still untouched.
+- `../records/`, `../teacher-files/`: private course inputs, excluded from publication.
+  Session-2 transcripts are private derived evidence under `../records/transcripts/`;
+  original recordings and the teacher repository are preserved unchanged.
 
 Do not create empty component directories or alternative content stores.
 
@@ -129,7 +133,8 @@ KnowledgeFooter derives related sessions/concepts and a link back to the corresp
 index. The concept index is server-rendered; ConceptExplorer adds a small text filter.
 No client graph store, synonym mapping, external search service or database exists.
 
-No real session has been processed. `demo:` recording locators are accepted only for
+Real session-2 documentation is tracked separately from the template fixtures.
+`demo:` recording locators are accepted only for
 demo pages, never rendered as media links. Phase 4 adds four explicitly generated concept
 fixtures with official references for search/discovery QA, not actual course content.
 No service worker or browser offline cache is promised. Without internet, keep serving
@@ -142,3 +147,8 @@ HTML resource attributes and the exact count of indexable Persian pages. It is a
 resource check, not a general JavaScript network analyzer; client imports were also reviewed.
 Published documents cannot reference native unpublished drafts. The reusable manual edge
 fixture stays under `tests/fixtures/`, outside production content. See the Phase 5 log.
+
+Local transcription is an optional maintenance tool, not a browser/server feature.
+`scripts/transcribe-recording.py` uses a separately installed Python environment and
+local model, processes bounded audio chunks, and writes private resumable JSONL evidence.
+The npm build does not install or run ASR. See `workflows/local-transcription.md`.
