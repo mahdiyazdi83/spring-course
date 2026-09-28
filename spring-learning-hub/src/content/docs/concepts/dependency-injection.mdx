@@ -25,6 +25,7 @@ kb:
   relatedConcepts:
     - bean
     - application-context
+    - autowiring
   changes:
     - date: '2026-09-26'
       type: initial
@@ -41,6 +42,9 @@ kb:
     - date: '2026-09-28'
       type: concept-update
       summary: جایگزینی محتوای نمایشی با مرجع مرتبط با کد واقعی جلسهٔ سوم و مستندات رسمی.
+    - date: '2026-09-28'
+      type: concept-update
+      summary: افزودن مقایسهٔ سازنده و setter، محدودیت زمان تزریق و پیوند به مثال‌های جلسهٔ چهارم.
 ---
 
 import SourceBlock from '../../../components/source/SourceBlock.astro';
@@ -112,6 +116,18 @@ final class BankClient {
 در DI، وابستگی به مصرف‌کننده تحویل داده می‌شود؛ در Service Locator، مصرف‌کننده خودش از یک واسطه درخواست سرویس می‌کند. اولی نیازها را مثلاً در پارامترهای سازنده نشان می‌دهد؛ در دومی باید بدنهٔ کلاس را بخوانیم تا درخواست‌های آن را پیدا کنیم.
 
 این مقایسه دربارهٔ **جهت درخواست** است، نه تضمین زمان ساخت. سرویس درخواست‌شده از locator ممکن است از قبل موجود باشد؛ DI نیز می‌تواند با روش‌های دسترسی تنبل ترکیب شود. [مقایسهٔ دو الگو از مارتین فاولر](https://martinfowler.com/articles/injection.html) و [پرسش‌وپاسخ پنج‌شنبه](/thursday/session-03/#service-locator)
+
+</SourceBlock>
+
+## سازنده یا setter؟ [#injection-timing]
+
+<SourceBlock id="injection-timing-explanation" source="gpt">
+
+در تزریق سازنده، وابستگی هنگام ساخت شیء دریافت می‌شود؛ این الگو برای بیان نیازهای ضروری و امکان نگهداری آن‌ها در فیلد `final` مناسب است. در setter injection، نمونه ابتدا ساخته می‌شود و سپس وابستگی از طریق متد داده می‌شود. این تفاوت ترتیب را با تأخیر خودکار تا بعد از startup اشتباه نگیرید: setter اجباریِ Spring نیز هنگام آماده‌سازی Bean باید وابستگی‌اش را دریافت کند.
+
+در [جلسهٔ چهارم](/tuesday/session-04/#constructor-injection)، یک قرارداد Repository با هر دو روش و با سه نوع پیکربندی متصل می‌شود. انتخاب Oracle یا MySQL به تنظیمات اتصال بستگی دارد؛ روش تزریق به‌تنهایی پیاده‌سازی را انتخاب نمی‌کند. این تصمیم در مرجع [Autowiring](/concepts/autowiring/) توضیح داده شده است.
+
+چرخهٔ سازندهٔ مستقیم میان دو شیء قابل حل نیست؛ بعضی چرخه‌های singleton با setter در Spring Framework قابل اجرا هستند. موفقیت اجرای یک چرخه به معنی طراحی مطلوب یا تضمین رفتار یکسان در تمام تنظیمات نیست. [نمونه و محدودیت چرخه](/tuesday/session-04/#circular-dependencies)
 
 </SourceBlock>
 

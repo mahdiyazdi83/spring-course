@@ -1,0 +1,106 @@
+---
+title: Autowiring — انتخاب و اتصال خودکار وابستگی
+description: تفاوت ثبت Bean با تزریق، انتخاب بین چند پیاده‌سازی و نقش Qualifier، Primary و سازنده در Spring.
+sidebar:
+  label: انتخاب وابستگی — Autowiring
+kb:
+  type: concept
+  id: autowiring
+  status: complete
+  createdAt: '2026-09-28'
+  updatedAt: '2026-09-28'
+  sources:
+    teacher:
+      repository:
+        location: ../teacher-files
+        commit: 1346059f934c6599b07a81a32a9ef159fcc9b290
+      references:
+        - ../teacher-files/session4/src/main/java/ir/digixo/p02abstraction
+        - ../teacher-files/session4/src/main/java/ir/digixo/p03DI
+    gpt:
+      references:
+        - https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/autowired.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-autowire.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/autowired-qualifiers.html
+  prerequisites: [bean, dependency-injection]
+  relatedConcepts: [application-context]
+  changes:
+    - date: '2026-09-28'
+      type: initial
+      summary: ایجاد مرجع انتخاب و اتصال وابستگی با مثال‌های نسخه‌دار جلسهٔ چهارم و تفکیک خطاهای ابهام.
+---
+
+import SourceBlock from '../../../components/source/SourceBlock.astro';
+import ConceptAppearances from '../../../components/documentation/ConceptAppearances.astro';
+import PrerequisiteList from '../../../components/documentation/PrerequisiteList.astro';
+import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+
+## پیش‌نیاز [#prerequisites]
+
+<PrerequisiteList />
+
+## مسئله‌ای که حل می‌کند [#overview]
+
+<SourceBlock id="autowiring-overview" source="gpt">
+
+پس از ثبت Beanها، کانتینر باید وابستگی هر مصرف‌کننده را پیدا و متصل کند. Autowiring یعنی بخشی از این انتخاب و اتصال از روی اطلاعاتی مانند نوع پارامتر، نام و qualifier انجام شود. ثبت کلاس با اسکن و مقداردهی وابستگی دو مرحلهٔ مفهومی متفاوت‌اند؛ `@Autowired` به‌تنهایی کلاس مصرف‌کننده را ثبت نمی‌کند.
+
+برای خواندن یک مثال چهار سؤال بپرسید: **چه Beanهایی ثبت شده‌اند؟ محل تزریق کجاست؟ نوع موردنیاز چیست؟ کدام قاعده انتخاب را محدود می‌کند؟**
+
+</SourceBlock>
+
+## دو پیاده‌سازی برای یک قرارداد [#qualifier]
+
+<SourceBlock id="repository-choice" source="teacher">
+
+در `session4/p02abstraction`، سرویس یک `Repository` می‌خواهد و MySQL و Oracle هر دو این قرارداد را پیاده‌سازی می‌کنند. در نسخهٔ موجود، `@Autowired` روی setter و `@Qualifier("mysql")` روی پارامتر آن است. اجرای بررسی‌شده، MySQL را انتخاب کرد. سرویس همچنان به interface وابسته است؛ qualifier تصمیم اتصال این نمونه را روشن می‌کند.
+
+مثال‌های سازنده و setter نیز همین مسئله را با XML، annotation و Java Config تکرار می‌کنند. در XMLِ صریح، ارجاع `repo1` یا `repo2` انتخاب را تعیین می‌کند. [شرح و کدهای جلسهٔ چهارم](/tuesday/session-04/#abstraction-and-qualifier)
+
+</SourceBlock>
+
+## تفاوت نام، نوع و ترجیح [#selection]
+
+<SourceBlock id="selection-rules" source="gpt">
+
+| ابزار                                      | نقش در انتخاب                                                     |
+| ------------------------------------------ | ----------------------------------------------------------------- |
+| XML `autowire="byName"`                    | جست‌وجوی Bean هم‌نام property قابل‌نوشتن                          |
+| XML `autowire="byType"`                    | انتخاب وابستگی سازگار با نوع property                             |
+| `@Qualifier`                               | محدودکردن کاندیداهای سازگار برای همین نقطهٔ تزریق                 |
+| `@Primary`                                 | ترجیح یک کاندیدا هنگام انتخاب وابستگی تک‌مقداری از میان چند گزینه |
+| XML `ref` یا `getBean("name", Type.class)` | انتخاب صریح Bean نام‌دار در همان کاربرد                           |
+
+Qualifier فقط معادل عمومیِ «جست‌وجو با نام» نیست؛ نام Bean می‌تواند برای تطبیق به‌کار رود، اما qualifier برای محدودکردن کاندیداهای سازگار است. Primary نیز انتخاب صریحِ نام دیگری را لغو نمی‌کند. [قواعد Qualifier](https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/autowired-qualifiers.html)
+
+</SourceBlock>
+
+## سازنده و محل تزریق [#constructor]
+
+<SourceBlock id="constructor-rule" source="teacher">
+
+در `p03DI/p06autowiring/p02annotation`، کلاس Target فقط یک سازنده با سه پارامتر دارد. نسخهٔ موجود بدون `@Autowired` روی سازنده، هر سه وابستگی را دریافت می‌کند. شرط مطرح‌شده یک سازنده است، نه یک پارامتر. اگر یک فیلد از ورودی سازنده حذف شود و جای دیگری مقدار نگیرد، صرف وجودش در کلاس برای تزریق کافی نیست.
+
+</SourceBlock>
+
+<SourceBlock id="constructor-caveat" source="gpt">
+
+تک‌سازنده بودن ابهام یا نبودن Bean وابسته را حل نمی‌کند. با چند سازنده، annotation و قواعد انتخاب سازنده را جدا بررسی کنید. همچنین setter اجباریِ Autowired هم هنگام آماده‌سازی Bean به وابستگی احتیاج دارد؛ setter به‌خودی‌خود راهی برای انتظار تا بعد از startup نیست. [مرجع Autowired](https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/autowired.html)
+
+</SourceBlock>
+
+## خطا را در محل درست پیدا کنید [#pitfalls]
+
+<SourceBlock id="ambiguity-locations" source="teacher">
+
+در آزمایش XML جلسه، هم دو BeanOne و هم دو Target وجود دارند. این‌ها دو احتمال مستقل برای ابهام‌اند: کانتینر ممکن است نتواند وابستگی BeanOne را انتخاب کند، یا خود برنامه هنگام `getBean(Target.class)` نتواند یکی از Targetها را انتخاب کند. در کلاس، خطای دوم با دریافت `target1` به‌صورت نام‌دار اصلاح می‌شود. اسم نوع در پیام خطا، محل مسئله را مشخص می‌کند.
+
+</SourceBlock>
+
+## این مفهوم کجا مطرح شده؟ [#appearances]
+
+<ConceptAppearances />
+
+## تاریخچهٔ تغییرات [#changelog]
+
+<ChangeLog />

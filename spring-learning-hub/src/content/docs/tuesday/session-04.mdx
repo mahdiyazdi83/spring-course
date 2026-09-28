@@ -1,0 +1,807 @@
+---
+title: جلسهٔ چهارم — تعریف Bean، روش‌های تزریق و انتخاب وابستگی
+description: ثبت Bean با XML و Java، تزریق سازنده و setter، Qualifier، استانداردهای Jakarta و جزئیات پایانی XML با مثال‌های بررسی‌شده.
+sidebar:
+  label: جلسهٔ ۴ — تعریف و اتصال Beanها
+  order: 4
+kb:
+  type: tuesday
+  id: tuesday-04
+  sessionNumber: 4
+  status: complete
+  createdAt: '2026-09-28'
+  updatedAt: '2026-09-28'
+  sources:
+    teacher:
+      recordings:
+        - id: teacher-04-part1
+          kind: video
+          location: ../records/tuesday-class-recordings/session4/2026-09-01 17-07-46.mp4
+          durationSeconds: 6426
+        - id: teacher-04-part2
+          kind: video
+          location: ../records/tuesday-class-recordings/session4/2026-09-01 19-17-04.mp4
+          durationSeconds: 4693
+      repository:
+        location: ../teacher-files
+        commit: 1346059f934c6599b07a81a32a9ef159fcc9b290
+        capturedAt: '2026-09-28'
+      references:
+        - ../teacher-files/session4
+    gpt:
+      references:
+        - https://docs.spring.io/spring-framework/reference/core/beans/annotation-config.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/autowired.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-properties-detailed.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-dependson.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/java/basic-concepts.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/standard-annotations.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/resource.html
+        - https://www.jcp.org/en/jsr/detail?id=330
+        - https://docs.micronaut.io/4.10.23/guide/
+  prerequisites: [bean, dependency-injection, application-context]
+  prerequisiteSessions: [tuesday-03]
+  concepts:
+    - id: bean
+      relation: expanded
+      anchor: registration-and-injection
+    - id: dependency-injection
+      relation: expanded
+      anchor: constructor-injection
+    - id: application-context
+      relation: used-in-code
+      anchor: load-refresh
+    - id: autowiring
+      relation: introduced
+      anchor: abstraction-and-qualifier
+    - id: functional-interface
+      relation: used-in-code
+      anchor: programmatic-registration
+  timeline:
+    - topic: تفکیک ثبت Bean و تزریق؛ مرور XML و c/p
+      source: teacher
+      recording: teacher-04-part1
+      start: '00:00'
+      approximate: true
+    - topic: annotation-config، فیلد Autowired و فعال‌کردن پردازش annotationها
+      source: teacher
+      recording: teacher-04-part1
+      start: '07:30'
+      approximate: true
+    - topic: GenericXmlApplicationContext؛ رفع خطای دوبار refresh و namespace
+      source: teacher
+      recording: teacher-04-part1
+      start: '12:00'
+      approximate: true
+    - topic: component-scan، نام Component و نقش base-package
+      source: teacher
+      recording: teacher-04-part1
+      start: '18:00'
+      approximate: true
+    - topic: Java Config، Bean، alias، Description، Lazy و Primary؛ سپس اسکن
+      source: teacher
+      recording: teacher-04-part1
+      start: '25:30'
+      approximate: true
+    - topic: registerBean، Supplier و BeanDefinitionCustomizer
+      source: teacher
+      recording: teacher-04-part1
+      start: '38:00'
+      approximate: true
+    - topic: static factory method و دریافت محصول کارخانه
+      source: teacher
+      recording: teacher-04-part1
+      start: '46:00'
+      approximate: true
+    - topic: Repository انتزاعی، Oracle و MySQL؛ ابهام و Qualifier
+      source: teacher
+      recording: teacher-04-part1
+      start: '52:30'
+      approximate: true
+    - topic: تزریق سازنده؛ XML، component-scan و پیکربندی Java
+      source: teacher
+      recording: teacher-04-part1
+      start: '01:05:00'
+      approximate: true
+    - topic: ترجیح سازنده، مقایسه با setter و اجرای سه شکل setter injection
+      source: teacher
+      recording: teacher-04-part1
+      start: '01:25:00'
+      approximate: true
+    - topic: چرخهٔ سازنده، رفع خطا با setter و اصلاح Component به Configuration
+      source: teacher
+      recording: teacher-04-part1
+      start: '01:36:00'
+      approximate: true
+    - topic: معرفی JSR-330 و JSR-250 و افزودن APIهای Jakarta
+      source: teacher
+      recording: teacher-04-part2
+      start: '00:00'
+      approximate: true
+    - topic: Inject و Named؛ تفاوت API با موتور DI و بحث قابلیت انتقال
+      source: teacher
+      recording: teacher-04-part2
+      start: '06:00'
+      approximate: true
+    - topic: Resource، انتخاب نام و رفع خطاهای مثال
+      source: teacher
+      recording: teacher-04-part2
+      start: '21:00'
+      approximate: true
+    - topic: روش مطالعهٔ استانداردها؛ specification، API، vendor و تفاوت هدف JSRها
+      source: teacher
+      recording: teacher-04-part2
+      start: '29:30'
+      approximate: true
+    - topic: XML autowiring؛ byName، byType، Primary و ابهام getBean
+      source: teacher
+      recording: teacher-04-part2
+      start: '40:30'
+      approximate: true
+    - topic: حذف سازندهٔ بدون آرگومان و تزریق خودکار تک‌سازنده
+      source: teacher
+      recording: teacher-04-part2
+      start: '54:00'
+      approximate: true
+    - topic: idref و تفاوت نام Bean با ارجاع شیء؛ پرسش‌وپاسخ
+      source: teacher
+      recording: teacher-04-part2
+      start: '57:30'
+      approximate: true
+    - topic: Inner Bean و property تودرتو
+      source: teacher
+      recording: teacher-04-part2
+      start: '01:06:00'
+      approximate: true
+    - topic: depends-on، lazy و ترتیب ساخت؛ تعیین ادامهٔ بحث برای جلسهٔ بعد
+      source: teacher
+      recording: teacher-04-part2
+      start: '01:12:00'
+      approximate: true
+  changes:
+    - date: '2026-09-28'
+      type: initial
+      summary: مستندسازی هر دو ضبط جلسهٔ چهارم با روش‌های تعریف و تزریق، مثال‌های نسخه‌دار و مرجع Autowiring.
+    - date: '2026-09-28'
+      type: correction
+      summary: تفکیک نسخهٔ کد از زمان ضبط، ثبت محدودیت مثال‌های ناقص و روشن‌کردن تفاوت استانداردهای تزریق.
+---
+
+import SourceBlock from '../../../components/source/SourceBlock.astro';
+import SourceFilter from '../../../components/source/SourceFilter.astro';
+import TechnicalCorrection from '../../../components/source/TechnicalCorrection.astro';
+import CodeExample from '../../../components/code/CodeExample.astro';
+import PrerequisiteList from '../../../components/documentation/PrerequisiteList.astro';
+import SessionTimeline from '../../../components/documentation/SessionTimeline.astro';
+import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+
+این جلسه، مسیر **معرفی شیء به کانتینر → انتخاب وابستگی → تزریق → کنترل ترتیب آماده‌سازی** را دنبال می‌کند. یک سرویس و دو Repository، مسئلهٔ مشترک مثال‌ها هستند؛ با تغییر روش پیکربندی می‌بینیم کدام مسئولیت ثابت می‌ماند و کدام تصمیم به برنامه‌نویس برمی‌گردد.
+
+**پوشش منابع:** سراسر متن حاصل از دو ویدئوی ۱ سپتامبر، در مجموع حدود سه ساعت و پنج دقیقه، با ASR محلی بررسی شده است. همهٔ مباحث آموزشی، مثال‌ها و پرسش‌وپاسخ‌های فنی در ساختار درس پوشش داده شده‌اند؛ مکث، حضورغیاب، تکرار گفتاری و خطاهای واضح تشخیص صدا به متن آموزشی منتقل نشده‌اند. این صفحه رونوشت لفظ‌به‌لفظ یا ادعای بررسی تک‌تک فریم‌ها نیست. برای جلسهٔ چهار فایل مستقلی از حیدری یا پنج‌شنبه موجود نبود.
+
+**نسخهٔ مثال‌ها:** کدهای `session4` از نسخهٔ ثبت‌شدهٔ ۱۵ سپتامبر بررسی شده‌اند؛ این نسخه بعد از تاریخ ضبط است و بازسازی قطعی صفحهٔ استاد در روز کلاس نیست. نمونه‌های کد زیر عین استخراج همان نسخه‌اند و تفاوت‌های مهم با اجرای کلاس جدا توضیح داده شده‌اند. POM شامل Spring **7.0.9**، Jakarta Inject **2.0.1**، Jakarta Annotations **3.0.0** و تنظیم Java **25** است. بررسی محلی در یک کپی، با تغییر سطح کامپایل به JDK **21** و تنظیم مسیر XML در ابزار آزمایش انجام شد؛ فایل‌های اصلی استاد تغییر نکردند و اجرای بدون تغییر POM با Java 25 در این بررسی ادعا نمی‌شود.
+
+## پیش‌نیاز مطالعه [#prerequisites]
+
+<PrerequisiteList />
+
+## ترتیب مباحث در ضبط‌ها [#timeline]
+
+زمان‌ها تقریبی و نسبت به ابتدای همان فایل‌اند. این خط زمانی، ترتیب کلاس را نگه می‌دارد؛ بدنه برای فهم ارتباط موضوع‌ها مرتب شده است.
+
+<SessionTimeline />
+
+<SourceFilter />
+
+<section data-source-group>
+
+## اول ثبت Bean، بعد اتصال وابستگی‌ها [#registration-and-injection]
+
+<SourceBlock id="registration-and-injection-explanation" source="teacher" recording="teacher-04-part1" timestamp="00:00">
+
+نقطهٔ شروع جلسه، تفکیک دو مسئولیت کانتینر است: **ثبت تعریف اشیای برنامه** و **برقرارکردن وابستگی میان آن‌ها**. ابتدا باید `MyService` و `MyRepository` در کانتینر شناخته شوند؛ سپس Spring می‌تواند رابطهٔ has-a میان سرویس و مخزن را مقداردهی کند. تعریف یک فیلد از نوع Repository به‌تنهایی هیچ شیئی نمی‌سازد و هیچ تزریقی انجام نمی‌دهد.
+
+در [جلسهٔ سوم](/tuesday/session-03/#manual-container) این فرایند را دستی، با Spring و با Weld دیدیم. این جلسه همان ایده را با چند شیوهٔ پیکربندی دنبال می‌کند. سؤال اول «Bean را چگونه معرفی کنیم؟» و سؤال دوم «وابستگی‌اش را چگونه و از کدام Bean تأمین کنیم؟» است؛ این دو سؤال را هنگام خواندن هر مثال جدا نگه دارید.
+
+استاد XML را برای شناخت پروژه‌های قدیمی مرور می‌کند و تمرکز را به annotation و پیکربندی Java می‌برد. این جهت‌گیری آموزشی به معنی حذف پشتیبانی XML از Spring نیست.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## مرور XML: سازنده، property و فضای نام [#xml-properties]
+
+<SourceBlock id="xml-properties-explanation" source="teacher" recording="teacher-04-part1" timestamp="03:00">
+
+در تعریف XML، `class` نوع شیء و `name` یا `id` نام Bean را مشخص می‌کند. `constructor-arg` ورودی ساخت شیء را می‌دهد و `property` پس از ساخت، property را از مسیر setter مقداردهی می‌کند. فضای نام `c` شکل کوتاه ورودی سازنده و فضای نام `p` شکل کوتاه property است.
+
+در مثال `BeanOne`، مقدار `nahid` به سازنده می‌رسد و سپس setter مقدار را به `nahid1` تغییر می‌دهد. بنابراین مقدار نهایی با ورودی اولیه فرق می‌کند. حذف سازندهٔ بدون آرگومان زمانی مسئله می‌شود که پیکربندی هنوز انتظار ساخت بدون آرگومان داشته باشد؛ با معرفی ورودی سازنده، وجود چنین سازنده‌ای الزامی نیست.
+
+نام فضای XML فقط یک پیشوند ظاهری نیست؛ تعریف namespace و schema باید درست باشد. در اجرای کلاس، خطای namespace دیده و اصلاح می‌شود؛ هنگام عیب‌یابی XML ابتدا خطای parser و مسیر فایل را از خطای تزریق جدا کنید.
+
+</SourceBlock>
+
+<CodeExample id="xml-properties-code" source="teacher" lang="xml" filename="config.xml" repositoryPath="session4/src/main/java/ir/digixo/p01beanDefinition/p01xmlBeanOne/config.xml" caption="XML نسخهٔ موجود: مقدار سازنده سپس مقدار property اعمال می‌شود." code={"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<beans xmlns=\"http://www.springframework.org/schema/beans\"\n       xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n       xmlns:c=\"http://www.springframework.org/schema/c\"\n       xmlns:p=\"http://www.springframework.org/schema/p\"\n       xsi:schemaLocation=\"http://www.springframework.org/schema/beans\n       http://www.springframework.org/schema/beans/spring-beans.xsd\">\n\n    <!--business obj-->\n\n\n    <bean class=\"ir.digixo.p01beanDefinition.p01xmlBeanOne.BeanOne\" name=\"one\"\n          c:name=\"nahid\" p:name=\"nahid1\"  >\n\n       <!-- <constructor-arg value=\"nahid\"/>\n        <property name=\"name\" value=\"nahid1\"/>-->\n    </bean>\n\n\n\n</beans>"} />
+
+</section>
+
+<section data-source-group>
+
+## annotation-config: پردازش annotation روی Beanهای معرفی‌شده [#annotation-config]
+
+<SourceBlock id="annotation-config-explanation" source="teacher" recording="teacher-04-part1" timestamp="07:30">
+
+در نخستین ترکیب XML و annotation، دو Bean با نام‌های `repo1` و `service1` صریحاً در XML معرفی می‌شوند. سپس روی فیلد `MyService.myRepository`، `@Autowired` قرار می‌گیرد. تگ `context:annotation-config` پردازش annotationهای پشتیبانی‌شده را فعال می‌کند تا Spring این نقطهٔ تزریق را ببیند.
+
+این تگ جای تعریف Beanها یا اسکن پکیج را نمی‌گیرد. وجود کلاس روی classpath و نوشتن `@Autowired` به‌تنهایی برای ساخت Bean آن کلاس کافی نیست. در این مثال، ثبت از XML می‌آید و اطلاعات محل تزریق از کلاس Java.
+
+استاد توضیح تگ را از مستندات محیط توسعه می‌خواند و به پشتیبانی Spring از annotationهای استاندارد Jakarta نیز اشاره می‌کند. نکتهٔ عملی این است که annotation را یک پردازشگر می‌خواند؛ خود علامت `@` اجرای مستقلی ایجاد نمی‌کند.
+
+</SourceBlock>
+
+<CodeExample
+  id="annotation-field"
+  source="teacher"
+  lang="java"
+  filename="MyService.java"
+  repositoryPath="session4/src/main/java/ir/digixo/p01beanDefinition/p02annotationxml/p01annotationConfig/MyService.java"
+  caption="محل تزریق در این مثال فیلد است؛ صرف وجود setter محل تزریق را تغییر نمی‌دهد."
+  code={
+    'package ir.digixo.p01beanDefinition.p02annotationxml.p01annotationConfig;\n\nimport org.springframework.beans.factory.annotation.Autowired;\n\npublic class MyService {\n    //has -a\n    @Autowired\n    private MyRepository myRepository;\n\n\n    public MyRepository getMyRepository() {\n        return myRepository;\n    }\n\n    public void setMyRepository(MyRepository myRepository) {\n        this.myRepository = myRepository;\n    }\n}'
+  }
+/>
+
+<SourceBlock id="annotation-current-api" source="gpt">
+
+توضیح کامنت‌شدهٔ XML مخزن، فهرستی تاریخی شامل `@Required` دارد؛ آن را فهرست APIهای جاری Spring 7 فرض نکنید. برای نسخهٔ بررسی‌شده، [مرجع پردازش annotationها](https://docs.spring.io/spring-framework/reference/core/beans/annotation-config.html) مبناست. وجود API مرتبط روی classpath و ثبت پردازشگر مناسب هر دو اهمیت دارند.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## بارگذاری تنظیمات و اشتباه دوبار refresh [#load-refresh]
+
+<SourceBlock id="load-refresh-explanation" source="teacher" recording="teacher-04-part1" timestamp="12:00">
+
+برای خواندن XML از `GenericXmlApplicationContext` استفاده می‌شود. در شیوهٔ گام‌به‌گام، کانتینر بدون آرگومان ساخته می‌شود، `load(...)` تعریف‌ها را می‌خواند و `refresh()` آماده‌سازی کانتینر را انجام می‌دهد. پیشوند `file:` فایل روی سیستم و `classpath:` منبع داخل classpath را مشخص می‌کند.
+
+در کلاس، ابتدا مسیر به سازنده داده می‌شود و سپس `refresh()` هم صدا زده می‌شود؛ خطای حاصل باعث می‌شود استاد روش را به سازندهٔ خالی، `load` و یک `refresh` تغییر دهد. این یک مرحلهٔ رفع خطا در کلاس است، نه الگوی دوبار refresh. پس از آماده‌سازی، `getBean(MyService.class)` سرویس را می‌گیرد و `getMyRepository()` نشان می‌دهد تزریق انجام شده است.
+
+وقتی چند Bean هم‌نوع داریم، تنها نوع برای انتخاب همیشه کافی نیست؛ نام یا قاعدهٔ انتخاب لازم می‌شود. این ابهام در ادامه با Repositoryهای MySQL و Oracle به‌صورت عملی بررسی می‌شود.
+
+</SourceBlock>
+
+<SourceBlock id="portable-paths" source="gpt">
+
+مسیرهای `C:\Users\Admin\IdeaProjects\...` در کلاس‌های `Test` مخزن، مسیر شخصی سیستم استادند؛ برخی نیز هنوز به پوشهٔ قبلی اشاره می‌کنند. برای اجرای محلی، مسیر XML همان مثال را بدهید یا آن را در resources قرار دهید و از `classpath:` استفاده کنید. صرف کپی‌کردن مسیر مخزن، فایل را به classpath منتقل نمی‌کند.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## Component Scan: کشف و ثبت خودکار کلاس‌ها [#component-scan]
+
+<SourceBlock id="component-scan-explanation" source="teacher" recording="teacher-04-part1" timestamp="18:00">
+
+در مرحلهٔ بعد، تعریف دستی `MyService` و `MyRepository` از XML حذف می‌شود و `context:component-scan` با `base-package` جای آن را می‌گیرد. کلاس‌ها با `@Component` مشخص می‌شوند؛ اسکن باید واقعاً پکیج آن‌ها را پوشش دهد. پس «annotation روی کلاس» و «پیکربندی اسکن» دو بخش یک راهکارند.
+
+در بحث کلاس، `@Service`، `@Repository`، `@Controller` و `@Configuration` از جهت شناسایی به‌عنوان component کنار هم قرار می‌گیرند. این وجه مشترک به معنی یکسان‌بودن همهٔ نقش‌ها و امکاناتشان نیست؛ فعلاً موضوع، ثبت‌شدن آن‌ها در کانتینر است.
+
+`@Component("service2")` یک نام صریح می‌دهد. مقدار آن یک رشته است؛ مثل آرایهٔ نام‌های `@Bean` عمل نمی‌کند. وقتی نامی تعیین نمی‌کنیم، Spring طبق قاعدهٔ نام‌گذاری خود نام می‌سازد. انتخاب پکیج محدودِ مثال کمک می‌کند کلاس‌های مشابه مثال‌های دیگر ناخواسته وارد اسکن نشوند.
+
+</SourceBlock>
+
+<CodeExample id="component-scan-xml" source="teacher" lang="xml" filename="config.xml" repositoryPath="session4/src/main/java/ir/digixo/p01beanDefinition/p02annotationxml/p02componentScan/config.xml" caption="اسکن همین پکیج، کلاس‌های علامت‌خوردهٔ مثال را ثبت می‌کند." code={"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<beans xmlns=\"http://www.springframework.org/schema/beans\"\n       xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n       xmlns:context=\"http://www.springframework.org/schema/context\"\n       xsi:schemaLocation=\"http://www.springframework.org/schema/beans\n       http://www.springframework.org/schema/beans/spring-beans.xsd\n       http://www.springframework.org/schema/context\n       https://www.springframework.org/schema/context/spring-context.xsd\">\n\n    <!--business obj-->\n\n\n<!--Scans the classpath for annotated components that will be auto-registered as\n\tSpring beans. By default, the Spring-provided @Component, @Repository, @Service,\n\t@Controller, @RestController, @ControllerAdvice, and @Configuration stereotypes\n\twill be detected.-->\n    <context:component-scan base-package=\"ir.digixo.p01beanDefinition.p02annotationxml.p02componentScan\"/>\n\n\n\n\n\n\n</beans>"} />
+
+<CodeExample
+  id="component-service"
+  source="teacher"
+  lang="java"
+  filename="MyService.java"
+  repositoryPath="session4/src/main/java/ir/digixo/p01beanDefinition/p02annotationxml/p02componentScan/MyService.java"
+  caption="نام صریح service2 و نقطهٔ تزریق فیلد."
+  code={
+    'package ir.digixo.p01beanDefinition.p02annotationxml.p02componentScan;\n\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.stereotype.Component;\n\n@Component("service2")\npublic class MyService {\n    //has -a\n    @Autowired\n    private MyRepository myRepository;\n\n\n    public MyRepository getMyRepository() {\n        return myRepository;\n    }\n\n    public void setMyRepository(MyRepository myRepository) {\n        this.myRepository = myRepository;\n    }\n}'
+  }
+/>
+
+</section>
+
+<section data-source-group>
+
+## پیکربندی Java: کنترل ساخت با Bean یا ادامهٔ اسکن [#java-config]
+
+<SourceBlock id="java-config-explanation" source="teacher" recording="teacher-04-part1" timestamp="25:30">
+
+به‌جای فایل XML، یک کلاس پیکربندی می‌تواند تعریف‌ها را در اختیار Spring قرار دهد. با `@Bean` روی متد، شیء بازگشتی آن متد به‌عنوان Bean معرفی می‌شود. تفاوتی که استاد بر آن تأکید می‌کند، حضور مستقیم کد ساخت در پیکربندی است: درون متد می‌توانیم `new`، سازنده و مقداردهی را خودمان بنویسیم.
+
+راه دیگر، قرار دادن `@ComponentScan` روی کلاس پیکربندی و علامت‌گذاری کلاس‌های برنامه است. `AnnotationConfigApplicationContext(Config.class)` نقطهٔ شروع این شیوه است. روش‌های XML، annotation و Java لزوماً جزیره‌های جدا نیستند و می‌توانند در یک برنامه ترکیب شوند.
+
+در مرور metadata، `@Bean({"r1", "r2"})` چند نام برای یک تعریف می‌دهد؛ `@Description` توضیح متنی اضافه می‌کند، `@Lazy` به زمان آماده‌سازی مربوط است و `@Primary` در انتخاب تک‌وابستگی از میان کاندیداها نقش دارد. این annotationها امکانات جدا هستند؛ داشتن alias به‌خودی‌خود scope یا زمان ساخت را عوض نمی‌کند. بحث کامل scope در این جلسه انجام نشده است.
+
+</SourceBlock>
+
+<CodeExample
+  id="java-config-explicit"
+  source="teacher"
+  lang="java"
+  filename="Config.java"
+  repositoryPath="session4/src/main/java/ir/digixo/p01beanDefinition/p03classConfig/p01/Config.java"
+  caption="نسخهٔ مخزن: متد repository دارای Bean است؛ متد service فاقد آن است."
+  code={
+    'package ir.digixo.p01beanDefinition.p03classConfig.p01;\n\nimport org.springframework.context.annotation.*;\n\n@Configuration\npublic class Config {\n\n    @Bean({"r1","r2"})\n    @Description("")\n    @Lazy\n    @Primary\n    public MyRepository myRepository()\n    {\n        MyRepository myRepository = new MyRepository();\n        return myRepository;\n    }\n\n    public MyService myService()\n    {\n        return  new MyService();\n    }\n}'
+  }
+/>
+
+<SourceBlock id="java-config-incomplete" source="gpt">
+
+در **نسخهٔ موجود مخزن**، `myService()` در همین فایل `@Bean` ندارد. اجرای پیکربندی تأیید کرد که Bean با نام `myService` ثبت نمی‌شود. این متد صرفاً به‌دلیل حضور در کلاس `@Configuration` به Bean تبدیل نمی‌شود؛ برای اجرای این الگو باید ثبت سرویس را کامل کنید. کلاس `Test` همین پوشه نیز هنوز XML قبلی را بار می‌کند؛ آن را اجرای سالمِ این Config فرض نکنید.
+
+در مقابل، نمونهٔ `p03classConfig/p02` با اسکن پکیج اجرا شد و وابستگی `MyRepository` را به سرویس داد. این تفاوتِ وضعیت فایل‌ها از بررسی کد نسخه‌دار به‌دست آمده؛ ادعای اینکه دقیقاً همین نسخه در لحظهٔ ضبط روی صفحه بوده نیست.
+
+</SourceBlock>
+
+<CodeExample
+  id="java-config-scan"
+  source="teacher"
+  lang="java"
+  filename="Config.java"
+  repositoryPath="session4/src/main/java/ir/digixo/p01beanDefinition/p03classConfig/p02/Config.java"
+  caption="راه دوم: تعریف پکیج اسکن در کلاس پیکربندی."
+  code={
+    'package ir.digixo.p01beanDefinition.p03classConfig.p02;\n\nimport org.springframework.context.annotation.*;\n\n@Configuration\n@ComponentScan(basePackages = {"ir.digixo.p01beanDefinition.p03classConfig.p02"})\npublic class Config {\n\n\n}'
+  }
+/>
+
+</section>
+
+<section data-source-group>
+
+## ثبت برنامه‌ای با registerBean و Supplier [#programmatic-registration]
+
+<SourceBlock id="programmatic-registration-explanation" source="teacher" recording="teacher-04-part1" timestamp="38:00">
+
+همهٔ کلاس‌ها در اختیار ما نیستند که رویشان annotation بگذاریم؛ گاهی یک کتابخانه یا کد بیرونی شیء را فراهم کرده است. استاد برای این وضعیت overloadهای `registerBean` را نشان می‌دهد: ثبت با نام و نوع، ثبت با `Supplier`ِ تأمین‌کنندهٔ نمونه، و ثبت همراه `BeanDefinitionCustomizer` برای تغییر metadata.
+
+در کد، `service01` از نوع `MyService` ثبت می‌شود؛ `service02` و `service03` از Supplier استفاده می‌کنند. این بخش به [Supplier و رابط‌های تابعی](/concepts/functional-interface/) جلسهٔ دوم متصل است: lambda تعیین می‌کند هنگام درخواست ساخت، چه شیئی تحویل داده شود. در مثال، هر دو lambda همان متغیر `myService` را برمی‌گردانند؛ دو نام الزاماً به دو نمونهٔ متفاوت منجر نمی‌شود.
+
+Customizer به تعریف Bean دسترسی می‌دهد. `setLazyInit(true)` و `setPrimary(true)` نمونهٔ تغییر تنظیمات همان تعریف‌اند؛ XML و annotation نیز در نهایت اطلاعاتی از همین جنس در اختیار کانتینر قرار می‌دهند. استاد با مرور متدهای BeanDefinition نشان می‌دهد که پشت شکل‌های مختلف پیکربندی، یک مدل مدیریت Bean وجود دارد.
+
+</SourceBlock>
+
+<CodeExample
+  id="register-bean-code"
+  source="teacher"
+  lang="java"
+  filename="Test.java"
+  repositoryPath="session4/src/main/java/ir/digixo/p01beanDefinition/p04programmitacally/Test.java"
+  caption="نمونهٔ API ثبت؛ وابستگی Repository در این فایل ثبت نشده است."
+  code={
+    'package ir.digixo.p01beanDefinition.p04programmitacally;\n\nimport org.springframework.context.annotation.AnnotationConfigApplicationContext;\n\npublic class Test {\n    static void main(String[] args) {\n\n        var context=new AnnotationConfigApplicationContext(Config.class);\n        context.registerBean("service01", MyService.class);\n\n        MyService myService=new MyService();\n        context.registerBean("service02",MyService.class,()->myService);\n\n        context.registerBean("service03", MyService.class,() -> myService,bd -> {\n            bd.setLazyInit(true);\n            bd.setPrimary(true);\n        });\n        /////\n\n    }\n}'
+  }
+/>
+
+<SourceBlock id="register-bean-gap" source="gpt">
+
+این فایل نمونهٔ API ثبت است و یک سرویس آمادهٔ استفادهٔ کامل نیست: `Config` خالی است و `MyRepository` ثبت نشده. در آزمایش، ثبت تعریف ممکن بود ولی `getBean("service01")` به `UnsatisfiedDependencyException` رسید. برای استفاده باید وابستگی سرویس را نیز ثبت کنید؛ `@Component` روی Repository بدون اسکن، آن را وارد این context نمی‌کند.
+
+همچنین `lazy` در تعریف نمی‌تواند ساختی را که خودتان قبلاً با `new MyService()` انجام داده‌اید به عقب بیندازد. Supplierِ بازگردانندهٔ شیء موجود را با Supplierِ سازندهٔ نمونهٔ جدید در لحظهٔ فراخوانی اشتباه نگیرید.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## ساخت Bean با static factory method [#static-factory]
+
+<SourceBlock id="static-factory-explanation" source="teacher" recording="teacher-04-part1" timestamp="46:00">
+
+گاهی شیء از یک متد کارخانه‌ای کتابخانه به‌دست می‌آید. استاد `BeanOneFactory` را می‌سازد: یک فیلد `static final` نمونه را نگه می‌دارد و `getInstance()` آن را برمی‌گرداند. در XML، `class` به **کلاس کارخانه** اشاره می‌کند و `factory-method` نام متدی است که شیء واقعی را تحویل می‌دهد.
+
+بنابراین نوع Beanِ دریافت‌شده از کانتینر، نوع خروجی متد است؛ در این نمونه `BeanOne` می‌گیریم، نه شیء `BeanOneFactory`. در پیکربندی Java هم می‌توان متد کارخانه را داخل متد `@Bean` فراخوانی کرد. هدف این مثال شناخت راه ورود اشیایی است که روش ساختشان از قبل در یک کتابخانه تعریف شده است.
+
+</SourceBlock>
+
+<CodeExample
+  id="static-factory-method"
+  source="teacher"
+  lang="java"
+  filename="BeanOneFactory.java"
+  repositoryPath="session4/src/main/java/ir/digixo/p01beanDefinition/p05staticFactoryMethod/BeanOneFactory.java"
+  caption="Factory یک نمونهٔ ازپیش‌نگهداری‌شده را از متد static برمی‌گرداند."
+  code={
+    'package ir.digixo.p01beanDefinition.p05staticFactoryMethod;\n\npublic class BeanOneFactory {\n\n    private static final BeanOne instance=new BeanOne();\n\n    public static BeanOne getInstance() {\n        return instance;\n    }\n}'
+  }
+/>
+
+<CodeExample id="static-factory-xml" source="teacher" lang="xml" filename="config.xml" repositoryPath="session4/src/main/java/ir/digixo/p01beanDefinition/p05staticFactoryMethod/config.xml" caption="کلاس کارخانه و نام متد سازندهٔ محصول در XML." code={"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<beans xmlns=\"http://www.springframework.org/schema/beans\"\n       xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n       xmlns:c=\"http://www.springframework.org/schema/c\"\n       xmlns:p=\"http://www.springframework.org/schema/p\"\n       xsi:schemaLocation=\"http://www.springframework.org/schema/beans\n       http://www.springframework.org/schema/beans/spring-beans.xsd\">\n\n    <!--business obj-->\n\n\n   <bean class=\"ir.digixo.p01beanDefinition.p05staticFactoryMethod.BeanOneFactory\" id=\"beanOne\"\n         factory-method=\"getInstance\"/>\n\n\n\n</beans>"} />
+
+<SourceBlock id="factory-singleton-distinction" source="gpt">
+
+در این کد، نگه‌داشتن نمونه در فیلد `static` تصمیمِ خود کلاس Factory است. آن را با scopeِ `singleton` در Spring یکی نگیرید؛ اولی به منطق کلاس و دومی به نحوهٔ مدیریت تعریف Bean در یک کانتینر مربوط است. همچنین نام کلاس `BeanOneFactory` به معنی پیاده‌سازی interfaceِ `FactoryBean` نیست.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## وابستگی به قرارداد و انتخاب با Qualifier [#abstraction-and-qualifier]
+
+<SourceBlock id="abstraction-and-qualifier-explanation" source="teacher" recording="teacher-04-part1" timestamp="52:30">
+
+سرویس به interfaceِ `Repository` وابسته می‌شود و دو پیاده‌سازی `MysqlRepository` و `OracleRepository` آن را اجرا می‌کنند. به‌این‌ترتیب نوع وابستگیِ سرویس، قراردادِ موردنیازش است؛ انتخاب پیاده‌سازی به پیکربندی سپرده می‌شود. متد `create()` در این مثال‌ها پیام چاپ می‌کند و اتصال واقعی به پایگاه داده برقرار نمی‌شود.
+
+وقتی هر دو پیاده‌سازی Bean باشند، نوشتن `Repository` به‌تنهایی معلوم نمی‌کند کدام باید تزریق شود. در اجرای کلاس، `UnsatisfiedDependencyException` دیده می‌شود و علت درونی خطا توضیح می‌دهد که به‌جای یک کاندیدا، دو مورد پیدا شده است. `@Autowired` محل دریافت وابستگی و `@Qualifier("mysql")` انتخاب موردنظر را روشن می‌کند.
+
+استاد در ادامه تزریق را از فیلد به setter می‌برد و تأکید می‌کند تمرین‌ها هم به قرارداد وابسته باشند. مثال «نیاز به یک نجار، نه یک شخص مشخص» برای توضیح همین وابستگی به نقش است. این طراحی وابستگی را صفر نمی‌کند؛ آن را از پیاده‌سازی مشخص به قرارداد منتقل می‌کند.
+
+</SourceBlock>
+
+<CodeExample
+  id="abstraction-service"
+  source="teacher"
+  lang="java"
+  filename="MyService.java"
+  repositoryPath="session4/src/main/java/ir/digixo/p02abstraction/MyService.java"
+  caption="نمونهٔ نهایی این بخش، تزریق از setter و انتخاب MySQL است."
+  code={
+    'package ir.digixo.p02abstraction;\n\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.beans.factory.annotation.Qualifier;\nimport org.springframework.stereotype.Component;\n\n@Component\npublic class MyService {\n    //has-a\n\n\n\n    private Repository repository;\n\n\n    public Repository getRepository() {\n        return repository;\n    }\n    @Autowired\n    public void setRepository(@Qualifier("mysql") Repository repository) {\n        this.repository = repository;\n    }\n}'
+  }
+/>
+
+</section>
+
+<section data-source-group>
+
+## تزریق از سازنده در سه نوع پیکربندی [#constructor-injection]
+
+<SourceBlock id="constructor-injection-explanation" source="teacher" recording="teacher-04-part1" timestamp="01:05:00">
+
+سرویس برای ساخته‌شدن، `Repository` می‌گیرد. همان کلاس می‌تواند با XML، annotation یا پیکربندی Java متصل شود؛ تغییر شکل پیکربندی، نقش پارامتر سازنده را عوض نمی‌کند. interface بودن پارامتر مانع تزریق نیست؛ نمونهٔ واقعی باید پیاده‌سازی سازگار آن باشد.
+
+در XML، دو Repository با نام `repo1` و `repo2` تعریف شده‌اند و `c:_0-ref="repo2"` به آرگومان شمارهٔ صفر، ارجاع Oracle می‌دهد. `ref` ارجاع به Bean است و با مقدار رشته‌ای ساده تفاوت دارد. شماره‌گذاری آرگومان‌ها از صفر شروع می‌شود.
+
+در نسخهٔ annotation، سازنده با `@Autowired` مشخص و پارامتر با `@Qualifier("oracle")` محدود می‌شود. استاد همین‌جا توضیح می‌دهد که `component-scan` پردازش annotationهای تزریق را نیز فعال می‌کند؛ افزودن جداگانهٔ `annotation-config` در حالت معمول این مثال تکراری است.
+
+در نسخهٔ Java، خود متد `@Bean` یک Repository با qualifier می‌گیرد و با `new MyService(repository)` به سازنده می‌دهد. ابتدا `@Primary` هم برای حل ابهام امتحان می‌شود، سپس استاد به Qualifier صریح برمی‌گردد. هر سه نسخهٔ موجود در بررسی اجرا، Oracle را انتخاب کردند.
+
+</SourceBlock>
+
+<CodeExample id="constructor-xml" source="teacher" lang="xml" filename="config.xml" repositoryPath="session4/src/main/java/ir/digixo/p03DI/p01constructor/p01Xml/config.xml" caption="ارجاع صریح به repo2 با c:_0-ref؛ تعریف‌ها از XML می‌آیند." code={"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<beans xmlns=\"http://www.springframework.org/schema/beans\"\n       xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n       xmlns:c=\"http://www.springframework.org/schema/c\"\n       xmlns:p=\"http://www.springframework.org/schema/p\"\n       xmlns:context=\"http://www.springframework.org/schema/context\"\n       xsi:schemaLocation=\"http://www.springframework.org/schema/beans\n       http://www.springframework.org/schema/beans/spring-beans.xsd\n       http://www.springframework.org/schema/context\n       https://www.springframework.org/schema/context/spring-context.xsd\">\n\n    <!--business obj-->\n\n\n\n\n\n    <bean class=\"ir.digixo.p03DI.p01constructor.p01Xml.MysqlRepository\" name=\"repo1\"/>\n    <bean class=\"ir.digixo.p03DI.p01constructor.p01Xml.OracleRepository\" name=\"repo2\"/>\n\n\n    <bean class=\"ir.digixo.p03DI.p01constructor.p01Xml.MyService\" name=\"service1\" c:_0-ref=\"repo2\"/>\n\n\n\n\n\n\n\n</beans>"} />
+
+<CodeExample
+  id="constructor-annotation"
+  source="teacher"
+  lang="java"
+  filename="MyService.java"
+  repositoryPath="session4/src/main/java/ir/digixo/p03DI/p01constructor/p02Annotation/MyService.java"
+  caption="پارامتر از نوع قرارداد است و Qualifier پیاده‌سازی را مشخص می‌کند."
+  code={
+    'package ir.digixo.p03DI.p01constructor.p02Annotation;\n\n\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.beans.factory.annotation.Qualifier;\nimport org.springframework.stereotype.Component;\n\n@Component("service")\npublic class MyService {\n    //has-a\n\n\n\n\n    private Repository repository;\n\n\n    //todo:constructor\n    @Autowired\n    public MyService(@Qualifier("oracle") Repository repository) {\n        this.repository = repository;\n    }\n\n    public Repository getRepository() {\n        return repository;\n    }\n\n    public void setRepository(Repository repository) {\n        this.repository = repository;\n    }\n}'
+  }
+/>
+
+<CodeExample
+  id="constructor-java"
+  source="teacher"
+  lang="java"
+  filename="Config.java"
+  repositoryPath="session4/src/main/java/ir/digixo/p03DI/p01constructor/p03ClassConfig/Config.java"
+  caption="پارامتر متد Bean را Spring فراهم می‌کند؛ انتقال آن به سازنده صریح است."
+  code={
+    'package ir.digixo.p03DI.p01constructor.p03ClassConfig;\n\nimport org.springframework.beans.factory.annotation.Qualifier;\nimport org.springframework.context.annotation.Bean;\nimport org.springframework.stereotype.Component;\n\n@Component\npublic class Config {\n\n    @Bean\n    public MyService myService(@Qualifier("oracle") Repository repository)\n    {\n        return new MyService(repository);\n    }\n\n    @Bean("oracle")\n    public Repository OracleRepository()\n    {\n        return new OracleRepository();\n    }\n    @Bean("mysql")\n    public Repository mysqlRepository()\n    {\n        return new MysqlRepository();\n    }\n}'
+  }
+/>
+
+<SourceBlock id="explicit-xml-not-ambiguity" source="gpt">
+
+ارجاع صریح XML در همین مثال، انتخاب را بی‌ابهام می‌کند؛ از آن نتیجه نگیرید که XML هرگز ابهام ندارد. XML با `autowire="byType"` یا فراخوانی `getBean(SomeType.class)` روی چند Bean هم‌نوع نیز می‌تواند به ابهام برسد؛ نمونهٔ Target در همین جلسه این تفاوت را نشان می‌دهد.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## تزریق از setter و تفاوت ترتیب ساخت [#setter-injection]
+
+<SourceBlock id="setter-injection-explanation" source="teacher" recording="teacher-04-part1" timestamp="01:27:00" summary="در تزریق setter، شیء ابتدا ساخته و سپس وابستگی به آن داده می‌شود؛ این ترتیب به‌تنهایی تزریق را تا بعد از startup عقب نمی‌اندازد.">
+
+در این روش، ابتدا نمونه ساخته می‌شود و سپس setter وابستگی را دریافت می‌کند. نمونهٔ XML از `p:repository-ref="repo1"` استفاده می‌کند و MySQL را می‌دهد. در نسخهٔ annotation، `@Autowired` روی `setRepository` و `@Qualifier("oracle")` روی پارامتر آن قرار دارد. در نسخهٔ Java، متد `@Bean` پس از ساخت سرویس، setter را صدا می‌زند و سپس سرویس را برمی‌گرداند.
+
+نتیجهٔ بررسی نسخه‌های مخزن: XMLِ setter، MySQL و دو نسخهٔ annotation و Java، Oracle را دریافت می‌کنند. پس تفاوت خروجی این فایل‌ها از انتخاب پیکربندی می‌آید؛ «setter» خودش قاعده‌ای برای ترجیح یک پایگاه داده ندارد. هنگام نوشتن Java Config، هشدار فراخوانی مستقیم متد Bean دیده می‌شود؛ استاد کمی بعد متوجه می‌شود کلاس را Component گذاشته و آن را به Configuration اصلاح می‌کند. توضیح تفاوت این دو حالت در یادداشت بعد از کد آمده است.
+
+استاد دلیل ترجیح سازنده را آماده‌شدن شیء همراه با وابستگی‌هایش توضیح می‌دهد و برای وابستگی فراهم‌نشده در زمان startup، setter را مطرح می‌کند. این بخش از مقایسه نیاز به محدودیت دقیق زیر دارد.
+
+</SourceBlock>
+
+<TechnicalCorrection id="setter-timing-correction" corrects="setter-injection-explanation" statement="اگر وابستگی هنگام startup فراهم نیست، می‌توان به‌جای سازنده از setter استفاده کرد." correction="تزریق معمول setter نیز هنگام آماده‌سازی Bean انجام می‌شود؛ یک setterِ Autowired با وابستگی اجباریِ موجودنبودنی همچنان خطا می‌دهد. setter به‌خودی‌خود سازوکار انتظار تا بعد از startup نیست." reason="اگر وابستگی واقعاً دیرتر فراهم می‌شود، باید طراحیِ دریافت دیرهنگام یا اختیاری بودن آن را صریح مشخص کرد؛ عوض‌کردن سازنده با setter کافی نیست.">
+
+[ترتیب ایجاد و مقداردهی وابستگی‌ها در Spring](https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html).
+
+</TechnicalCorrection>
+
+<CodeExample id="setter-xml" source="teacher" lang="xml" filename="config.xml" repositoryPath="session4/src/main/java/ir/digixo/p03DI/p02Setter/p01Xml/config.xml" caption="p:repository-ref مقدار شیء را به setter می‌دهد؛ p:repository بدون ref مقدار ساده است." code={"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<beans xmlns=\"http://www.springframework.org/schema/beans\"\n       xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n       xmlns:c=\"http://www.springframework.org/schema/c\" xmlns:p=\"http://www.springframework.org/schema/p\"\n       xsi:schemaLocation=\"http://www.springframework.org/schema/beans\n       http://www.springframework.org/schema/beans/spring-beans.xsd\">\n\n    <!--business obj-->\n\n\n\n\n\n    <bean class=\"ir.digixo.p03DI.p02Setter.p01Xml.MysqlRepository\" name=\"repo1\"/>\n    <bean class=\"ir.digixo.p03DI.p02Setter.p01Xml.OracleRepository\" name=\"repo2\"/>\n\n\n    <bean class=\"ir.digixo.p03DI.p02Setter.p01Xml.MyService\" name=\"service1\" p:repository-ref=\"repo1\"/>\n\n\n\n\n\n\n\n</beans>"} />
+
+<CodeExample
+  id="setter-java"
+  source="teacher"
+  lang="java"
+  filename="Config.java"
+  repositoryPath="session4/src/main/java/ir/digixo/p03DI/p02Setter/p03ClassConfig/Config.java"
+  caption="ساخت سرویس، فراخوانی setter و سپس تحویل نتیجه به کانتینر."
+  code={
+    'package ir.digixo.p03DI.p02Setter.p03ClassConfig;\n\nimport org.springframework.beans.factory.annotation.Qualifier;\nimport org.springframework.context.annotation.Bean;\nimport org.springframework.context.annotation.Configuration;\nimport org.springframework.stereotype.Component;\n\n@Configuration\npublic class Config {\n\n    @Bean\n    public MyService myService()\n    {\n        MyService myService = new MyService();\n        myService.setRepository(oracleRepository());\n        return myService;\n    }\n\n    @Bean("oracle")\n    public Repository oracleRepository()\n    {\n        return new OracleRepository();\n    }\n   @Bean("mysql")\n    public Repository mysqlRepository()\n    {\n        return new MysqlRepository();\n    }\n}'
+  }
+/>
+
+<SourceBlock id="configuration-methods" source="gpt">
+
+در نمونهٔ setter، کلاس دارای `@Configuration` است و با تنظیم پیش‌فرض، فراخوانی `oracleRepository()` از متد دیگر از مدیریت Spring عبور می‌کند. در مقابل، کلاس `Config` نمونهٔ سازنده فقط `@Component` دارد و از پارامتر متد برای دریافت وابستگی استفاده می‌کند. در حالت سبک یا `proxyBeanMethods=false`، فراخوانی مستقیم متد `@Bean` یک فراخوانی معمول Java است؛ این دو الگو را بی‌توجه به تنظیم کلاس جابه‌جا نکنید. [تفاوت حالت‌های پیکربندی Java](https://docs.spring.io/spring-framework/reference/core/beans/java/basic-concepts.html)
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## وابستگی دوری: ساخت کدام شیء باید اول تمام شود؟ [#circular-dependencies]
+
+<SourceBlock id="circular-dependencies-explanation" source="teacher" recording="teacher-04-part1" timestamp="01:36:00">
+
+در ضبط، ابتدا `BeanOne` برای ساخت به `BeanTwo` احتیاج دارد و BeanTwo نیز در سازنده BeanOne می‌خواهد. ساخت کانتینر به خطای وابستگی دوری می‌رسد: هیچ‌کدام نمی‌تواند ساخت کامل دیگری را پیش‌نیاز خود قرار دهد. استاد این وضعیت را نشانهٔ مسئله در طراحی می‌داند و توصیه می‌کند از رسیدن به چنین وابستگی‌ای جلوگیری شود.
+
+سپس مثال به سازندهٔ بدون آرگومان و setterِ علامت‌خورده با `@Autowired` تبدیل می‌شود و در کلاس اجرا می‌شود. فایل‌های موجود `p03DI/p03` همین حالت دوم را نگه داشته‌اند؛ اجرای آن‌ها در یک `AnnotationConfigApplicationContext` معمولی نیز موفق بود. این نمونه تفاوت مرحلهٔ ساخت و مرحلهٔ مقداردهی را نشان می‌دهد، نه توصیه به ایجاد چرخه.
+
+تمرین مطرح‌شده برای جلسهٔ بعد: دو راه دیگرِ برخورد با این مسئله را بررسی کنید. پاسخ این تمرین در ضبط حاضر داده نمی‌شود؛ آن را به‌عنوان محتوای تدریس‌شده بازسازی نمی‌کنیم.
+
+</SourceBlock>
+
+<CodeExample
+  id="circular-one"
+  source="teacher"
+  lang="java"
+  filename="BeanOne.java"
+  repositoryPath="session4/src/main/java/ir/digixo/p03DI/p03/BeanOne.java"
+  caption="یک سوی رابطهٔ دوری؛ BeanTwo نیز setter وابسته به BeanOne دارد."
+  code={
+    'package ir.digixo.p03DI.p03;\n\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.stereotype.Component;\n\n@Component\npublic class BeanOne {\n    private BeanTwo beanTwo;\n\n    public BeanOne() {\n\n    }\n\n    public BeanTwo getBeanTwo() {\n        return beanTwo;\n    }\n\n    @Autowired\n    public void setBeanTwo(BeanTwo beanTwo) {\n        this.beanTwo = beanTwo;\n    }\n}'
+  }
+/>
+
+<SourceBlock id="circular-limits" source="gpt">
+
+چرخهٔ سازندهٔ مستقیم، مانند A که برای ساخته‌شدن B می‌خواهد و B که A می‌خواهد، بدون راهکار واسط قابل حل نیست. بعضی چرخه‌های setter میان singletonها در Spring Framework قابل مدیریت‌اند؛ این نتیجه را به هر scope، proxy یا تنظیم Spring Boot تعمیم ندهید.
+
+برای وابستگی ضروری، سازنده قرارداد روشن‌تری می‌سازد و امکان فیلد `final` را می‌دهد. برخورد با چرخه معمولاً فرصتی برای بازبینی مسئولیت‌هاست؛ صرفاً برای خاموش‌کردن خطا همه‌چیز را setter نکنید. [مرجع DI و چرخه‌ها](https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html)
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## Inject و Named: زبان مشترک تزریق [#jakarta-inject]
+
+<SourceBlock id="jakarta-inject-explanation" source="teacher" recording="teacher-04-part2" timestamp="06:00">
+
+در بخش دوم، استاد وابستگی `jakarta.inject-api:2.0.1` را اضافه می‌کند و سه نقش را از هم نشان می‌دهد: `@Named` روی کلاس برای معرفی نام component قابل‌اسکن، `@Inject` روی محل تزریق، و `@Named("mysql")` روی پارامتر برای محدودکردن انتخاب. اسکن پکیج و `ApplicationContext` همچنان متعلق به Spring هستند.
+
+خود استاد تأکید می‌کند که اینجا موتور CDI به برنامه اضافه نشده؛ Spring annotationهای استاندارد را تفسیر می‌کند. اضافه‌شدن JARِ API به‌تنهایی کانتینر نمی‌سازد. در اجرای کلاس، خطای انتخاب Bean با بررسی نام‌ها و پکیج‌ها دنبال می‌شود؛ نسخهٔ موجود کد، MySQL را به setter می‌دهد.
+
+انگیزهٔ استفاده از این قراردادها، کم‌کردن وابستگی سورس به annotation اختصاصی یک فریم‌ورک و انتقال دانش بین پروژه‌هاست. استاد مثال JPA و Hibernate را هم برای تفکیک قرارداد از محصول مطرح می‌کند. این مزیت را با تضمین انتقال بی‌تغییر تمام پیکربندی، scope و امکانات فریم‌ورک اشتباه نگیرید.
+
+</SourceBlock>
+
+<CodeExample
+  id="inject-named-code"
+  source="teacher"
+  lang="java"
+  filename="MyService.java"
+  repositoryPath="session4/src/main/java/ir/digixo/p03DI/p05jsr330/MyService.java"
+  caption="Inject محل تزریق و Named روی پارامتر، Bean موردنظر را مشخص می‌کند."
+  code={
+    'package ir.digixo.p03DI.p05jsr330;\n\n\nimport jakarta.inject.Inject;\nimport jakarta.inject.Named;\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.beans.factory.annotation.Qualifier;\n\n//@Component("service")\n@Named(value = "service")\npublic class MyService {\n    //has-a\n\n\n\n\n    private Repository repository;\n\n\n    //todo:constructor\n\n\n    public MyService() {\n    }\n\n    public Repository getRepository() {\n        return repository;\n    }\n    @Inject\n    public void setRepository(@Named("mysql") Repository repository) {\n        this.repository = repository;\n    }\n}'
+  }
+/>
+
+</section>
+
+<section data-source-group>
+
+## Resource: نام منبع را صریح بگو [#jakarta-resource]
+
+<SourceBlock id="jakarta-resource-explanation" source="teacher" recording="teacher-04-part2" timestamp="21:00">
+
+در مثال JSR-250، وابستگی `jakarta.annotation-api:3.0.0` اضافه می‌شود. به‌جای `@Inject` و qualifier روی پارامتر، `@Resource(name="oracle")` روی setter قرار می‌گیرد. نام موردنظر همین‌جا نوشته شده و نسخهٔ موجود و اجرای بررسی‌شده، Repository اوراکل را انتخاب می‌کند.
+
+استاد هنگام توضیح Resource به JNDI و استانداردهای Jakarta اشاره می‌کند. در **این نمونهٔ Spring**، نام `oracle` به Bean داخل کانتینر مربوط است؛ برای اجرای همین مثال سرویس JNDI جداگانه راه‌اندازی نشده است. `@Named("service")` روی کلاس از APIِ Inject می‌آید، حتی اگر پوشهٔ مثال `p04jsr250` نام داشته باشد.
+
+</SourceBlock>
+
+<CodeExample
+  id="resource-code"
+  source="teacher"
+  lang="java"
+  filename="MyService.java"
+  repositoryPath="session4/src/main/java/ir/digixo/p03DI/p04jsr250/MyService.java"
+  caption="Resource روی setter: انتخاب Bean با نام oracle."
+  code={
+    'package ir.digixo.p03DI.p04jsr250;\n\n\nimport jakarta.annotation.Resource;\nimport jakarta.inject.Inject;\nimport jakarta.inject.Named;\n\n//@Component("service")\n@Named(value = "service")\npublic class MyService {\n    //has-a\n\n\n\n\n    private Repository repository;\n\n\n    //todo:constructor\n\n\n    public MyService() {\n    }\n\n    public Repository getRepository() {\n        return repository;\n    }\n    //JNDI\n    @Resource(name = "oracle")\n    public void setRepository(Repository repository) {\n        this.repository = repository;\n    }\n}'
+  }
+/>
+
+<SourceBlock id="resource-inject-targets" source="gpt">
+
+`@Inject` می‌تواند روی سازنده، فیلد یا متد قرار گیرد. `@Resource` برای فیلد و متد است و جایگزین annotation سازنده نیست. همچنین `@Resource` بدون نام صریح در Spring قواعد پیش‌فرض انتخاب نام و سپس fallback نوع دارد؛ آن را در تمام وضعیت‌ها معادل `@Autowired` یا الزاماً جست‌وجوی JNDI ندانید. [Resource در Spring](https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/resource.html) و [پشتیبانی JSR-330](https://docs.spring.io/spring-framework/reference/core/beans/standard-annotations.html)
+
+در پاسخ پایانی کلاس، `@Named` در امتداد بحث استاندارد قدیمی و JNDI توضیح داده می‌شود؛ برای تشخیص منشأ API به import نگاه کنید: `jakarta.inject.Named` متعلق به خانوادهٔ JSR-330 است، نه JSR-250. ترکیب Named و Resource در یک کلاس، استفاده از دو API متفاوت است.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## Specification، API و پیاده‌سازی؛ چه چیزی را مطالعه کنیم؟ [#standards-and-study]
+
+<SourceBlock id="standards-and-study-explanation" source="teacher" recording="teacher-04-part2" timestamp="29:30" summary="Specification قرارداد رفتار، API ابزار کدنویسی و implementation اجرای آن قرارداد است؛ پشتیبانی Inject به‌تنهایی به معنی پیاده‌سازی کامل CDI نیست.">
+
+در پاسخ به سؤال تفاوت استانداردها، استاد سه لایه را جدا می‌کند: specification رفتار و قرارداد را تعریف می‌کند؛ API شامل annotation، کلاس و interfaceهایی است که برنامه با آن‌ها نوشته می‌شود؛ vendor آن رفتار را در یک محصول پیاده‌سازی می‌کند. هدف مطالعه برای برنامه‌نویس این است که نقش و کاربرد API را بفهمد و در صورت نیاز برای جزئیات دقیق به specification مراجعه کند.
+
+تمرین مطالعاتی کلاس، مرور `Inject`، `Named` و `Resource` و شناخت نقش هر کدام است. `PostConstruct` و `PreDestroy` نیز به‌عنوان نام‌هایی مرتبط با چرخهٔ حیات معرفی می‌شوند؛ توضیح کامل lifecycle در این بخش انجام نمی‌شود. اشاره به REST و JPA برای نشان‌دادن همین الگوی «قرارداد و پیاده‌سازی» است و موضوع اصلی جلسه همچنان DI می‌ماند.
+
+در معرفی تاریخی ابتدای بخش دوم، پیدایش این استانداردها به Java EE 8 پیوند داده می‌شود و Micronaut نیز کنار فریم‌ورک‌های CDI مطرح می‌شود؛ این دو تعبیر نیاز به تفکیک دقیق‌تر دارند.
+
+</SourceBlock>
+
+<TechnicalCorrection id="standards-history-correction" corrects="standards-and-study-explanation" statement="در معرفی تاریخی، استانداردهای DI به Java EE 8 پیوند داده می‌شوند و Micronaut در کنار CDI قرار می‌گیرد." correction="نسخهٔ نهایی JSR-330 در ۱۴ اکتبر ۲۰۰۹ منتشر شد و از Java EE 8 قدیمی‌تر است. JSR-330 مجموعهٔ قراردادهای پایهٔ تزریق است و با تمام CDI یکی نیست؛ Micronaut نیز سازوکار DI خودش را بر پایهٔ اطلاعات زمان کامپایل دارد." reason="شناخت annotation مشترک را نباید تضمین یکسان‌بودن کانتینر، scopeها یا انتقال بی‌تغییر برنامه تلقی کرد.">
+
+[تاریخچهٔ رسمی JSR-330](https://www.jcp.org/en/jsr/detail?id=330)؛ [راهنمای Micronaut](https://docs.micronaut.io/4.10.23/guide/).
+
+</TechnicalCorrection>
+
+</section>
+
+<section data-source-group>
+
+## Autowiring در XML: byName، byType و دو نوع ابهام [#xml-autowiring]
+
+<SourceBlock id="xml-autowiring-explanation" source="teacher" recording="teacher-04-part2" timestamp="45:00">
+
+کلاس `Target` به سه نوع `BeanOne`، `BeanTwo` و `BeanThree` وابسته است. در XML می‌توان به‌جای نوشتن جداگانهٔ هر property، از `autowire="byName"` استفاده کرد: Spring برای property قابل‌نوشتن به دنبال Bean هم‌نام می‌گردد. setterها در کلاس وجود دارند؛ «خودکار» بودن یعنی لازم نیست هر اتصال را دستی در XML بنویسیم، نه اینکه setter هیچ نقشی نداشته باشد.
+
+در `byType` نوع property ملاک جست‌وجو است. دو Bean از نوع `BeanOne` باعث می‌شوند انتخاب تک‌مقداری به قاعدهٔ رفع ابهام نیاز پیدا کند؛ استاد `primary="true"` را معرفی می‌کند. در نسخهٔ موجود، هر دو Target با `byName` ذخیره شده‌اند. اجرای همین نسخه تأیید کرد `target1.beanOne` همان Bean با نام `beanOne` است، نه `beanOne2` که primary شده؛ تنظیم primary انتخاب صریحِ نام را عوض نمی‌کند.
+
+یک خطای دیگرِ کلاس از محل تزریق نبود: دو Target ثبت شده بودند و برنامه `getBean(Target.class)` می‌خواست. استاد با کمک پرسش‌وپاسخ، محل خطا را در `Test` پیدا می‌کند و از `getBean("target1", Target.class)` استفاده می‌کند. همیشه نوعی را که پیام خطا نام می‌برد بخوانید؛ ابهامِ گرفتن Target با ابهامِ انتخاب وابستگی BeanOne فرق دارد.
+
+</SourceBlock>
+
+<CodeExample id="xml-autowiring-code" source="teacher" lang="xml" filename="config.xml" repositoryPath="session4/src/main/java/ir/digixo/p03DI/p06autowiring/p01xml/config.xml" caption="نسخهٔ ذخیره‌شده هر دو Target را byName تعریف می‌کند؛ byType در توضیح و آزمایش کلاس مطرح شده است." code={"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<beans xmlns=\"http://www.springframework.org/schema/beans\"\n       xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n       xmlns:c=\"http://www.springframework.org/schema/c\"\n       xmlns:p=\"http://www.springframework.org/schema/p\"\n       xsi:schemaLocation=\"http://www.springframework.org/schema/beans\n       http://www.springframework.org/schema/beans/spring-beans.xsd\">\n\n    <!--business obj-->\n\n\n    <bean class=\"ir.digixo.p03DI.p06autowiring.p01xml.BeanOne\" name=\"beanOne\"/>\n    <bean class=\"ir.digixo.p03DI.p06autowiring.p01xml.BeanOne\" name=\"beanOne2\" primary=\"true\"/>\n    <bean class=\"ir.digixo.p03DI.p06autowiring.p01xml.BeanTwo\" name=\"beanTwo\"/>\n    <bean class=\"ir.digixo.p03DI.p06autowiring.p01xml.BeanThree\" name=\"beanThree\"/>\n\n\n\n    <bean class=\"ir.digixo.p03DI.p06autowiring.p01xml.Target\" id=\"target1\" autowire=\"byName\" />\n    <bean class=\"ir.digixo.p03DI.p06autowiring.p01xml.Target\" id=\"target2\" autowire=\"byName\"/>\n\n\n\n\n\n\n</beans>"} />
+
+</section>
+
+<section data-source-group>
+
+## یک سازندهٔ مشخص؛ بدون Autowired هم تزریق می‌شود [#single-constructor]
+
+<SourceBlock id="single-constructor-explanation" source="teacher" recording="teacher-04-part2" timestamp="54:00">
+
+در نسخهٔ annotation، کلاس‌های مثال با `@Component` ثبت می‌شوند و پکیجشان اسکن می‌شود. استاد مشاهده می‌کند که وقتی کلاس Target فقط **یک سازنده** دارد، وابستگی‌های پارامترهای آن بدون نوشتن `@Autowired` تأمین می‌شوند. شرط دربارهٔ تعداد سازنده‌های کلاس است، نه تعداد پارامترهای سازنده.
+
+در ادامه یکی از وابستگی‌ها از ورودی سازنده حذف می‌شود. همان دو پارامتر باقی‌مانده تزریق می‌شوند؛ فیلدی که دیگر نه در سازنده مقدار گرفته و نه نقطهٔ تزریق دیگری دارد، خودبه‌خود مقدار نمی‌گیرد. نسخهٔ نهایی مخزن هر سه پارامتر را دارد و اجرای آن نیز تزریق را تأیید کرد.
+
+در آزمایش قبلی، باقی‌ماندن سازندهٔ بدون آرگومان مسیر ساخت را تغییر داده بود. اگر چند سازنده دارید، قاعدهٔ تک‌سازنده دیگر کافی نیست و باید انتخاب سازنده و annotationها را دقیق بررسی کنید.
+
+</SourceBlock>
+
+<CodeExample
+  id="single-constructor-code"
+  source="teacher"
+  lang="java"
+  filename="Target.java"
+  repositoryPath="session4/src/main/java/ir/digixo/p03DI/p06autowiring/p02annotation/Target.java"
+  caption="یک سازنده با سه وابستگی؛ تعداد آرگومان‌ها محدود به یک نیست."
+  code={
+    'package ir.digixo.p03DI.p06autowiring.p02annotation;\n\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.stereotype.Component;\n\n@Component\npublic class Target {\n    //todo: only one constructor\n\n    private BeanOne beanOne;\n    private BeanTwo beanTwo;\n    private BeanThree beanThree;\n\n\n\n\n    //@Autowired\n    public Target(BeanOne beanOne, BeanTwo beanTwo, BeanThree beanThree) {\n        this.beanOne = beanOne;\n        this.beanTwo = beanTwo;\n        this.beanThree = beanThree;\n    }\n\n    public BeanOne getBeanOne() {\n        return beanOne;\n    }\n\n    public void setBeanOne(BeanOne beanOne) {\n        this.beanOne = beanOne;\n    }\n\n    public BeanTwo getBeanTwo() {\n        return beanTwo;\n    }\n\n    public void setBeanTwo(BeanTwo beanTwo) {\n        this.beanTwo = beanTwo;\n    }\n\n    public BeanThree getBeanThree() {\n        return beanThree;\n    }\n\n    public void setBeanThree(BeanThree beanThree) {\n        this.beanThree = beanThree;\n    }\n}'
+  }
+/>
+
+<SourceBlock id="single-constructor-limit" source="gpt">
+
+این قاعده وجود Beanهای موردنیاز را تضمین نمی‌کند: اگر برای یک پارامتر هیچ کاندیدا یا چند کاندیدای حل‌نشده وجود داشته باشد، ساخت سرویس شکست می‌خورد. وابستگی اختیاری و انتخاب میان چند سازنده قواعد جداگانه دارند. [مرجع Autowired و سازنده‌ها](https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/autowired.html)
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## idref: نام معتبر Bean، نه خود Bean [#idref]
+
+<SourceBlock id="idref-explanation" source="teacher" recording="teacher-04-part2" timestamp="57:30">
+
+گاهی یک property از نوع `String` باید نام Bean دیگری را نگه دارد. `value="beanTwo"` فقط یک رشته می‌دهد و وجود Bean با این نام را تضمین نمی‌کند. `idref` نام Bean را به‌عنوان رشته تحویل می‌دهد و وجود ارجاع را بررسی می‌کند.
+
+در مثال، `BeanOne.name` همچنان String است. `idref bean="beanTwo"` باعث نمی‌شود شیء BeanTwo به فیلد String تزریق شود؛ خروجی `getName()` همان متن `beanTwo` است. پرسش‌وپاسخ کلاس دقیقاً همین سوءبرداشت را روشن می‌کند: `ref` برای ارجاعِ شیء و `idref` برای نام معتبرِ آن است.
+
+</SourceBlock>
+
+<CodeExample id="idref-code" source="teacher" lang="xml" filename="config.xml" repositoryPath="session4/src/main/java/ir/digixo/p04idref/config.xml" caption="نام beanTwo به property رشته‌ای داده می‌شود؛ خروجی تأییدشده beanTwo است." code={"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<beans xmlns=\"http://www.springframework.org/schema/beans\"\n       xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n       xmlns:c=\"http://www.springframework.org/schema/c\"\n       xmlns:p=\"http://www.springframework.org/schema/p\"\n       xsi:schemaLocation=\"http://www.springframework.org/schema/beans\n       http://www.springframework.org/schema/beans/spring-beans.xsd\">\n\n    <!--business obj-->\n\n\n    <bean class=\"ir.digixo.p04idref.BeanOne\">\n        <property name=\"name\">\n          <!--<value>efdefdfdfdf</value>-->\n            <idref bean=\"beanTwo\"/>\n        </property>\n    </bean>\n\n    <bean class=\"ir.digixo.p04idref.BeanTwo\" id=\"beanTwo\"/>\n\n\n\n\n</beans>"} />
+
+</section>
+
+<section data-source-group>
+
+## Inner Bean: تعریف وابستگی داخل تعریف مصرف‌کننده [#inner-bean]
+
+<SourceBlock id="inner-bean-explanation" source="teacher" recording="teacher-04-part2" timestamp="01:06:00">
+
+در این مثال، BeanOne یک property از نوع BeanTwo دارد. به‌جای معرفی جداگانهٔ BeanTwo در سطح بالای فایل و دادن `ref`، تعریف آن داخل `property` نوشته می‌شود. همان تعریف داخلی هم می‌تواند property داشته باشد؛ اینجا `name` مقدار `hijh` می‌گیرد.
+
+در اجرای مثال، مسیر `beanOne.getBeanTwo().getName()` به مقدار داخلی می‌رسد. هدف این ساختار، توصیف یک وابستگی در همان محل مصرف است؛ ظاهر تودرتوی XML را با ارث‌بری کلاس‌های Java اشتباه نگیرید.
+
+</SourceBlock>
+
+<CodeExample id="inner-bean-code" source="teacher" lang="xml" filename="config.xml" repositoryPath="session4/src/main/java/ir/digixo/p05innerBean/config.xml" caption="BeanTwo داخل propertyِ BeanOne تعریف و مقداردهی شده است." code={"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<beans xmlns=\"http://www.springframework.org/schema/beans\"\n       xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n       xsi:schemaLocation=\"http://www.springframework.org/schema/beans\n       http://www.springframework.org/schema/beans/spring-beans.xsd\">\n\n    <!--business obj-->\n\n\n    <bean class=\"ir.digixo.p05innerBean.BeanOne\" id=\"beanOne\">\n       <property name=\"beanTwo\">\n           <bean class=\"ir.digixo.p05innerBean.BeanTwo\">\n               <property name=\"name\" value=\"hijh\"/>\n           </bean>\n       </property>\n    </bean>\n\n\n\n\n\n\n</beans>"} />
+
+<SourceBlock id="inner-bean-identity" source="gpt">
+
+Inner Bean برای دریافت مستقل از کانتینر با یک نام عمومی تعریف نشده است؛ صرف نوشتن `id` روی آن، آن را مانند Bean سطح بالای فایل قابل lookup نمی‌کند. برای وابستگی مشترک میان چند مصرف‌کننده، تعریف مستقل و ارجاع روشن معمولاً مدل مناسب‌تری است. [مرجع Inner Bean و idref](https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-properties-detailed.html)
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## depends-on و اثر آن بر Beanهای lazy [#depends-on]
+
+<SourceBlock id="depends-on-explanation" source="teacher" recording="teacher-04-part2" timestamp="01:12:00">
+
+در آخرین مثال، سه Bean فقط در سازنده پیام چاپ می‌کنند. ابتدا آماده‌سازی eagerِ singletonهای معمول دیده می‌شود؛ سپس `lazy-init` زمان ساخت را تغییر می‌دهد. استاد برای BeanOne می‌نویسد `depends-on="beanTwo,beanThree"` تا وابستگی ترتیب مقداردهی را اعلام کند.
+
+حتی اگر BeanTwo و BeanThree lazy باشند، وقتی BeanOne برای آماده‌شدن به آن‌ها وابسته اعلام شده، باید پیش از آن آماده شوند. خروجی نسخهٔ بررسی‌شده به‌ترتیب «bean two created»، «bean three created» و «bean one created» بود. این خروجی از شروع کانتینر به‌دست می‌آید؛ کلاس Context نیازی به `getBean` جداگانه برای این آزمایش ندارد.
+
+کاربرد مطرح‌شده، آماده‌بودن یک پیش‌نیاز مانند زیرساخت داده یا مقداردهی اولیه پیش از مصرف است. استاد صریحاً می‌گوید بحث تمام نشده و ادامهٔ annotationِ depends-on و mixed configuration به جلسهٔ بعد می‌رسد.
+
+</SourceBlock>
+
+<CodeExample id="depends-on-code" source="teacher" lang="xml" filename="config.xml" repositoryPath="session4/src/main/java/ir/digixo/p06dependon/p01xml/config.xml" caption="وابستگی ترتیبِ BeanOne به دو Beanِ lazy." code={"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<beans xmlns=\"http://www.springframework.org/schema/beans\"\n       xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n       xsi:schemaLocation=\"http://www.springframework.org/schema/beans\n       http://www.springframework.org/schema/beans/spring-beans.xsd\">\n\n    <!--business obj-->\n\n\n    <bean class=\"ir.digixo.p06dependon.p01xml.BeanOne\" id=\"beanOne\" depends-on=\"beanTwo,beanThree\"/>\n    <bean class=\"ir.digixo.p06dependon.p01xml.BeanTwo\" id=\"beanTwo\" lazy-init=\"true\"/>\n    <bean class=\"ir.digixo.p06dependon.p01xml.BeanThree\" id=\"beanThree\" lazy-init=\"true\"/>\n\n\n\n\n\n\n\n\n</beans>"} />
+
+<SourceBlock id="depends-on-not-injection" source="gpt">
+
+`depends-on` خودش هیچ فیلد یا setterی را مقداردهی نمی‌کند؛ اعلام ترتیب و پیش‌نیاز مقداردهی است. اگر مصرف‌کننده به خود شیء احتیاج دارد، تزریق سازنده، setter یا روش مناسب دیگر همچنان لازم است. برای singletonها این رابطه روی ترتیب تخریب هم اثر دارد. [مرجع depends-on](https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-dependson.html)
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## موضوعی که خوب است گفته شود [#practice]
+
+<SourceBlock id="practice-explanation" source="gpt">
+
+برای مرور، یکی از مثال‌های Repository را انتخاب کنید و قبل از اجرا این چهار پاسخ را بنویسید: کجا ثبت می‌شود؟ محل تزریق کجاست؟ نوع موردنیاز چیست؟ کدام نام یا qualifier انتخاب را محدود می‌کند؟ سپس یک بار نام انتخاب‌شده را عمداً اشتباه کنید و علت درونی خطا را بخوانید.
+
+در یک کپی آزمایشی، qualifier را از نمونهٔ دارای دو Repository حذف کنید؛ سپس آن را برگردانید. جداگانه دو Target بسازید و تفاوت `getBean(Target.class)` با دریافت Targetِ نام‌دار را ببینید. این تمرین دو محل مستقلِ ابهام را از هم جدا می‌کند.
+
+برای ترتیب ساخت، خروجی نمونهٔ depends-on را پیش‌بینی کنید. توضیح دهید چرا lazy بودن دو Bean، وقتی پیش‌نیاز یک Bean eager هستند، مانع ساخته‌شدنشان نشد. اگر این تفاوت را با تزریق مرجع توضیح دهید، سه مفهوم «ثبت»، «اتصال» و «ترتیب مقداردهی» را از هم تفکیک کرده‌اید.
+
+</SourceBlock>
+
+</section>
+
+## تاریخچهٔ تغییرات [#changelog]
+
+<ChangeLog />

@@ -1,7 +1,9 @@
 # Agent entry point
 
 This folder is operational memory for maintaining the Spring knowledge base.
-Current scope: the Phase 5 template plus user-authorized documentation of sessions 2 and 3.
+Current scope: the Phase 5 template plus user-authorized documentation of sessions 2, 3 and 4.
+Session 4 has two Tuesday videos and no supplied Heydari/Thursday recording. Its
+teacher code pin postdates the recording; the lesson and processing log explain this.
 Use `PROCESSING-CHECKLIST.md` for each real session and `workflows/local-transcription.md`
 for authorized local ASR. The session-specific processing logs record coverage and source limits;
 do not infer completion from the presence of a recording in frontmatter.

@@ -29,6 +29,9 @@ kb:
     - date: '2026-09-28'
       type: concept-update
       summary: جایگزینی محتوای نمایشی با مرجع مرتبط با کد واقعی جلسهٔ سوم و مستندات رسمی.
+    - date: '2026-09-28'
+      type: concept-update
+      summary: تکمیل راه‌های ثبت با Supplier و factory method و تفکیک metadata، نمونه و اتصال در جلسهٔ چهارم.
 ---
 
 import SourceBlock from '../../../components/source/SourceBlock.astro';
@@ -61,6 +64,16 @@ Bean شیئی است که کانتینر Spring آن را مدیریت می‌ک
 در این جلسه سه شیوه را می‌بینیم: تعریف XML، متد `@Bean` در پیکربندی Java و شناسایی `@Component` با component scanning. وجود annotation بدون شناسایی کلاس در کانتینر کافی نیست.
 
 نام، راه ارجاع به Bean است و با نام کلاس الزاماً یکی نیست. چند نام می‌توانند alias یک Bean باشند؛ این با چند تعریف مستقل از یک کلاس فرق دارد. تعریف Bean نیز الزاماً در همان لحظه به نمونه تبدیل نمی‌شود؛ تنظیمات scope و lazy بودن روی زمان ساخت اثر دارند. [مرجع تعریف و نام Bean](https://docs.spring.io/spring-framework/reference/core/beans/definition.html)
+
+</SourceBlock>
+
+## ثبت برنامه‌ای و روش ساخت [#programmatic-definition]
+
+<SourceBlock id="bean-programmatic-definition" source="gpt">
+
+`registerBean` می‌تواند نوع Bean، یک Supplier برای تأمین نمونه و تنظیمات تعریف را دریافت کند. Supplierِ بازگردانندهٔ یک شیء موجود با Supplierِ سازندهٔ شیء تازه یکسان نیست؛ اگر قبلاً شیء را ساخته‌اید، lazy کردن تعریف، آن ساخت قبلی را به تعویق نمی‌اندازد. ثبت سرویس نیز وابستگیِ ثبت‌نشدهٔ آن را خودکار ایجاد نمی‌کند. [مثال و محدودیت نسخهٔ استاد](/tuesday/session-04/#programmatic-registration)
+
+در XMLِ دارای `factory-method`، کلاس معرفی‌شده می‌تواند کارخانه باشد و نوع محصول با آن فرق کند. نمونهٔ جلسهٔ چهارم از `BeanOneFactory.getInstance()` یک BeanOne می‌گیرد. نگهداری staticِ نمونه در کلاس کارخانه، تصمیم آن کلاس است؛ scopeِ singleton در Spring مربوط به مدیریت تعریف Bean در کانتینر است. [مثال static factory](/tuesday/session-04/#static-factory)
 
 </SourceBlock>
 
