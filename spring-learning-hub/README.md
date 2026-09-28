@@ -186,6 +186,16 @@ Dependencies, generated output, caches and environment files are also excluded f
 
 ## Add real course content
 
+For lower-overhead recording processing, use the
+[efficient session workflow](agent/workflows/efficient-session-processing.md).
+`scripts/prepare-session.py` creates source-preserving reading packets locally using
+only Python's standard library (Python 3.10+). No API key or extra package is needed.
+Keep generated transcripts and packets private and excluded from Git.
+
+Run `npm run check:quiet` for the complete verification pipeline with compact console
+output; full logs are saved under `.cache/checks/`. Failures retain a nonzero exit code.
+Run `npm run test:packets` to test the optional Python preparation utility.
+
 Start with the [maintenance guide](agent/README.md) and [processing checklist](agent/PROCESSING-CHECKLIST.md).
 
 - Tuesday lessons live in `src/content/docs/tuesday/session-NN.mdx`; Heydari follow-ups extend the matching page.

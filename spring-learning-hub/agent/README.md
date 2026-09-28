@@ -18,6 +18,8 @@ reflection) now contain real session-3 documentation and must not be relabeled a
    file under `workflows/`. `SESSION-WORKFLOW.md` provides the common sequence.
 3. For framework/schema changes: `ARCHITECTURE.md` and affected ADRs as well.
 4. Read the affected session, new source, and directly related concepts only.
+   For recording work, follow `workflows/efficient-session-processing.md` before
+   opening transcripts. Use bounded packets and retain private coverage notes.
 5. For layout, typography, components or theme changes: `DESIGN-SYSTEM.md`.
 6. For MDX authoring and filtering: `COMPONENTS.md`; preserve the tested component contract.
 

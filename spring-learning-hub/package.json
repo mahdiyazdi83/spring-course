@@ -8,6 +8,8 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "check:quiet": "node scripts/check-quiet.mjs",
+    "test:packets": "python -m unittest discover -s tests -p test_prepare_session.py",
     "build": "npm run validate:content && astro build",
     "preview": "astro preview",
     "format": "prettier --write .",
