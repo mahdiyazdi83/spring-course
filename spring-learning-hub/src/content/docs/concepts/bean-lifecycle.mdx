@@ -1,0 +1,81 @@
+---
+title: Bean lifecycle — آماده‌سازی و پایان کار
+description: تفاوت constructor، callbackهای initialization، Awareها و cleanup هنگام بستن ApplicationContext.
+kb:
+  type: concept
+  id: bean-lifecycle
+  status: complete
+  createdAt: '2026-09-30'
+  updatedAt: '2026-09-30'
+  sources:
+    gpt:
+      references:
+        - https://docs.spring.io/spring-framework/reference/core/beans/factory-nature.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html
+        - ../teacher-files/session5/src/main/java/ir/digixo/p07BeanLifecycle
+  prerequisites: [bean, dependency-injection]
+  relatedConcepts: [application-context]
+  changes:
+    - date: '2026-09-30'
+      type: initial
+      summary: افزودن مرجع lifecycle با تمایز ساخت، آماده‌سازی و cleanup در مثال‌های جلسهٔ پنجم.
+---
+
+import SourceBlock from '../../../components/source/SourceBlock.astro';
+import PrerequisiteList from '../../../components/documentation/PrerequisiteList.astro';
+import ConceptAppearances from '../../../components/documentation/ConceptAppearances.astro';
+import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+
+## پیش‌نیاز [#prerequisites]
+
+<PrerequisiteList />
+
+## چرا constructor کافی نیست؟ [#initialization]
+
+<SourceBlock id="lifecycle-overview" source="gpt">
+
+Bean lifecycle قرارداد آماده‌سازی و پایان کار شیء تحت مدیریت Spring است. در مثال‌های setter/field injection، constructor پیش از دریافت این وابستگی‌ها اجرا می‌شود؛ پس منطق نیازمند آن‌ها را نباید صرفاً به constructor منتقل کرد. callbackِ initialization پس از تنظیم وابستگی‌ها جای مشخصی برای آماده‌سازی دارد.
+
+در [جلسهٔ پنجم](/tuesday/session-05/#lifecycle-callbacks)، پیام constructor و پیام callback جدا چاپ می‌شوند. برای خواندن خروجی، نام متد کافی نیست: در یکی از فایل‌های ذخیره‌شده، متدی به نام `myDestroy` annotationِ `@PostConstruct` دارد و هنگام initialization اجرا می‌شود.
+
+</SourceBlock>
+
+## قراردادهای متناظر [#callbacks]
+
+<SourceBlock id="callback-options" source="gpt">
+
+| روش                   | initialization                          | destruction                         |
+| --------------------- | --------------------------------------- | ----------------------------------- |
+| interfaceهای Spring   | `InitializingBean.afterPropertiesSet()` | `DisposableBean.destroy()`          |
+| metadataِ Bean        | `initMethod` یا `init-method`           | `destroyMethod` یا `destroy-method` |
+| annotationهای Jakarta | `@PostConstruct`                        | `@PreDestroy`                       |
+
+هنگام ترکیب متدهای متفاوت، ترتیب initialization برابر PostConstruct، سپس afterPropertiesSet و بعد initMethod است. این‌ها سه راه بیان یک نیاز مشابه‌اند؛ انتخاب همهٔ آن‌ها بدون نیاز روشن فقط دنبال‌کردن جریان را سخت‌تر می‌کند. [مرجع callbackها](https://docs.spring.io/spring-framework/reference/core/beans/factory-nature.html)
+
+</SourceBlock>
+
+## بستن context با GC فرق دارد [#cleanup]
+
+<SourceBlock id="context-cleanup" source="gpt">
+
+در نمونهٔ مستقل کلاس، `close()` اجرای callbackِ destruction را قابل مشاهده می‌کند. `registerShutdownHook()` نیز می‌تواند context را هنگام shutdown معمول JVM ببندد. هیچ‌کدام به معنی آزادشدن فوری حافظه توسط GC یا تضمین اجرا هنگام توقف اجباری سیستم نیستند.
+
+مرز scope را هم حفظ کنید: Spring پس از تحویل Bean با scopeِ prototype، destruction آن را مانند singletonهای تحت مدیریت پیگیری نمی‌کند؛ آزادسازی منابع آن مسئولیت مصرف‌کننده است. [مرجع scopeها](https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html)
+
+</SourceBlock>
+
+## Aware برای چه نیازی است؟ [#aware]
+
+<SourceBlock id="aware-purpose" source="gpt">
+
+`BeanNameAware` نام ثبت‌شدهٔ Bean را می‌دهد و `ApplicationContextAware` دسترسی به context را فراهم می‌کند. این callbackها ابزار اتصال به زیرساخت‌اند؛ برای دریافت وابستگی‌های عادی همچنان DI مستقیم روشن‌تر است. مثال و وضعیت ثبت shutdown-hook Bean در [جلسهٔ پنجم](/tuesday/session-05/#aware-shutdown) بررسی شده است.
+
+</SourceBlock>
+
+## حضور در جلسات [#appearances]
+
+<ConceptAppearances />
+
+## تاریخچهٔ تغییرات [#changelog]
+
+<ChangeLog />

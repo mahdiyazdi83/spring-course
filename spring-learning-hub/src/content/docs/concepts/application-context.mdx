@@ -21,6 +21,7 @@ kb:
       references:
         - https://docs.spring.io/spring-framework/reference/core/beans/beanfactory.html
         - https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-lazy-init.html
+        - https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/context/ConfigurableApplicationContext.html
   prerequisites: [bean]
   relatedConcepts: [bean, dependency-injection]
   changes:
@@ -33,6 +34,9 @@ kb:
     - date: '2026-09-30'
       type: content-update
       summary: یکدست‌سازی نام‌های فنی انگلیسی در توضیح فارسی، بدون تغییر محتوای آموزشی.
+    - date: '2026-09-30'
+      type: concept-update
+      summary: افزودن مدیریت پایان عمر context و ارجاع به Aware و shutdown hook جلسهٔ پنجم.
 ---
 
 import SourceBlock from '../../../components/source/SourceBlock.astro';
@@ -77,6 +81,16 @@ import ChangeLog from '../../../components/documentation/ChangeLog.astro';
 <SourceBlock id="application-context-pitfalls" source="gpt">
 
 Bean شیء مدیریت‌شده است؛ ApplicationContext محیط مدیریت آن است. دریافت Bean با `getBean` در نقطهٔ شروع برنامه قابل فهم است، اما لازم نیست هر سرویس کانتینر را نگه دارد و همکارهایش را از آن پیدا کند؛ [Dependency Injection](/concepts/dependency-injection/#java-example) این نیازها را صریح‌تر می‌کند.
+
+</SourceBlock>
+
+## پایان عمر context [#context-lifetime]
+
+<SourceBlock id="context-lifetime-explanation" source="gpt">
+
+در برنامهٔ مستقل، مالک context باید به پایان عمر آن هم فکر کند. قرارداد `ConfigurableApplicationContext` امکانات `close()` و `registerShutdownHook()` را دارد؛ این امکانات مخصوص GenericApplicationContext نیستند. [مثال جلسهٔ پنجم](/tuesday/session-05/#aware-shutdown) تفاوت بسته‌شدن صریح، shutdown hook و دسترسی از طریق Aware را نشان می‌دهد.
+
+خود ApplicationContext قابل تزریق نیز هست؛ نیاز به این قابلیت زیرساختی را با دریافت همهٔ وابستگی‌های سرویس از طریق `getBean` یکی نگیرید. توضیح callbackهای آماده‌سازی و cleanup در [Bean lifecycle](/concepts/bean-lifecycle/) آمده است.
 
 </SourceBlock>
 

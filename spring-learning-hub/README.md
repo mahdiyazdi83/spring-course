@@ -4,7 +4,7 @@ A Persian, right-to-left Spring learning hub built with **Astro, Starlight, Type
 
 Explore Tuesday classes, independent Thursday sessions and a linked concept reference through an educational dashboard. Teacher, Heydari and GPT explanations retain separate attribution.
 
-> **Content status:** All five template phases are complete. Tuesday sessions 2–4 and independent Thursday sessions 2–3 are documented, with recording timelines and ten real concept references. Session 4 covers Bean registration, constructor/setter injection, Jakarta annotations, autowiring and XML details. No session-4 Heydari or Thursday recording was supplied. Its pinned teacher code postdates the recording; the lesson distinguishes recorded explanations from the available source snapshot. The per-session logs under `agent/logs/` record verification and source limits. Simulated session-1 lessons remain unpublished; other demo material is explicitly labeled.
+> **Content status:** All five template phases are complete. Tuesday sessions 2–5 and independent Thursday sessions 2–3 are documented, with recording timelines and twelve real concept references. Session 5 covers mixed configuration, optional dependencies, custom scanning, properties, Bean lifecycle and collections. Both session-5 videos were reviewed against a same-day teacher-code snapshot; no session-5 Heydari or Thursday recording was supplied. Code caveats and technical corrections are documented alongside the lessons. The per-session logs under `agent/logs/` record verification and source limits. Simulated session-1 lessons remain unpublished; other demo material is explicitly labeled.
 
 ## Features
 

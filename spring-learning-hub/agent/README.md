@@ -4,9 +4,12 @@ Follow [TERMINOLOGY.md](TERMINOLOGY.md) for balanced Persian prose and standard
 English technical names in every educational edit.
 
 This folder is operational memory for maintaining the Spring knowledge base.
-Current scope: the Phase 5 template plus user-authorized documentation of sessions 2, 3 and 4.
+Current scope: the Phase 5 template plus user-authorized documentation of sessions 2 through 5.
 Session 4 has two Tuesday videos and no supplied Heydari/Thursday recording. Its
 teacher code pin postdates the recording; the lesson and processing log explain this.
+Session 5 has two Tuesday videos and a same-day code pin. No session-5 Heydari or
+Thursday recording was supplied. Its log records code defects, verified corrections
+and the collection exercises that were assigned rather than executed in class.
 Use `PROCESSING-CHECKLIST.md` for each real session and `workflows/local-transcription.md`
 for authorized local ASR. The session-specific processing logs record coverage and source limits;
 do not infer completion from the presence of a recording in frontmatter.

@@ -6,22 +6,36 @@ kb:
   id: optional
   status: complete
   createdAt: '2026-09-26'
-  updatedAt: '2026-09-26'
+  updatedAt: '2026-09-30'
   sources:
     gpt:
       references:
         - https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Optional.html
         - ../teacher-files/session2/functional/src/p04stream/p01optional/OptionalDemo.java
+        - https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/autowired.html
   relatedConcepts: [stream-pipeline]
   changes:
     - date: '2026-09-26'
       type: initial
       summary: توضیح نتیجهٔ اختیاری بر پایهٔ مثال میانگین جلسهٔ دوم.
+    - date: '2026-09-30'
+      type: concept-update
+      summary: افزودن کاربرد Optional در تزریق وابستگی و رفع ابهام نسخهٔ Spring 7 در جلسهٔ پنجم.
 ---
 
 import SourceBlock from '../../../components/source/SourceBlock.astro';
 import ConceptAppearances from '../../../components/documentation/ConceptAppearances.astro';
 import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+
+## Optional در Dependency Injection [#optional-injection]
+
+<SourceBlock id="optional-spring" source="gpt">
+
+علاوه بر نتیجهٔ محاسبه، `Optional<T>` می‌تواند نبودن وابستگی اختیاری را بیان کند. در Spring 7.0.9، پارامتر Optional در setterِ Autowired پشتیبانی می‌شود: نبود Bean متناظر با Optional خالی نمایش داده می‌شود. نوع فیلد، پارامتر و منطق مصرف باید با این قرارداد هماهنگ باشند؛ صرف عوض‌کردن یک امضا در IDE کافی نیست.
+
+این نکته در [اصلاح آزمایش جلسهٔ پنجم](/tuesday/session-05/#optional-dependencies) با اجرای مستقل بررسی شده است. مصرف‌کننده همچنان باید حالت نبودن مقدار را مدیریت کند؛ استفادهٔ بی‌شرط از `get()` مسئله را حل نمی‌کند.
+
+</SourceBlock>
 
 ## نبودن مقدار با صفر فرق دارد [#absence]
 

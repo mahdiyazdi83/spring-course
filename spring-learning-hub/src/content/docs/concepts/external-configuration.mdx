@@ -1,0 +1,68 @@
+---
+title: External configuration — تنظیمات بیرون از کد
+description: نقش properties، placeholder، PropertySource و Value در تنظیم Beanهای برنامه و DataSource.
+kb:
+  type: concept
+  id: external-configuration
+  status: complete
+  createdAt: '2026-09-30'
+  updatedAt: '2026-09-30'
+  sources:
+    gpt:
+      references:
+        - https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/value-annotations.html
+        - ../teacher-files/session5/src/main/java/ir/digixo/p06Properties
+  prerequisites: [bean, dependency-injection]
+  relatedConcepts: [application-context]
+  changes:
+    - date: '2026-09-30'
+      type: initial
+      summary: افزودن مرجع تنظیم مقادیر بیرونی با properties و مثال DataSource جلسهٔ پنجم.
+---
+
+import SourceBlock from '../../../components/source/SourceBlock.astro';
+import PrerequisiteList from '../../../components/documentation/PrerequisiteList.astro';
+import ConceptAppearances from '../../../components/documentation/ConceptAppearances.astro';
+import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+
+## پیش‌نیاز [#prerequisites]
+
+<PrerequisiteList />
+
+## چه چیزی را از کد جدا می‌کنیم؟ [#purpose]
+
+<SourceBlock id="external-values" source="gpt">
+
+External configuration یعنی مقادیری مانند نشانی دیتابیس را از منطق Java جدا کنیم تا محیط اجرا بتواند مقدار مناسب خود را بدهد. شکل Bean و مسئولیت آن در کد می‌ماند؛ مقدارهایی مثل URL در منبع تنظیمات قرار می‌گیرند.
+
+در [جلسهٔ پنجم](/tuesday/session-05/#properties)، `BasicDataSource` از یک کتابخانهٔ دیگر می‌آید. سه مقدار properties به آن داده می‌شود و برنامه از قرارداد `DataSource` استفاده می‌کند. اینکه مقادیر درست تزریق شوند با اینکه دیتابیس واقعاً در دسترس باشد دو بررسی جداست.
+
+</SourceBlock>
+
+## منبع، کلید و محل مصرف [#resolution]
+
+<SourceBlock id="property-resolution" source="gpt">
+
+سه پرسش را جدا کنید: فایل کجاست؟ نام کلید چیست؟ مقدار به کدام فیلد یا property می‌رود؟ در نسخهٔ XML، `context:property-placeholder` منبع را معرفی می‌کند و عبارتی مانند `${jdbc.url}` مقدار کلید را مصرف می‌کند. در نسخهٔ Java، `@PropertySource` منبع را اضافه می‌کند و `@Value("${jdbc.url}")` محل دریافت مقدار است.
+
+خود `@Value` فایل دلخواهی را پیدا نمی‌کند. همچنین فایل زیر `src/main/java` الزاماً resource خروجی Maven نیست؛ برای استفاده از classpath باید آن را واقعاً در مسیر منابعِ build قرار دهید. [مرجع Value](https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/value-annotations.html)
+
+</SourceBlock>
+
+## تمرین عیب‌یابی [#diagnosis]
+
+<SourceBlock id="configuration-debugging" source="gpt">
+
+در مثال DataSource، ابتدا مقدار URL تنظیم‌شده را بدون بازکردن connection بررسی کنید. سپس در محیط دارای دیتابیس، اتصال و وجود جدول/ستون را جدا بسنجید. مسیر فایل، نام کلید، پیکربندی Bean و خطای SQL چهار علت متفاوت‌اند؛ تغییر تصادفی همهٔ آن‌ها پیدا کردن علت را سخت می‌کند.
+
+اینکه Spring Boot بخشی از تعریف DataSource را خودکار می‌کند، به معنی حذف پیکربندی نیست. برای فهم مثال این دوره، از مسیر صریح source → مقدار → Bean شروع کنید؛ جزئیات امکانات Boot بحث مستقلی است.
+
+</SourceBlock>
+
+## حضور در جلسات [#appearances]
+
+<ConceptAppearances />
+
+## تاریخچهٔ تغییرات [#changelog]
+
+<ChangeLog />

@@ -23,7 +23,7 @@ kb:
         - https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-autowire.html
         - https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/autowired-qualifiers.html
   prerequisites: [bean, dependency-injection]
-  relatedConcepts: [application-context]
+  relatedConcepts: [application-context, optional]
   changes:
     - date: '2026-09-28'
       type: initial
@@ -31,6 +31,9 @@ kb:
     - date: '2026-09-30'
       type: content-update
       summary: یکدست‌سازی نام‌های فنی انگلیسی در توضیح فارسی، بدون تغییر محتوای آموزشی.
+    - date: '2026-09-30'
+      type: concept-update
+      summary: افزودن وابستگی اختیاری و تزریق مجموعهٔ Beanها از مباحث جلسهٔ پنجم.
 ---
 
 import SourceBlock from '../../../components/source/SourceBlock.astro';
@@ -97,6 +100,16 @@ Qualifier فقط معادل عمومیِ «جست‌وجو با نام» نیس�
 <SourceBlock id="ambiguity-locations" source="teacher">
 
 در آزمایش XML جلسه، هم دو BeanOne و هم دو Target وجود دارند. این‌ها دو احتمال مستقل برای ابهام‌اند: کانتینر ممکن است نتواند وابستگی BeanOne را انتخاب کند، یا خود برنامه هنگام `getBean(Target.class)` نتواند یکی از Targetها را انتخاب کند. در کلاس، خطای دوم با دریافت `target1` به‌صورت نام‌دار اصلاح می‌شود. اسم نوع در پیام خطا، محل مسئله را مشخص می‌کند.
+
+</SourceBlock>
+
+## وابستگی اختیاری و collections [#optional-collections]
+
+<SourceBlock id="optional-and-collections" source="gpt">
+
+در [جلسهٔ پنجم](/tuesday/session-05/#optional-dependencies)، `@Autowired(required=false)` در نبود DAO از فراخوانی setter می‌گذرد؛ این کار مقدار جایگزین نمی‌سازد و استفادهٔ بعدی از `null` همچنان خطاست. `Optional<T>` نیز در Spring 7.0.9 پشتیبانی می‌شود و نبود وابستگی را به شکل مقدار خالی بیان می‌کند.
+
+در تزریق `List<T>` ممکن است مقصود، دریافت همهٔ Beanهای نوع T باشد. مثال `List<C04MyBean>` جلسهٔ پنجم سه Bean را با ترتیب `@Order` دریافت می‌کند. این حالت را از دریافت یک collection Beanِ نام‌دار جدا کنید؛ در مثال `List<String>`، خود یک List به‌عنوان Bean تعریف شده است. [جزئیات و کد](/tuesday/session-05/#collections-java)
 
 </SourceBlock>
 

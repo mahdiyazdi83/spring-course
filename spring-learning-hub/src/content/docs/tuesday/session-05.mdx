@@ -1,0 +1,806 @@
+---
+title: جلسهٔ پنجم — تنظیمات ترکیبی، Properties و Bean lifecycle
+description: وابستگی اختیاری، mixed configuration، stereotypeها، custom scanning، تنظیم DataSource، callbackها، Aware و تزریق collections با بررسی کد واقعی.
+sidebar:
+  label: جلسهٔ ۵ — تنظیمات و Bean lifecycle
+  order: 5
+kb:
+  type: tuesday
+  id: tuesday-05
+  sessionNumber: 5
+  status: complete
+  createdAt: '2026-09-30'
+  updatedAt: '2026-09-30'
+  sources:
+    teacher:
+      recordings:
+        - id: teacher-05-part1
+          kind: video
+          location: ../records/tuesday-class-recordings/session5/2026-09-08 17-23-47.mp4
+          durationSeconds: 5814
+        - id: teacher-05-part2
+          kind: video
+          location: ../records/tuesday-class-recordings/session5/2026-09-08 19-26-52.mp4
+          durationSeconds: 4566
+      repository:
+        location: ../teacher-files
+        commit: ce8bdd47f741825eb5705b5cabd1c6b5cc490ad1
+        capturedAt: '2026-09-30'
+      references:
+        - ../teacher-files/session5
+    gpt:
+      references:
+        - https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/autowired.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-autowire.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/classpath-scanning.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/value-annotations.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/factory-nature.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html
+        - https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/context/ConfigurableApplicationContext.html
+        - https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runtime.html
+  prerequisites: [bean, dependency-injection, application-context, autowiring]
+  prerequisiteSessions: [tuesday-04]
+  concepts:
+    - id: bean
+      relation: expanded
+      anchor: lazy-depends-on
+    - id: autowiring
+      relation: expanded
+      anchor: optional-dependencies
+    - id: optional
+      relation: used-in-code
+      anchor: optional-dependencies
+    - id: application-context
+      relation: expanded
+      anchor: aware-shutdown
+    - id: bean-lifecycle
+      relation: introduced
+      anchor: bean-lifecycle
+    - id: external-configuration
+      relation: introduced
+      anchor: properties
+  timeline:
+    - topic: eager/lazy و DependsOn در XML، annotation و Java Config
+      source: teacher
+      recording: teacher-05-part1
+      start: '00:00'
+      approximate: true
+    - topic: وابستگی اختیاری، required=false و آزمایش Optional/Nullable
+      source: teacher
+      recording: teacher-05-part1
+      start: '07:00'
+      approximate: true
+    - topic: مرور ComponentScan و mixed configuration
+      source: teacher
+      recording: teacher-05-part1
+      start: '17:10'
+      approximate: true
+    - topic: XML-centric؛ import فایل و scan کلاس configuration
+      source: teacher
+      recording: teacher-05-part1
+      start: '24:00'
+      approximate: true
+    - topic: class-centric؛ Import و ImportResource
+      source: teacher
+      recording: teacher-05-part1
+      start: '30:00'
+      approximate: true
+    - topic: لایه‌های Controller، Service و DAO؛ stereotypeها و Named
+      source: teacher
+      recording: teacher-05-part1
+      start: '34:10'
+      approximate: true
+    - topic: custom scanning با annotation، marker interface، REGEX و ASPECTJ
+      source: teacher
+      recording: teacher-05-part1
+      start: '51:00'
+      approximate: true
+    - topic: مقادیر properties و تنظیم DataSource
+      source: teacher
+      recording: teacher-05-part1
+      start: '01:06:00'
+      approximate: true
+    - topic: تنظیم Beanهای third-party، اشاره به Boot و Environment
+      source: teacher
+      recording: teacher-05-part2
+      start: '00:00'
+      approximate: true
+    - topic: lifecycle، مقایسه با JVM و Servlet و مراحل آماده‌سازی
+      source: teacher
+      recording: teacher-05-part2
+      start: '02:20'
+      approximate: true
+    - topic: InitializingBean، DisposableBean و context.close
+      source: teacher
+      recording: teacher-05-part2
+      start: '18:00'
+      approximate: true
+    - topic: متدهای سفارشی، PostConstruct/PreDestroy و ترتیب callbackها
+      source: teacher
+      recording: teacher-05-part2
+      start: '23:10'
+      approximate: true
+    - topic: مرور تمرین circular dependency و ApplicationContextAware
+      source: teacher
+      recording: teacher-05-part2
+      start: '30:40'
+      approximate: true
+    - topic: shutdown hook، BeanNameAware و تمرین ترکیب callbackها
+      source: teacher
+      recording: teacher-05-part2
+      start: '33:00'
+      approximate: true
+    - topic: کاربرد PostConstruct و مرز کارهای initialization
+      source: teacher
+      recording: teacher-05-part2
+      start: '52:00'
+      approximate: true
+    - topic: collections در XML، util namespace و Java Config
+      source: teacher
+      recording: teacher-05-part2
+      start: '01:01:00'
+      approximate: true
+  changes:
+    - date: '2026-09-30'
+      type: initial
+      summary: استخراج دو ویدئوی جلسهٔ پنجم، تطبیق کدها و ثبت اصلاح‌های فنی و تمرین‌ها.
+---
+
+import SourceBlock from '../../../components/source/SourceBlock.astro';
+import SourceFilter from '../../../components/source/SourceFilter.astro';
+import TechnicalCorrection from '../../../components/source/TechnicalCorrection.astro';
+import CodeExample from '../../../components/code/CodeExample.astro';
+import PrerequisiteList from '../../../components/documentation/PrerequisiteList.astro';
+import SessionTimeline from '../../../components/documentation/SessionTimeline.astro';
+import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+
+## پیش‌نیازها [#prerequisites]
+
+<PrerequisiteList />
+
+## ترتیب واقعی کلاس [#timeline]
+
+<SessionTimeline />
+
+<SourceFilter />
+
+<section data-source-group>
+
+## مسیر این جلسه و منابع آن [#overview]
+
+<SourceBlock id="source-scope" source="gpt">
+
+این جلسه ادامهٔ [جلسهٔ چهارم](/tuesday/session-04/) است: پس از ثبت و اتصال Beanها، تنظیمات چندگانه را کنار هم می‌گذاریم، مقادیر بیرونی را به برنامه می‌رسانیم و زمان آماده‌سازی و پایان کار Bean را کنترل می‌کنیم. سپس تزریق collections را در XML و Java می‌خوانیم.
+
+دو ویدئوی سه‌شنبهٔ ۸ سپتامبر ۲۰۲۶، در مجموع حدود **۲ ساعت و ۵۳ دقیقه**، مبنای توضیح‌ها هستند. کدها از snapshot ثبت‌شدهٔ همان روز، پوشهٔ `session5`، انتخاب شده‌اند. این snapshot وضعیت ذخیره‌شدهٔ پس از کلاس است؛ همهٔ تغییرهای موقت روی صفحه را نگه نمی‌دارد. فایل جداگانه‌ای از توضیح حیدری یا پنج‌شنبهٔ پنجم در منابع موجود نیست.
+
+پیش‌نیاز عملی، شناخت Bean، ApplicationContext و Dependency Injection است. ترتیب متن برای یادگیری تنظیم شده؛ ترتیب واقعی بحث‌ها در خط زمانی بالا باقی مانده است.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## Lazy و DependsOn؛ زمان ساخت و ترتیب آماده‌سازی [#lazy-depends-on]
+
+<SourceBlock id="lazy-recap" source="teacher" recording="teacher-05-part1" timestamp="00:00">
+
+استاد بحث را با ساخت eagerِ singletonهای معمول و تغییر آن با `lazy-init` ادامه می‌دهد. انتخاب lazy یا eager یک trade-off است: صرفاً برچسب «بهتر» و «بدتر» ندارد و باید با نیاز برنامه و هزینهٔ آماده‌سازی سنجیده شود. وقتی هر سه Bean در XML lazy باشند، شروع کانتینر آن‌ها را نمی‌سازد؛ دریافت BeanOne، ساخت آن را لازم می‌کند.
+
+اگر BeanOne به BeanTwo و BeanThree وابستگی ترتیب داشته باشد، `depends-on` اعلام می‌کند آن دو باید پیش از BeanOne آماده شوند، حتی اگر خودشان lazy باشند. این موضوع ادامهٔ [مثال جلسهٔ چهارم](/tuesday/session-04/#depends-on) است؛ این جلسه همان تنظیم را با annotation و Java Config نشان می‌دهد.
+
+</SourceBlock>
+
+<CodeExample
+  id="depends-annotation"
+  source="teacher"
+  lang="java"
+  filename="BeanOne.java"
+  repositoryPath="session5/src/main/java/ir/digixo/p01dependon/p02annotation/BeanOne.java"
+  caption="Lazy و DependsOn روی Bean شناسایی‌شده با Component."
+  code={
+    'package ir.digixo.p01dependon.p02annotation;\n\n\nimport org.springframework.context.annotation.DependsOn;\nimport org.springframework.context.annotation.Lazy;\nimport org.springframework.stereotype.Component;\n\n@Component\n@Lazy\n@DependsOn({"beanTwo","beanThree"})\npublic class BeanOne {\n    public BeanOne() {\n        System.out.println("bean one created");\n    }\n}'
+  }
+/>
+
+<SourceBlock id="depends-java" source="teacher" recording="teacher-05-part1" timestamp="04:30">
+
+در Java Config می‌توان `@Lazy` و `@DependsOn` را روی متد `@Bean` گذاشت. قرار دادن `@Lazy` روی کلاس configuration نیز پیش‌فرض lazy را برای Beanهای تعریف‌شده در آن اعلام می‌کند. استاد نسخهٔ class-based را به‌صورت طرح کوتاه می‌نویسد؛ مقصود، محل annotationهاست.
+
+</SourceBlock>
+
+<CodeExample
+  id="depends-method"
+  source="teacher"
+  lang="java"
+  filename="Config.java"
+  repositoryPath="session5/src/main/java/ir/digixo/p01dependon/p03class/Config.java"
+  caption="طرح ذخیره‌شده: DependsOn روی متد هنوز نام وابستگی ندارد."
+  code={
+    'package ir.digixo.p01dependon.p03class;\n\nimport org.springframework.context.annotation.Bean;\nimport org.springframework.context.annotation.Configuration;\nimport org.springframework.context.annotation.DependsOn;\nimport org.springframework.context.annotation.Lazy;\n\n@Configuration\n//@Lazy\npublic class Config {\n\n\n    @Bean\n    @Lazy\n    @DependsOn\n    public BeanOne beanOne()\n    {\n        return new BeanOne();\n    }\n}'
+  }
+/>
+
+<SourceBlock id="depends-snapshot" source="gpt">
+
+در snapshot، `@DependsOn` متد بالا آرایهٔ نام‌ها ندارد؛ بنابراین وابستگی به BeanTwo و BeanThree را اعلام نمی‌کند. همچنین launcherهای annotation و class هنوز مسیر XML جلسهٔ چهارم را دارند. برای اجرای همان سناریو باید کانتکست و نام Beanهای همین پکیج را تنظیم کرد؛ اجرای launcher قدیمی شاهدی برای کارکرد annotationهای جدید نیست.
+
+در بررسی XML همین جلسه، پیش از `getBean` هیچ‌یک از سه singleton ساخته نشده بود و درخواست BeanOne، ابتدا پیام BeanTwo و BeanThree و سپس BeanOne را چاپ کرد. `depends-on` ترتیب آماده‌سازی است؛ خودش جای constructor injection یا setter injection را نمی‌گیرد.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## وابستگی اختیاری؛ required=false و مسئولیت مصرف‌کننده [#optional-dependencies]
+
+<SourceBlock id="required-demo" source="teacher" recording="teacher-05-part1" timestamp="07:30">
+
+در مثال MyService و MyDao، setter با `@Autowired` مشخص می‌شود و کانتینر هر دو Component را پیدا می‌کند. با حذف `@Component` از MyDao، وابستگی اجباری پیدا نمی‌شود و startup شکست می‌خورد. صرف انتخاب setter injection، وابستگی را اختیاری نمی‌کند.
+
+سپس `required=false` اجازه می‌دهد سرویس بدون DAO ساخته شود. خطا در مثال بعداً و هنگام استفاده از DAO رخ می‌دهد: مقدار `myDao` همچنان `null` است و فراخوانی `bean.getMyDao().create()` به آن دسترسی پیدا می‌کند. اختیاری‌کردن اتصال، مسئولیت تصمیم‌گیری دربارهٔ نبودن وابستگی را به منطق مصرف‌کننده می‌سپارد.
+
+</SourceBlock>
+
+<CodeExample
+  id="optional-setter"
+  source="teacher"
+  lang="java"
+  filename="MyService.java"
+  repositoryPath="session5/src/main/java/ir/digixo/p02required/MyService.java"
+  caption="setter اختیاری؛ این تنظیم مقدار جایگزین برای DAO نمی‌سازد."
+  code={
+    'package ir.digixo.p02required;\n\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.lang.Nullable;\nimport org.springframework.stereotype.Component;\n\nimport java.util.Optional;\n\n@Component\npublic class MyService {\n\n    private MyDao myDao;\n\n\n    public MyService() {\n        System.out.println("service obj created!!!!");\n    }\n\n\n    public MyDao getMyDao() {\n        return myDao;\n    }\n\n    @Autowired(required = false)\n    public void setMyDao(MyDao myDao) {\n        this.myDao = myDao;\n    }\n\n\n}'
+  }
+/>
+
+<SourceBlock id="optional-version-claim" source="teacher" recording="teacher-05-part1" timestamp="15:00">
+
+در ادامه، هنگام آزمایش `@Nullable` و `Optional`، استاد از تغییرات Spring 7 و باقی‌ماندن راه `required=false` صحبت می‌کند. این جمع‌بندی از آزمایش همان لحظه آمده است؛ نتیجهٔ نسخهٔ واقعی را باید جدا بررسی کرد.
+
+</SourceBlock>
+
+<TechnicalCorrection id="optional-version-correction" corrects="optional-version-claim" statement="در آزمایش کلاس، Optional و Nullable به‌عنوان راه‌های قبلی مطرح می‌شوند و ادامهٔ مثال روی required=false می‌ماند." correction="Spring 7.0.9 همچنان تزریق Optional و پارامتر Nullable را پشتیبانی می‌کند. Deprecated شدن org.springframework.lang.Nullable به معنی حذف وابستگی اختیاری نیست؛ JSpecify Nullable قابل استفاده است." reason="نوع پارامتر و بدنهٔ setter باید با هم تغییر کنند؛ خطای یک ویرایش در IDE را نباید حذف قابلیت تلقی کرد.">
+
+[مرجع رسمی Autowired](https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/autowired.html)
+
+</TechnicalCorrection>
+
+<SourceBlock id="optional-verification" source="gpt">
+
+در یک آزمایش مستقل با Spring 7.0.9، setter دارای `Optional<Dependency>` بدون Bean متناظر، `Optional.empty()` گرفت؛ setter دارای پارامتر `org.jspecify.annotations.Nullable` نیز با `null` فراخوانی شد. در مقابل، setter با `@Autowired(required=false)` در نبود وابستگی اصلاً فراخوانی نمی‌شود. برای مرور خود نوع Optional به [مرجع Optional](/concepts/optional/) مراجعه کنید.
+
+</SourceBlock>
+
+<SourceBlock id="required-xml-exercise" source="teacher" recording="teacher-05-part1" timestamp="16:40">
+
+استاد بررسی معادل XML را به تمرین واگذار می‌کند و از یافتن attribute متناظر صحبت می‌کند. این بخش یک اجرای کامل XML در ضبط ندارد.
+
+</SourceBlock>
+
+<TechnicalCorrection id="required-xml-correction" corrects="required-xml-exercise" statement="برای اختیاری‌کردن وابستگی در XML، یافتن attribute با نام required پیشنهاد می‌شود." correction="در تعریف استاندارد bean یا property در Spring XML، required=false معادل مستقیمی برای attribute این annotation نیست. رفتار autowire و ارجاع صریح ref را باید جدا بررسی کرد؛ ref به Bean ناموجود همچنان خطاست." reason="کپی نام attribute از annotation به XML می‌تواند فایل پیکربندی نامعتبر بسازد.">
+
+[Autowiring در XML](https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-autowire.html)
+
+</TechnicalCorrection>
+
+</section>
+
+<section data-source-group>
+
+## Mixed configuration؛ انتخاب نقطهٔ شروع [#mixed-configuration]
+
+<SourceBlock id="mixed-motivation" source="teacher" recording="teacher-05-part1" timestamp="18:00">
+
+در پروژهٔ legacy یا هنگام ادغام دو پروژه، ممکن است بخشی از Beanها در XML و بخشی در Java تعریف شده باشند. لازم نیست برای ورود یک بخش، همهٔ تنظیمات آن را فوراً بازنویسی کنیم. پرسش اصلی این است که کدام تنظیم نقطهٔ شروع کانتینر باشد: XML-centric یا class-centric.
+
+در مرور پیش‌نیاز این بحث، استاد دوباره تفاوت شناسایی Componentها با داشتن صرفِ annotation را یادآوری می‌کند: ComponentScan محدودهٔ جست‌وجو را تعیین می‌کند. قرار دادن آن روی کلاس configuration، محل تنظیم این رفتار را روشن نگه می‌دارد.
+
+</SourceBlock>
+
+<SourceBlock id="xml-centric" source="teacher" recording="teacher-05-part1" timestamp="24:00">
+
+در نسخهٔ XML-centric، `FileSystemXmlApplicationContext` فایل `config1.xml` را می‌خواند. این فایل BeanOne را ثبت می‌کند، با `<import resource="config2.xml"/>` تعریف BeanTwo را می‌آورد و با component scanning کلاس‌های configuration را پیدا می‌کند. `@Configuration` نیز از خانوادهٔ Component است؛ پس متد `@Bean` مربوط به BeanThree وارد همان کانتینر می‌شود. صرف وجود کلاس BeanFour در پکیج برای ثبت آن کافی نیست؛ در این مثال تعریفی برای آن نوشته نشده است.
+
+</SourceBlock>
+
+<CodeExample id="mixed-xml" source="teacher" lang="xml" filename="config1.xml" repositoryPath="session5/src/main/java/ir/digixo/p03MixConfig/p01Xml/config1.xml" caption="XML اصلی: import فایل دوم و scan کلاس‌های configuration." code={"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<beans xmlns=\"http://www.springframework.org/schema/beans\"\n       xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n       xmlns:context=\"http://www.springframework.org/schema/context\"\n       xsi:schemaLocation=\"http://www.springframework.org/schema/beans\n       http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd\">\n\n    <!--business obj-->\n\n\n\n\n\n    <bean class=\"ir.digixo.p03MixConfig.p01Xml.BeanOne\"/>\n\n    <import resource=\"config2.xml\"/>\n\n    <context:component-scan base-package=\"ir.digixo.p03MixConfig.p01Xml\"/>\n\n\n\n\n\n\n\n\n</beans>"} />
+
+<SourceBlock id="class-centric" source="teacher" recording="teacher-05-part1" timestamp="30:00">
+
+در نسخهٔ class-centric، شروع کار با `AnnotationConfigApplicationContext(Config1.class)` است. `@Import(Config2.class)` کلاس configuration دیگر را وارد می‌کند؛ `@ImportResource` فایل XML را می‌خواند. XML واردشده می‌تواند خودش XML دیگری را import کند. بنابراین شکل شروع کانتینر با قالب تمام منابعی که در نهایت مصرف می‌کند یکی نیست.
+
+مسیرهای `file:` در نمونه به سیستم استاد وابسته‌اند. برای اجرای محلی باید آن‌ها را به محل واقعی منبع تغییر دهید یا فایل‌های موردنیاز را به resources ببرید و از مسیر classpath مناسب استفاده کنید؛ صرف تغییر پیشوند مسیر، فایل را وارد خروجی build نمی‌کند.
+
+</SourceBlock>
+
+<CodeExample
+  id="mixed-java"
+  source="teacher"
+  lang="java"
+  filename="Config1.java"
+  repositoryPath="session5/src/main/java/ir/digixo/p03MixConfig/p02class/Config1.java"
+  caption="Import برای کلاس و ImportResource برای XML؛ مسیر مطلق نمونه نیاز به تنظیم محلی دارد."
+  code={
+    'package ir.digixo.p03MixConfig.p02class;\n\nimport org.springframework.context.annotation.Bean;\nimport org.springframework.context.annotation.Configuration;\nimport org.springframework.context.annotation.Import;\nimport org.springframework.context.annotation.ImportResource;\n\n@Configuration\n@Import(Config2.class)\n@ImportResource(value = "file:C:\\\\Users\\\\Admin\\\\IdeaProjects\\\\spring\\\\11\\\\session5\\\\src\\\\main\\\\java\\\\ir\\\\digixo\\\\p03MixConfig\\\\p02class\\\\config1.xml")\npublic class Config1 {\n\n    @Bean\n    public BeanThree beanThree()\n    {\n        return new BeanThree();\n    }\n}'
+  }
+/>
+
+</section>
+
+<section data-source-group>
+
+## Stereotypeها و مسئولیت لایه‌ها [#stereotypes]
+
+<SourceBlock id="stereotype-intro" source="teacher" recording="teacher-05-part1" timestamp="34:10">
+
+تا اینجا همهٔ نقش‌ها با `@Component` معرفی شده‌اند. اکنون استاد ساختار Controller → Service → DAO را باز می‌کند: Controller نقطهٔ ورود/ارائه، Service محل منطق کسب‌وکار و DAO محل دسترسی به داده است. این تفکیک را هم در ساختارهای monolithic و هم داخل یک سرویس می‌توان دید. نام‌هایی مثل MySqlDao و OracleDao در این تمرین برای مقایسهٔ پیاده‌سازی‌ها هستند؛ نام‌گذاری واقعی باید مسئولیت دامنه، مثلاً Product، را هم روشن کند.
+
+</SourceBlock>
+
+<SourceBlock id="stereotype-wiring" source="teacher" recording="teacher-05-part1" timestamp="39:00">
+
+Controller به interfaceِ Service وابسته است و ProductService به interfaceِ Dao. چون دو DAO وجود دارد، انتخاب پیاده‌سازی لازم است: در این مثال `@Inject` همراه `@Named("mySqlDao")` روی پارامتر setter استفاده می‌شود. Controller فقط یک Service متناظر دارد و به qualifier اضافی نیاز ندارد. فراخوانی `create()` در Controller، به `createProduct()` در Service و سپس `create()` در DAO می‌رسد.
+
+پس از اجرای زنجیره، `@Component`های عمومی به `@Controller`، `@Service` و `@Repository` تبدیل می‌شوند. در همین برنامهٔ ساده خروجی تغییر نمی‌کند؛ نام annotation مسئولیت کلاس را برای خواننده روشن می‌کند. تعارض نام interfaceِ `Service` با annotation نیز دلیل استفادهٔ نمونه از نام کامل `@org.springframework.stereotype.Service` است.
+
+</SourceBlock>
+
+<CodeExample
+  id="stereotype-service"
+  source="teacher"
+  lang="java"
+  filename="ProductService.java"
+  repositoryPath="session5/src/main/java/ir/digixo/p04StereoTypeAnnotations/service/ProductService.java"
+  caption="انتخاب MySQL از میان دو DAO با Inject و Named."
+  code={
+    'package ir.digixo.p04StereoTypeAnnotations.service;\n\nimport ir.digixo.p04StereoTypeAnnotations.dao.Dao;\nimport jakarta.inject.Inject;\nimport jakarta.inject.Named;\nimport org.springframework.stereotype.Component;\n\n//@Component\n@org.springframework.stereotype.Service\npublic class ProductService implements Service{\n\n\n    private Dao dao;\n\n    public Dao getDao() {\n        return dao;\n    }\n\n    @Inject\n    public void setDao(@Named(value = "mySqlDao") Dao dao) {\n        this.dao = dao;\n    }\n\n    @Override\n    public void createProduct() {\ndao.create();\n    }\n}'
+  }
+/>
+
+<SourceBlock id="stereotype-boundary" source="gpt">
+
+این مثال با دریافت مستقیم Bean و فراخوانی Java اجرا می‌شود؛ صرف افزودن `@Controller`، آن را به HTTP endpoint تبدیل نمی‌کند. همچنین جملهٔ «همه Component هستند» دربارهٔ شناسایی مشترک آن‌هاست: در زیرساخت مناسب، Controller و Repository می‌توانند رفتارهای تخصصی هم داشته باشند. annotationها به‌تنهایی معماری سه‌لایه را تحمیل یا تضمین نمی‌کنند. [مرجع stereotypeها](https://docs.spring.io/spring-framework/reference/core/beans/classpath-scanning.html)
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## Custom scanning؛ تعیین معیار شناسایی Bean [#custom-scanning]
+
+<SourceBlock id="scan-options" source="teacher" recording="teacher-05-part1" timestamp="51:00">
+
+ComponentScan فقط نام یک پکیج نیست؛ گزینه‌هایی مانند name generator، scope resolver، resource pattern و filter دارد. کلاس روی `includeFilters` تمرکز می‌کند و چند معیار را آزمایش می‌کند:
+
+| FilterType        | معیار این تمرین                                             |
+| ----------------- | ----------------------------------------------------------- |
+| `ANNOTATION`      | شناسایی کلاس علامت‌خورده با MyAnnotation                    |
+| `ASSIGNABLE_TYPE` | شناسایی پیاده‌سازهای MyInterface                            |
+| `REGEX`           | تطبیق نام کلاس با الگو                                      |
+| `ASPECTJ`         | تطبیق type pattern؛ نیازمند کتابخانهٔ مربوط                 |
+| `CUSTOM`          | در فهرست گزینه‌ها معرفی می‌شود؛ اینجا پیاده‌سازی کامل ندارد |
+
+MyAnnotation با targetِ TYPE و retentionِ RUNTIME تعریف می‌شود. سپس با تغییر معیار به MyInterface، حتی کلاس بدون Component نیز می‌تواند candidate باشد. interface در این نمونه marker است و متدی ندارد؛ هدفش تعیین عضویت در گروه قابل شناسایی است.
+
+</SourceBlock>
+
+<CodeExample
+  id="scan-custom-annotation"
+  source="teacher"
+  lang="java"
+  filename="MyAnnotation.java"
+  repositoryPath="session5/src/main/java/ir/digixo/p05CustomScanning/MyAnnotation.java"
+  caption="annotation اختصاصی برای آزمایش filter؛ خودش meta-annotationِ Component ندارد."
+  code={
+    'package ir.digixo.p05CustomScanning;\n\nimport java.lang.annotation.ElementType;\nimport java.lang.annotation.Retention;\nimport java.lang.annotation.RetentionPolicy;\nimport java.lang.annotation.Target;\n\n@Target(ElementType.TYPE)\n@Retention(RetentionPolicy.RUNTIME)\npublic @interface MyAnnotation {\n}'
+  }
+/>
+
+<CodeExample
+  id="scan-filter-config"
+  source="teacher"
+  lang="java"
+  filename="Config.java"
+  repositoryPath="session5/src/main/java/ir/digixo/p05CustomScanning/Config.java"
+  caption="نسخهٔ نهایی با ASSIGNABLE_TYPE؛ گزینه‌های دیگر به‌صورت کامنت حفظ شده‌اند."
+  code={
+    'package ir.digixo.p05CustomScanning;\n\nimport org.springframework.context.annotation.ComponentScan;\nimport org.springframework.context.annotation.Configuration;\nimport org.springframework.context.annotation.FilterType;\n\n@Configuration\n@ComponentScan(\n        //basePackages = {"ir.digixo.p05CustomScanning"},\n       // includeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION,classes = MyAnnotation.class)\n       includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,classes = MyInterface.class)\n      //  includeFilters = @ComponentScan.Filter(type = FilterType.REGEX,pattern = ".*[bean1]")\n     //   includeFilters = @ComponentScan.Filter(type = FilterType.ASPECTJ,pattern = "ir.digixo.p05CustomScanning.*")\n\n)\npublic class Config {\n}'
+  }
+/>
+
+<SourceBlock id="scan-experiment" source="teacher" recording="teacher-05-part1" timestamp="58:50">
+
+در پرسش‌وپاسخ، ابتدا هر دو کلاس بدون پیاده‌سازی MyInterface هستند و ثبت نمی‌شوند؛ با افزودن interface به MyBean1 و سپس MyBean2، شناسایی آن‌ها فعال می‌شود. این آزمایش نشان می‌دهد marker نقش قرارداد اسکن را دارد، نه اینکه متدی از آن فراخوانی شود.
+
+در آزمایش REGEX، الگو چند بار تغییر می‌کند؛ برای ASPECTJ نیز نبود کلاس مربوط به dependency خطا می‌دهد و استاد dependencyِ `spring-aspects` با نسخهٔ 7.0.9 را اضافه می‌کند. مقصود این بخش، شناخت راه‌های سفارشی‌کردن scan در ساختارهای بزرگ یا legacy است، نه اعلام یک الگوی regex نهایی برای همهٔ پروژه‌ها.
+
+</SourceBlock>
+
+<SourceBlock id="scan-precision" source="gpt">
+
+در Config ذخیره‌شده، basePackages کامنت شده است؛ در این حالت اسکن از پکیج کلاسِ دارای ComponentScan شروع می‌شود. `includeFilters` به‌طور پیش‌فرض معیارهای استاندارد را حذف نمی‌کند؛ برای محدودکردن شناسایی فقط به معیار خودتان، `useDefaultFilters=false` را آگاهانه بررسی کنید. گزینهٔ `lazyInit` نیز دربارهٔ Beanهای همین scan است، نه همهٔ Beanهای هر منبع تنظیمات.
+
+الگوی کامنت‌شدهٔ `.*[bean1]` معنی «نامی که با Bean1 تمام می‌شود» ندارد؛ کروشه در regex مجموعه‌ای از کاراکترهاست. برای چنین هدفی باید الگوی مطابق نام واقعی کلاس، مثلاً `.*MyBean1`، بررسی شود. در اجرای نسخهٔ فعال، هر دو پیاده‌ساز MyInterface بدون Component شناسایی شدند. [مرجع scanning و filterها](https://docs.spring.io/spring-framework/reference/core/beans/classpath-scanning.html)
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## Properties و placeholder؛ تنظیم DataSource [#properties]
+
+<SourceBlock id="properties-purpose" source="teacher" recording="teacher-05-part1" timestamp="01:06:00">
+
+مقادیر تنظیمات مثل JDBC URL، username و password نباید برای هر محیط در منطق Java هاردکد شوند. استاد این موضوع را یک نیاز قدیمی و همچنان مهم می‌داند؛ راحتی Spring Boot نباید باعث شود مسیر رسیدن مقدار از فایل به Bean را نشناسیم. فایل properties مجموعهٔ key=value است و مثال کلاس، `datasource.properties` نام دارد.
+
+در XML، `context:property-placeholder` محل فایل را می‌گیرد. استاد برای نشان‌دادن پشت صحنه، تعریف دستی `PropertySourcesPlaceholderConfigurer` و مقداردهی Properties آن را هم باز می‌کند، ولی استفاده از فایل جدا و روش کوتاه را ترجیح می‌دهد. عبارت‌هایی مانند `${jdbc.url}` مقدار کلید را در محل مصرف قرار می‌دهند.
+
+</SourceBlock>
+
+<CodeExample id="datasource-xml" source="teacher" lang="xml" filename="config.xml" repositoryPath="session5/src/main/java/ir/digixo/p06Properties/p01xml/config.xml" caption="نسخهٔ XML با placeholder؛ تعریف دستی configurer به‌صورت کامنت برای مقایسه باقی مانده است." code={"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<beans xmlns=\"http://www.springframework.org/schema/beans\"\n       xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n       xmlns:context=\"http://www.springframework.org/schema/context\"\n       xsi:schemaLocation=\"http://www.springframework.org/schema/beans\n       http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd\">\n\n    <!--business obj-->\n\n\n\n\n    <context:property-placeholder location=\"file:C:\\Users\\Admin\\IdeaProjects\\spring\\11\\session5\\src\\main\\java\\ir\\digixo\\p06Properties\\datasource.properties\"/>\n\n    \n    <!--<bean class=\"org.springframework.context.support.PropertySourcesPlaceholderConfigurer\">\n        <property name=\"properties\">\n            <value>\n                jdbc.url=mysql:jdbc://localhost:3306/mydb\n                jdbc.username=root\n                jdbc.password=1234\n            </value>\n        </property>\n    </bean>-->\n\n\n    <bean class=\"org.apache.commons.dbcp2.BasicDataSource\" id=\"datasource1\">\n        <property name=\"url\" value=\"${jdbc.url}\"/>\n        <property name=\"username\" value=\"${jdbc.username}\"/>\n        <property name=\"password\" value=\"${jdbc.password}\"/>\n    </bean>\n\n\n\n\n\n\n\n\n\n</beans>"} />
+
+<SourceBlock id="datasource-example" source="teacher" recording="teacher-05-part1" timestamp="01:15:00">
+
+برای ملموس‌شدن تنظیمات، MySQL Connector و Apache Commons DBCP به پروژه اضافه می‌شوند. `BasicDataSource` یک پیاده‌سازیِ آماده از قرارداد `DataSource` است؛ XML آن را می‌سازد و url، username و password را از placeholderها می‌گیرد. سپس `GenericXmlApplicationContext` فایل را load و refresh می‌کند، DataSource دریافت می‌شود و برنامه از آن Connection می‌گیرد.
+
+در اجرای کلاس، خطای `No suitable driver` دیده می‌شود. ابتدا نسخه‌ها بررسی می‌شوند، اما بازگشت به مقدار URL و ترتیب `jdbc:mysql` مشکل نشان‌داده‌شده را روشن می‌کند. بنابراین هر خطای اتصال لزوماً با تعویض نسخهٔ driver حل نمی‌شود. در snapshot نهایی، URL با پیشوند `jdbc:mysql://` آمده است.
+
+پس از اتصال، یک PreparedStatement برای `select * from product` ساخته می‌شود؛ ResultSet پیمایش و ستون `name` چاپ می‌شود. این بخش، کاربرد واقعیِ Bean و مقدار تنظیمات را نشان می‌دهد؛ آموزش کامل JDBC یا persistence هدف این قسمت نیست.
+
+</SourceBlock>
+
+<CodeExample
+  id="datasource-query"
+  source="teacher"
+  lang="java"
+  filename="Test.java"
+  repositoryPath="session5/src/main/java/ir/digixo/p06Properties/p01xml/Test.java"
+  caption="دریافت DataSource و اجرای query در نمونهٔ استاد؛ دیتابیس و مسیر محلی باید موجود باشند."
+  code={
+    'package ir.digixo.p06Properties.p01xml;\n\nimport org.springframework.context.support.GenericApplicationContext;\nimport org.springframework.context.support.GenericXmlApplicationContext;\n\nimport javax.sql.DataSource;\nimport java.sql.Connection;\nimport java.sql.PreparedStatement;\nimport java.sql.ResultSet;\nimport java.sql.SQLException;\n\npublic class Test {\n    static void main() throws SQLException {\n\n        var context=new GenericXmlApplicationContext();\n        context.load("file:C:\\\\Users\\\\Admin\\\\IdeaProjects\\\\spring\\\\11\\\\session5\\\\src\\\\main\\\\java\\\\ir\\\\digixo\\\\p06Properties\\\\p01xml\\\\config.xml");\n        context.refresh();\n\n        DataSource dataSource = context.getBean(DataSource.class);\n        Connection connection = dataSource.getConnection();\n        PreparedStatement preparedStatement = connection.prepareStatement("select * from product");\n        ResultSet resultSet = preparedStatement.executeQuery();\n        while (resultSet.next())\n            System.out.println(resultSet.getString("name"));\n\n\n    }\n}'
+  }
+/>
+
+<SourceBlock id="datasource-verification" source="gpt">
+
+POM ثبت‌شده، Spring 7.0.9، MySQL Connector/J 9.7.0 و DBCP 2.12.0 دارد. در ضبط نسخه‌های دیگری موقتاً بررسی می‌شوند؛ آن آزمایش‌ها را با dependency نهایی مخزن یکی نگیرید. برای این مستند، main sourceها در یک کپی خصوصی با target/sourceِ Java 21 کامپایل شدند؛ POM اصلی Java 25 می‌خواهد و تغییر نکرده است.
+
+بررسی مستقل، ساخت BasicDataSource و رسیدن URL از فایل properties را تأیید کرد؛ اتصال واقعی به MySQL و اجرای query اینجا انجام نشده است. مسیرهای مطلق داخل مثال برای رایانهٔ استادند. مقادیر credential نمونه آموزشی‌اند؛ خود استاد نیز این شیوهٔ دادن اطلاعات دیتابیس را نسخهٔ نهایی برای پروژهٔ بزرگ معرفی نمی‌کند.
+
+</SourceBlock>
+
+<SourceBlock id="properties-java" source="teacher" recording="teacher-05-part1" timestamp="01:27:00">
+
+در نسخهٔ Java، کلاس DataSourceConfig با `@PropertySource` فایل را معرفی می‌کند، سه فیلد String برای url، username و password دارد و هر کدام با `@Value` مقدار می‌گیرند. سپس متد `@Bean` یک BasicDataSource می‌سازد، setterهای آن را با همین فیلدها پر می‌کند و آن را به‌صورت DataSource برمی‌گرداند.
+
+در پایان، context با `AnnotationConfigApplicationContext(DataSourceConfig.class)` ساخته و همان مسیر query آزمایش می‌شود. نبود پیشنهاد autocomplete برای کلیدها در IDE، به‌تنهایی به معنی شکست مقداردهی نبود؛ اجرای کلاس کارکرد این تنظیم را نشان می‌دهد. استاد انتظار دارد افزودن property file اختصاصی، حتی با وجود تنظیمات آمادهٔ Boot، قابل انجام باشد.
+
+استاد هنگام خواندن توضیح annotation به Spring Environment اشاره می‌کند؛ بحث کامل Environment به ادامهٔ دوره موکول می‌شود. همچنین ساختار سلسله‌مراتبی YAML در Boot با همان تنظیمات key/value مقایسه می‌شود.
+
+</SourceBlock>
+
+<CodeExample
+  id="datasource-java"
+  source="teacher"
+  lang="java"
+  filename="DataSourceConfig.java"
+  repositoryPath="session5/src/main/java/ir/digixo/p06Properties/p02annotation/DataSourceConfig.java"
+  caption="PropertySource منبع را معرفی می‌کند؛ Value مقادیر را به فیلدهای configuration می‌رساند."
+  code={
+    'package ir.digixo.p06Properties.p02annotation;\n\nimport org.apache.commons.dbcp2.BasicDataSource;\nimport org.springframework.beans.factory.annotation.Value;\nimport org.springframework.context.annotation.Bean;\nimport org.springframework.context.annotation.Configuration;\nimport org.springframework.context.annotation.PropertySource;\n\nimport javax.sql.DataSource;\n\n@Configuration\n@PropertySource("file:C:\\\\Users\\\\Admin\\\\IdeaProjects\\\\spring\\\\11\\\\session5\\\\src\\\\main\\\\java\\\\ir\\\\digixo\\\\p06Properties\\\\datasource.properties")\npublic class DataSourceConfig {\n\n\n    @Value("${jdbc.url}")\n    private String url;\n    @Value("${jdbc.username}")\n    private String username;\n    @Value("${jdbc.password}")\n    private String password;\n\n    @Bean\n    public DataSource dataSource(){\n        BasicDataSource basicDataSource=new BasicDataSource();\n        basicDataSource.setUrl(url);\n        basicDataSource.setUsername(username);\n        basicDataSource.setPassword(password);\n        return basicDataSource;\n    }\n}'
+  }
+/>
+
+<SourceBlock id="property-source-boundary" source="gpt">
+
+برای عیب‌یابی، «اضافه‌شدن منبع به Environment» و «جایگزینی placeholder در محل مصرف» را جدا کنید. `@PropertySource` به‌تنهایی سازندهٔ DataSource نیست؛ متد Bean این کار را انجام می‌دهد. همچنین اسم کلید مثل `jdbc.url` با نام فیلد Java یا propertyِ کتابخانه الزاماً یکی نیست؛ در مثال، مقدار کلید به فیلد url و سپس به `setUrl` می‌رود. [مرجع تنظیم مقادیر](https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/value-annotations.html)
+
+برای مرور مسیر کلی فایل → مقدار → Bean به [External configuration](/concepts/external-configuration/) مراجعه کنید. مثال XML و Java هر دو همین مسیر را با ابزار متفاوت بیان می‌کنند.
+
+</SourceBlock>
+
+<SourceBlock id="boot-third-party" source="teacher" recording="teacher-05-part2" timestamp="00:00">
+
+در آغاز ویدئوی دوم، استاد این مثال را به Beanهای third-party تعمیم می‌دهد: در Boot برخی تعریف‌ها با تنظیمات پیش‌فرض آماده می‌شوند و propertyهای اعلام‌شده امکان تغییر دارند، اما برای نیاز پیشرفته ممکن است تعریف Bean اختصاصی لازم شود. بنابراین شناخت ساخت Bean و پیکربندی آن همچنان مهم است؛ بحث Environment در اینجا فقط معرفی می‌شود.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## Bean lifecycle؛ آماده‌سازی با ساخت شیء یکی نیست [#bean-lifecycle]
+
+<SourceBlock id="lifecycle-background" source="teacher" recording="teacher-05-part2" timestamp="02:20">
+
+استاد lifecycle را با تجربهٔ Java و Servlet مقایسه می‌کند: JVM حافظهٔ شیء را مدیریت می‌کند، اما framework برای آماده‌سازی، استفاده و جمع‌کردن منابع قراردادهای خودش را دارد. در Servlet، `init`، `service` و `destroy` نمونهٔ آشنای این قرارداد هستند. در Spring نیز Bean فقط خروجی `new` نیست؛ وابستگی‌هایش باید متصل شوند و callbackهای مربوط به آماده‌سازی آن اجرا شوند.
+
+نمودار کلاس چند مرحله را کنار هم می‌گذارد: ساخت، تزریق، دریافت اطلاعات کانتینر از طریق Awareها، callbackهای initialization و در پایان callbackهای destruction. هدف، حفظ‌کردن تعداد ثابتی از مراحل نیست؛ برای توسعهٔ برنامه باید بدانیم منطق آماده‌سازی و آزادسازی منابع را کجا قرار دهیم، و برای کار روی خود framework شناخت جزئیات بیشتری لازم است.
+
+</SourceBlock>
+
+<SourceBlock id="lifecycle-boundaries" source="gpt">
+
+callbackِ destruction به معنی حذف فوری شیء از حافظه نیست. `close()` کانتینر فرصت آزادکردن منابع Beanهای تحت مدیریت را فراهم می‌کند؛ تصمیم GC دربارهٔ حافظه موضوع دیگری است. همچنین قیاس با Servlet به این معنی نیست که هر Spring Bean یک متد `service()` مخصوص رسیدگی به درخواست دارد.
+
+مسیر ساده برای این مثال‌ها چنین است: **ساخت شیء → تزریق وابستگی‌ها → initialization → استفاده → بستن کانتینر و cleanup**. زمان ساخت می‌تواند تحت تأثیر lazy باشد. برای مرور متمرکز به [Bean lifecycle](/concepts/bean-lifecycle/) مراجعه کنید.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## سه راه تعریف callbackهای initialization و destruction [#lifecycle-callbacks]
+
+<SourceBlock id="lifecycle-interfaces" source="teacher" recording="teacher-05-part2" timestamp="18:00">
+
+راه اول پیاده‌سازی `InitializingBean` و `DisposableBean` است. متد `afterPropertiesSet()` پس از تنظیم وابستگی‌ها اجرا می‌شود و `destroy()` هنگام بستن کانتینر فرصت cleanup می‌دهد. در آزمایش اول، پایان متد `main` به‌تنهایی پیام destroy را نشان نمی‌دهد؛ با `context.close()`، callback اجرا می‌شود. این تفاوت از مهم‌ترین مشاهده‌های عملی درس است.
+
+</SourceBlock>
+
+<CodeExample
+  id="lifecycle-interface-code"
+  source="teacher"
+  lang="java"
+  filename="Human.java"
+  repositoryPath="session5/src/main/java/ir/digixo/p07BeanLifecycle/p01interface/Human.java"
+  caption="دو interface مخصوص Spring و callbackهای متناظر."
+  code={
+    'package ir.digixo.p07BeanLifecycle.p01interface;\n\nimport org.springframework.beans.factory.DisposableBean;\nimport org.springframework.beans.factory.InitializingBean;\nimport org.springframework.stereotype.Component;\n\n@Component\npublic class Human implements InitializingBean, DisposableBean {\n    public Human() {\n        System.out.println("human created");\n    }\n\n    @Override\n    public void destroy() throws Exception {\n        System.out.println("destroy method of DisposableBean invoked");\n    }\n\n    @Override\n    public void afterPropertiesSet() throws Exception {\n        System.out.println("afterPropertiesSet method of InitializingBean invoked");\n    }\n}'
+  }
+/>
+
+<SourceBlock id="lifecycle-methods" source="teacher" recording="teacher-05-part2" timestamp="23:10">
+
+راه دوم تعریف متدهای معمول در کلاس و معرفی نام آن‌ها در metadata است. در `@Bean(initMethod="myInit", destroyMethod="myDestroy")`، نام متدها به کانتینر داده می‌شود. خود Human دیگر مجبور نیست interfaceهای Spring را پیاده کند. در روش XML نیز metadataِ `init-method` و `destroy-method` همین نقش را دارد.
+
+</SourceBlock>
+
+<CodeExample
+  id="lifecycle-method-code"
+  source="teacher"
+  lang="java"
+  filename="Config.java"
+  repositoryPath="session5/src/main/java/ir/digixo/p07BeanLifecycle/p02Method/Config.java"
+  caption="متدهای init و destroy در تعریف Bean معرفی می‌شوند؛ scan این snapshot هنوز به پکیج قبلی اشاره دارد."
+  code={
+    'package ir.digixo.p07BeanLifecycle.p02Method;\n\nimport org.springframework.context.annotation.Bean;\nimport org.springframework.context.annotation.ComponentScan;\nimport org.springframework.context.annotation.Configuration;\n\n@Configuration\n@ComponentScan(basePackages = {"ir.digixo.p07BeanLifecycle.p01interface"})\npublic class Config {\n\n    @Bean(initMethod = "myInit",destroyMethod = "myDestroy")\n    public Human human()\n    {\n        return new Human();\n    }\n}'
+  }
+/>
+
+<SourceBlock id="lifecycle-annotations" source="teacher" recording="teacher-05-part2" timestamp="27:10">
+
+راه سوم annotationهای `@PostConstruct` و `@PreDestroy` است که در مرور کلاس با نام تاریخی JSR-250 معرفی می‌شوند. در کد فعلی importها از `jakarta.annotation` هستند. با این روش، خود متدها علامت می‌خورند و نام دلخواه آن‌ها معیار زمان اجرا نیست.
+
+استاد توصیه می‌کند این روش‌ها را بی‌دلیل با هم ترکیب نکنیم؛ در صورت نیاز واقعی به چند callback، ترتیب مهم می‌شود: ابتدا PostConstruct، سپس `afterPropertiesSet` و بعد initMethod. در میانهٔ این بحث، تمرین circular dependency جلسهٔ قبل نیز مرور می‌شود؛ setter و lazy در پاسخ‌ها مطرح می‌شوند، اما راهکار سوم در این قسمت با نمونهٔ کامل تشریح نمی‌شود.
+
+</SourceBlock>
+
+<CodeExample
+  id="lifecycle-annotation-code"
+  source="teacher"
+  lang="java"
+  filename="Human.java"
+  repositoryPath="session5/src/main/java/ir/digixo/p07BeanLifecycle/p03jsr250/Human.java"
+  caption="در فایل ذخیره‌شده، annotationها با نام ظاهری دو متد جابه‌جا هستند؛ زمان اجرا را annotation تعیین می‌کند."
+  code={
+    'package ir.digixo.p07BeanLifecycle.p03jsr250;\n\nimport jakarta.annotation.PostConstruct;\nimport jakarta.annotation.PreDestroy;\n\n//@Component()\npublic class Human{\n    public Human() {\n        System.out.println("human created");\n    }\n\n    @PreDestroy\n    public void  myInit()\n    {\n        System.out.println("myInit invoked");\n    }\n\n    @PostConstruct\n    public void myDestroy()\n    {\n        System.out.println("myDestroy method  invoked");\n    }\n\n\n}'
+  }
+/>
+
+<SourceBlock id="lifecycle-code-audit" source="gpt">
+
+در فایل بالا، `myDestroy()` با `@PostConstruct` هنگام initialization اجرا می‌شود و `myInit()` با `@PreDestroy` هنگام close. اجرای snapshot همین ترتیب را تأیید کرد؛ نام متد نباید خواننده را گمراه کند. در پرسش‌وپاسخ حدود دقیقهٔ ۴۵ ویدئوی دوم نیز ناسازگاری نام/متن با annotation دیده و مطرح می‌شود. نمونهٔ پکیج `p04ApplicationContextAware` نام و annotation را هماهنگ دارد.
+
+همچنین Configهای `p02Method` و `p03jsr250` هنوز پکیج `p01interface` را scan می‌کنند. در بررسی همین نسخه، تعریف Human با متد Bean در نهایت انتخاب شد؛ برای مثال آموزشی مستقل بهتر است scan اضافیِ نمونهٔ قبلی حذف شود تا ثبت هم‌نام و تنظیمات override در محیط دیگر دخالت نکند. این تفاوت‌ها مربوط به فایل ذخیره‌شده‌اند و ادعای خطای همهٔ اجراهای داخل کلاس نیستند.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## Awareها و shutdown hook؛ دسترسی به کانتینر [#aware-shutdown]
+
+<SourceBlock id="aware-explanation" source="teacher" recording="teacher-05-part2" timestamp="32:20">
+
+کانتینر Beanها را می‌شناسد، اما هر Bean به‌طور عادی لازم نیست از کانتینر سازندهٔ خود خبر داشته باشد. با پیاده‌سازی `ApplicationContextAware`، Spring متد `setApplicationContext` را فراخوانی و context را تحویل می‌دهد. در مثال، از آن برای ثبت shutdown hook استفاده می‌شود.
+
+استاد تأکید می‌کند این دسترسی نباید به عادتِ دریافت دستی همهٔ وابستگی‌ها با `getBean` تبدیل شود؛ روش‌های معمول DI مسئولیت‌ها را روشن‌تر نگه می‌دارند. Awareها برای نیاز به اطلاعات و امکانات زیرساختی کانتینر هستند.
+
+</SourceBlock>
+
+<CodeExample
+  id="aware-hook-code"
+  source="teacher"
+  lang="java"
+  filename="ShutDownHookBean.java"
+  repositoryPath="session5/src/main/java/ir/digixo/p07BeanLifecycle/p04ApplicationContextAware/ShutDownHookBean.java"
+  caption="Component در snapshot کامنت است؛ این کلاس بدون ثبت Bean خودکار فعال نمی‌شود."
+  code={
+    'package ir.digixo.p07BeanLifecycle.p04ApplicationContextAware;\n\nimport org.springframework.beans.BeansException;\nimport org.springframework.context.ApplicationContext;\nimport org.springframework.context.ApplicationContextAware;\nimport org.springframework.context.support.GenericApplicationContext;\nimport org.springframework.stereotype.Component;\n\n//@Component\npublic class ShutDownHookBean implements ApplicationContextAware {\n\n    ApplicationContext context;\n\n\n    @Override\n    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {\n        this.context=applicationContext;\n        if (applicationContext instanceof GenericApplicationContext)\n            ((GenericApplicationContext)applicationContext).registerShutdownHook();\n    }\n}'
+  }
+/>
+
+<SourceBlock id="aware-claim" source="teacher" recording="teacher-05-part2" timestamp="36:00">
+
+در توضیح این مثال، مسیر Aware به‌عنوان راه دریافت ApplicationContext معرفی می‌شود و cast به GenericApplicationContext برای رسیدن به `registerShutdownHook()` انجام می‌گیرد. مرور شفاهی shutdown hook نیز ابتدا از پایان غیرعادی JVM مثال می‌زند و سپس به پایین‌آمدن برنامه برمی‌گردد.
+
+</SourceBlock>
+
+<TechnicalCorrection id="aware-api-correction" corrects="aware-claim" statement="در توضیح نمونه، دریافت ApplicationContext با Autowired رد می‌شود و registerShutdownHook به GenericApplicationContext نسبت داده می‌شود." correction="ApplicationContext از وابستگی‌های قابل تزریق خود Spring است و با Autowired هم قابل دریافت است. registerShutdownHook در قرارداد ConfigurableApplicationContext وجود دارد و مخصوص GenericApplicationContext نیست. shutdown hook تضمینی برای crash یا توقف اجباری JVM نیست." reason="برای cleanup قابل اتکا در اجرای معمول، close یا ثبت shutdown hook را صریح انجام دهید؛ به callback هنگام هر نوع توقف تکیه نکنید.">
+
+[قرارداد ConfigurableApplicationContext](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/context/ConfigurableApplicationContext.html)
+
+</TechnicalCorrection>
+
+<SourceBlock id="shutdown-snapshot" source="gpt">
+
+در نسخهٔ ذخیره‌شده، `@Component` روی ShutDownHookBean غیرفعال است و در Test نیز `context.close()` کامنت شده است. بنابراین این نسخه به‌تنهایی ثبت hook نشان‌داده‌شده در ضبط را اجرا نمی‌کند. در بررسی مستقل، با بستن صریح context، PreDestroy مربوط به Human اجرا شد.
+
+برای یک برنامهٔ command-line می‌توان context را در try-with-resources نگه داشت تا پایان محدوده آن را ببندد، یا برای عمر برنامه shutdown hook ثبت کرد. این دو روش را با حذف شیء توسط GC یکی نگیرید. استفاده از context داخل منطق کسب‌وکار نیز موضوع متفاوتی از مدیریت عمر context در نقطهٔ شروع برنامه است.
+
+</SourceBlock>
+
+<SourceBlock id="bean-name-aware" source="teacher" recording="teacher-05-part2" timestamp="40:40">
+
+نمونهٔ دیگر، `BeanNameAware` است: کانتینر از طریق `setBeanName` نامی را که Bean با آن ثبت شده در اختیارش می‌گذارد؛ استاد کاربرد آن را در logging مثال می‌زند. داشتن نام کلاس با دانستن نام ثبت‌شدهٔ Bean یکی نیست. `BeanClassLoaderAware` و Awareهای دیگر نیز برای دسترسی به بخش‌های مشخص زیرساخت معرفی می‌شوند.
+
+تمرین کلاس، ساخت یک Bean آزمایشی با `InitializingBean`، `DisposableBean`، `BeanNameAware`، `BeanClassLoaderAware`، `ApplicationContextAware` و annotationهای lifecycle است تا ترتیب callbackها مشاهده شود. استاد تصریح می‌کند کنار هم گذاشتن همهٔ این‌ها هدف تمرینی دارد؛ نسخهٔ ذخیره‌شدهٔ BeanOne هنوز اسکلت این تمرین است.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## کاربرد initialization و مرز کارهای startup [#initialization-work]
+
+<SourceBlock id="postconstruct-use" source="teacher" recording="teacher-05-part2" timestamp="52:00">
+
+در پاسخ به کاربرد PostConstruct، استاد آماده‌سازی یک مقدار موردنیاز Bean یا دریافت اطلاعاتی پیش از استفادهٔ بعدی را مثال می‌زند. این موضوع به معنی قراردادن کل منطق کسب‌وکار در callback نیست. همچنین ایجاد connection به روش قدیمی Servlet را از مدیریت اتصال در لایهٔ persistence برنامهٔ جدید جدا می‌کند.
+
+</SourceBlock>
+
+<SourceBlock id="initialization-cost" source="gpt">
+
+فراخوانی بیرونی در initialization می‌تواند startup را کند یا به دسترس‌بودن سرویس دیگر وابسته کند. برای مثال‌های واقعی، timeout، خطا و وابستگی بین Beanها را روشن کنید. callback آماده‌سازی را با اجرای دائمی عملیات کسب‌وکار یکی نگیرید؛ برای کارهای سنگین پس از آماده‌شدن singletonها، رویداد context یا `SmartInitializingSingleton` ممکن است محل مناسب‌تری باشد. [توضیح رسمی initialization](https://docs.spring.io/spring-framework/reference/core/beans/factory-nature.html)
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## Collections در XML و util namespace [#collections-xml]
+
+<SourceBlock id="collections-intro" source="teacher" recording="teacher-05-part2" timestamp="01:01:00">
+
+در بخش پایانی، استاد نمونهٔ قدیمی collections را وارد پروژه می‌کند تا تفاوت آن با تزریق یک شیء ساده دیده شود. نام پکیج‌ها و برخی مسیرها هنوز نیازمند هماهنگ‌سازی‌اند؛ در ضبط صریحاً اجرای کامل این بخش به تمرین واگذار می‌شود.
+
+در XML، `list` و `set` چند value یا ref می‌گیرند؛ `map` از entry با key/value یا ارجاع استفاده می‌کند؛ `props` یا متن key=value برای Properties به کار می‌رود. این‌ها ساختار داده‌اند، نه لزوماً فایل تنظیمات بیرونی. property هر Bean مشخص می‌کند این collection به کدام بخش شیء داده شود.
+
+</SourceBlock>
+
+<CodeExample id="collections-xml-code" source="teacher" lang="xml" filename="p09collections.xml" repositoryPath="session5/src/main/java/ir/digixo/p08collections/p01xml/p09collections.xml" caption="تعریف Properties، List، Map و Set؛ اجرای این snapshot به setterهای کلاس نیاز دارد." code={"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<beans xmlns=\"http://www.springframework.org/schema/beans\"\n       xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n       xsi:schemaLocation=\"http://www.springframework.org/schema/beans\n        http://www.springframework.org/schema/beans/spring-beans.xsd\">\n\n\n\n    <bean id=\"complexObject\" class=\"ir.digixo.p08collections.p01xml.C01CollectionBean\">\n        <!-- results in a setAdminEmails(java.util.Properties) call -->\n       <!-- <property name=\"prop\">\n            <props>\n                <prop key=\"administrator\">administrator@example.org</prop>\n                <prop key=\"support\">support@example.org</prop>\n                <prop key=\"development\">development@example.org</prop>\n            </props>\n        </property>-->\n\n        <!--or-->\n        <property name=\"prop\">\n            <value>\n                administrator=administrator@example.org\n                support=support@example.org\n            </value>\n        </property>\n        <!-- results in a setSomeList(java.util.List) call -->\n        <property name=\"lists\">\n            <list>\n                <value>a list element followed by a reference</value>\n                <value>val2</value>\n                <!--<ref bean=\"myDataSource\" />-->\n            </list>\n        </property>\n        <!-- results in a setSomeMap(java.util.Map) call -->\n        <property name=\"maps\">\n            <map>\n                <entry key=\"an entry\" value=\"just some string\"/>\n                <entry key=\"key2\" value=\"value2\"/>\n               <!-- <entry key=\"a ref\" value-ref=\"myDataSource\"/>-->\n            </map>\n        </property>\n        <!-- results in a setSomeSet(java.util.Set) call -->\n        <property name=\"sets\">\n            <set>\n                <value>just some string</value>\n                <value>ddddd</value>\n               <!-- <ref bean=\"myDataSource\" />-->\n            </set>\n        </property>\n    </bean>\n\n\n</beans>"} />
+
+<SourceBlock id="collections-xml-gap" source="gpt">
+
+کلاس C01CollectionBean در snapshot فقط فیلدهای private و متد نمایش دارد؛ setterهای `prop`، `lists`، `maps` و `sets` در آن نیستند. در ضبط هنگام انتقال کد، اشاره به کنارگذاشتن Lombok دیده می‌شود. اجرای XML همین نسخه با خطای `NotWritablePropertyException` برای prop متوقف شد. برای تمرین باید setterها فراهم شوند؛ نمایش درست تگ‌ها به‌تنهایی به معنی قابل اجرا بودن فایل فعلی نیست.
+
+</SourceBlock>
+
+<SourceBlock id="collections-util" source="teacher" recording="teacher-05-part2" timestamp="01:04:40">
+
+در نسخهٔ ترکیبی، `util:map`، `util:properties`، `util:set` و `util:list` خود collection را با یک id به‌عنوان Bean تعریف می‌کنند. کلاس مصرف‌کننده با `@Resource(name="list")` و نام‌های مشابه به آن‌ها وصل می‌شود؛ Properties نیز با Autowired و Qualifier به `props` متصل شده است.
+
+نمونهٔ ContentHolder یک marker interface است و StringHolder یک مقدار رشته‌ای نگه می‌دارد. `<ref bean="holder"/>` نشان می‌دهد عضو collection فقط literal نیست و می‌تواند ارجاع به یک Bean باشد. استاد بررسی نقش این holder و اجرای کد را برای تمرین می‌گذارد.
+
+</SourceBlock>
+
+<CodeExample
+  id="collections-injection-fields"
+  source="teacher"
+  lang="java"
+  filename="C04CollectionBean.java"
+  repositoryPath="session5/src/main/java/ir/digixo/p08collections/p02annotation/C04CollectionBean.java"
+  caption="اتصال collection Beanهای نام‌دار؛ برشی از فیلدهای نمونه."
+  code={
+    'package ir.digixo.p08collections.p02annotation;\n\nimport jakarta.annotation.Resource;\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.beans.factory.annotation.Qualifier;\nimport org.springframework.stereotype.Service;\n\n\nimport java.util.List;\nimport java.util.Map;\nimport java.util.Properties;\nimport java.util.Set;\n@Service\npublic class C04CollectionBean {\n   // @Resource(name = "props")\n    @Autowired\n    @Qualifier(value = "props")\n    private Properties prop ;\n    @Resource(name = "list")\n    private List lists ;\n    @Resource(name = "map")\n    private Map<String, Object> maps;\n    @Resource(name = "set")\n    private Set sets ;\n\n\n    public void displayInfo()\n    {\n        //'
+  }
+/>
+
+<SourceBlock id="collections-util-gaps" source="gpt">
+
+در نسخهٔ annotation، Config هنوز `p17collections.p02annotation` را scan می‌کند و ImportResource به مسیر قدیمی سیستم دیگری اشاره دارد. در XML نیز `p17collections` و نام کلاس holder قدیمی باقی مانده‌اند. پیش از اجرا، مسیر ImportResource، محدودهٔ scan و نام کامل کلاس holder باید با `ir.digixo.p08collections.p02annotation` هماهنگ شوند. این فایل‌ها نمونهٔ آمادهٔ کپی و اجرای بی‌تغییر نیستند.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## Collections در Java Config؛ ساخت دستی و جمع‌آوری Beanها [#collections-java]
+
+<SourceBlock id="collections-java-explanation" source="teacher" recording="teacher-05-part2" timestamp="01:06:00">
+
+در Java Config، ساخت collection همان Java معمولی است: Set هنگام ساخت CollectionBean به constructor داده می‌شود؛ Map ساخته و با setter تنظیم می‌شود؛ سپس Bean برگردانده می‌شود. یک متد Bean جدا نیز List رشته‌ها را برمی‌گرداند. استاد روی این سادگی تأکید می‌کند: وقتی ساخت شیء در اختیار شماست، لازم نیست همهٔ جزئیات ساختار داده را با تگ‌های XML بیان کنید.
+
+</SourceBlock>
+
+<CodeExample
+  id="collections-java-config"
+  source="teacher"
+  lang="java"
+  filename="C02CollectionConfig.java"
+  repositoryPath="session5/src/main/java/ir/digixo/p08collections/p03Class/C02CollectionConfig.java"
+  caption="ساخت Set و Map، تعریف List و سه Bean با Orderهای متفاوت."
+  code={
+    'package ir.digixo.p08collections.p03Class;\n\nimport org.springframework.context.annotation.Bean;\nimport org.springframework.context.annotation.Configuration;\nimport org.springframework.core.annotation.Order;\n\nimport java.util.*;\n\n@Configuration\npublic class C02CollectionConfig {\n    @Bean\n    public C01CollectionBean getCollectionsBean() {\n       // return new C01CollectionBean();\n        C01CollectionBean bean= new C01CollectionBean(new HashSet<>(Arrays.asList("John", "Adam", "Harry")));\n        Map<Integer, String>  myMap = new HashMap<>();\n        myMap.put(1, "aa");\n        myMap.put(2, "bb");\n        myMap.put(3, "cc");\n        bean.setMyMap(myMap);\n        return bean;\n    }\n\n    @Bean\n    public List<String> myList() {\n        return Arrays.asList("Ali", "reza", "Hoda");\n    }\n\n    //\n    @Bean\n    @Order(2)\n    public C04MyBean bean1() {\n        return new C04MyBean("11");\n    }\n    @Bean\n    @Order(3)\n    public C04MyBean bean2() {\n        return new C04MyBean("22");\n    }\n    @Bean\n    @Order(1)\n    public C04MyBean bean3() {\n        return new C04MyBean("33");\n    }\n\n}'
+  }
+/>
+
+<SourceBlock id="collections-aggregate" source="gpt">
+
+در همین کد، دو معنای متفاوت کنار هم‌اند: `List<String>` از List تعریف‌شده دریافت می‌شود؛ اما `List<C04MyBean>` همهٔ Beanهای C04MyBean را جمع می‌کند. بررسی مستقل این snapshot، سه عضو با ترتیب نام‌های `33`، `11` و `22` را نشان داد؛ مطابق `@Order(1)`، `@Order(2)` و `@Order(3)`. عدد کوچک‌تر اول می‌آید. این نتیجهٔ بررسی کد است؛ در ضبط، مثال Order به‌تفصیل اجرا و تدریس نمی‌شود.
+
+`@Order` در این کاربرد ترتیب اعضای collection را مشخص می‌کند؛ برای بیان اینکه یک Bean پیش از دیگری آماده شود، آن را جایگزین `@DependsOn` نکنید. مثال جداگانهٔ Cars نیز در فایل C05Order وجود دارد، ولی scan آن هنوز پکیج قدیمی را دارد و پیش از اجرا باید اصلاح شود.
+
+</SourceBlock>
+
+<SourceBlock id="collections-layers" source="teacher" recording="teacher-05-part2" timestamp="01:09:00">
+
+در جمع‌بندی استاد، دریافت یک List از داده‌های کسب‌وکار با تزریق خود collection یکسان نیست. اگر Controller به فهرست Productها نیاز دارد، معمولاً Service را به‌عنوان وابستگی می‌گیرد و متد `getProducts` را روی آن صدا می‌زند. نتیجهٔ هر فراخوانیِ متد الزاماً یک Bean مستقل برای autowiring نیست. مثال holder و collection کمک می‌کند این مرز میان وابستگی سرویس و دادهٔ خروجی آن دیده شود.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## تمرین‌ها و ادامهٔ مسیر [#exercises]
+
+<SourceBlock id="teacher-homework" source="teacher" recording="teacher-05-part2" timestamp="01:12:00">
+
+- یک Bean آزمایشی بسازید و ترتیب callbackهای lifecycle، Awareها و متدهای init/destroy را با پیام‌های متمایز مشاهده کنید. ترکیب همهٔ روش‌ها برای شناخت ترتیب است.
+- مثال collections را از مخزن بخوانید، مسیرها و پکیج‌های منتقل‌شده را هماهنگ و اجرا کنید؛ نقش ContentHolder و تفاوت ساخت collection در XML و Java را توضیح دهید.
+
+در پایان ضبط، Bean scope، Environment و AOP از مباحث باقی‌مانده معرفی می‌شوند و سپس رفتن به لایهٔ persistence/Spring Data مطرح می‌شود. این برنامهٔ ادامهٔ دوره است؛ این صفحه ادعای پوشش کامل آن مباحث را ندارد.
+
+</SourceBlock>
+
+<SourceBlock id="verification-exercise" source="gpt">
+
+برای سنجش یادگیری، سه مرز را با خروجی واقعی نشان دهید: نبود DAO هنگام ساخت سرویس در برابر خطای مصرف null؛ پایان main در برابر closeِ context؛ و collection Beanِ نام‌دار در برابر مجموعهٔ همهٔ Beanهای یک نوع. اگر خروجی با انتظار فرق داشت، ابتدا source configuration، سپس نام/type و در پایان زمان اجرای callback را بررسی کنید.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## موضوعی که خوب است گفته شود [#supplement]
+
+<SourceBlock id="resource-ownership" source="gpt">
+
+در مثال DataSource، مالک هر resource را مشخص کنید: JDBC Connection، PreparedStatement و ResultSet باید پس از کار آزاد شوند، معمولاً با try-with-resources. مالکیت طول عمر DataSourceِ کانتینری با طول عمر یک Connection برای اجرای query یکسان نیست؛ بستن context جای cleanup به‌موقع هر عملیات را نمی‌گیرد.
+
+</SourceBlock>
+
+<SourceBlock id="lifecycle-scope-limit" source="gpt">
+
+cleanup خودکار را به هر scope تعمیم ندهید. برای نمونه، Spring lifecycleِ destruction یک prototype تحویل‌داده‌شده را مانند singleton دنبال نمی‌کند. این مرز هنگام استفاده از فایل یا connection اهمیت دارد؛ جزئیات scopeها در ادامهٔ دوره مطرح می‌شود. [مرجع scopeها](https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html)
+
+</SourceBlock>
+
+</section>
+
+## تاریخچهٔ تغییرات [#changelog]
+
+<ChangeLog />
