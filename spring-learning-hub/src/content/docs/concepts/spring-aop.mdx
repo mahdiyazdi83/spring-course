@@ -1,0 +1,96 @@
+---
+title: Spring AOP — Advice، Pointcut و Proxy
+description: مسیر فراخوانی در Spring AOP و تفاوت منطق اضافه، محل اعمال آن و target اصلی.
+kb:
+  type: concept
+  id: spring-aop
+  status: complete
+  createdAt: '2026-09-30'
+  updatedAt: '2026-09-30'
+  sources:
+    gpt:
+      references:
+        - https://docs.spring.io/spring-framework/reference/core/aop/proxying.html
+        - https://docs.spring.io/spring-framework/reference/core/aop-api/advice.html
+        - https://docs.spring.io/spring-framework/reference/core/aop-api/pointcuts.html
+        - ../teacher-files/session6/_01SpringAOP-ClassicApi
+        - ../teacher-files/session6/dynamicProxy
+  prerequisites: [dependency-injection]
+  relatedConcepts: [bean-scope, reflection]
+  changes:
+    - date: '2026-09-30'
+      type: initial
+      summary: افزودن مرجع AOP با مثال ProxyFactory و مرز static/dynamic pointcut جلسهٔ ششم.
+---
+
+import SourceBlock from '../../../components/source/SourceBlock.astro';
+import PrerequisiteList from '../../../components/documentation/PrerequisiteList.astro';
+import ConceptAppearances from '../../../components/documentation/ConceptAppearances.astro';
+import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+
+## پیش‌نیاز [#prerequisites]
+
+<PrerequisiteList />
+
+## رفتار اضافه کجا اجرا می‌شود؟ [#call-path]
+
+<SourceBlock id="aop-call-path" source="gpt">
+
+AOP برای جداکردن concernهایی مثل logging از متدهای منطق اصلی به کار می‌رود. در نمونهٔ Spring این جلسه، caller به proxy دسترسی دارد و proxy زنجیرهٔ adviceها را پیش از رسیدن به target اجرا می‌کند. [نمونه‌های جلسهٔ ششم](/tuesday/session-06/#classic-aop) این مسیر را با `ProxyFactory` می‌سازند.
+
+ضبط جلسه، Human و ProxyFactory را تدریس می‌کند؛ نمونه‌های جداگانهٔ Advice و static/dynamic pointcut زیر، از کد همراه همان snapshot خوانده و آزمایش شده‌اند. آن‌ها را اجرای نمایش‌داده‌شده در ضبط فرض نکنید.
+
+```text
+caller → proxy → advice chain → target method
+                       ↑             |
+                       └── return/exception
+```
+
+| اصطلاح     | سؤال متناظر                                 | نمونه                                    |
+| ---------- | ------------------------------------------- | ---------------------------------------- |
+| Target     | منطق اصلی روی کدام شیء است؟                 | Human یا JavaProgrammer                  |
+| Advice     | چه رفتار اضافه‌ای داریم؟                    | چاپ پیام قبل یا بعد از متد               |
+| Join point | کدام نقطه از اجرا قابل مداخله است؟          | اجرای متد در Spring AOP                  |
+| Pointcut   | کدام اجراها انتخاب شوند؟                    | متد code فقط در JavaProgrammer           |
+| Advisor    | رفتار و انتخاب چگونه کنار هم قرار می‌گیرند؟ | DefaultPointcutAdvisor(pointcut, advice) |
+| Proxy      | caller از چه واسطه‌ای عبور می‌کند؟          | خروجی ProxyFactory.getProxy()            |
+
+</SourceBlock>
+
+## Before، After returning، Around و Throws [#advice-kinds]
+
+<SourceBlock id="advice-distinction" source="gpt">
+
+در Classic API، `MethodBeforeAdvice` پیش از متد، `AfterReturningAdvice` پس از بازگشت موفق و `ThrowsAdvice` هنگام exception به کار می‌روند. `MethodInterceptor` به کل invocation دسترسی دارد؛ `proceed()` ادامهٔ chain و اجرای بعدی را جلو می‌برد.
+
+در کد `HumanDecorator`، چاپ `after` بعد از `proceed()` نوشته شده و داخل `finally` نیست؛ اگر target exception بدهد، آن خط اجرا نمی‌شود. نام «around» تضمینِ اجرای کد بعدی در مسیر خطا نیست. در آزمایش ThrowsAdvice نیز پیام advice چاپ شد و exception همچنان به caller رسید. [مرجع Advice API](https://docs.spring.io/spring-framework/reference/core/aop-api/advice.html)
+
+</SourceBlock>
+
+## Static یا Dynamic؟ [#pointcut-matching]
+
+<SourceBlock id="pointcut-experiment" source="gpt">
+
+در نمونهٔ static، نوع کلاس و نام متد برای تصمیم کافی‌اند: `code` در JavaProgrammer انتخاب می‌شود و همان متد در PhpProgrammer انتخاب نمی‌شود. در نمونهٔ dynamic، علاوه بر نام `m1` و کلاس، مقدار آرگومان هم اهمیت دارد: `100` انتخاب نمی‌شود و `101` انتخاب می‌شود، چون شرط کد ذخیره‌شده `x > 100` است.
+
+static check می‌تواند انتخاب را پیش از بررسی آرگومان رد کند. به همین دلیل `m2()` بدون آرگومان وارد بخشی نمی‌شود که `args[0]` را می‌خواند. این رفتار در [آزمایش pointcutها](/tuesday/session-06/#pointcuts) بررسی شده است. [مرجع Pointcut API](https://docs.spring.io/spring-framework/reference/core/aop-api/pointcuts.html)
+
+</SourceBlock>
+
+## مرز Proxy را فراموش نکنیم [#proxy-boundary]
+
+<SourceBlock id="proxy-limitations" source="gpt">
+
+فراخوانی مستقیم target با فراخوانی proxy یکی نیست. در Spring AOP، self-invocation روی `this` نیز از proxy بیرونی عبور نمی‌کند. JDK dynamic proxy بر interfaceها تکیه دارد؛ proxy مبتنی بر subclass برای کلاس final قابل ساخت نیست و متد final را override نمی‌کند. [مرجع Proxying](https://docs.spring.io/spring-framework/reference/core/aop/proxying.html)
+
+این محدودیت‌ها مربوط به مدل proxy در Spring AOP هستند؛ AOP یک مفهوم گسترده‌تر است و نباید آن را در همهٔ ابزارها مساوی proxy دانست. وجود `spring-aspects` در POM نیز به‌تنهایی ثابت نمی‌کند که مثال با AspectJ weaving اجرا شده است.
+
+</SourceBlock>
+
+## حضور در جلسات [#appearances]
+
+<ConceptAppearances />
+
+## سابقهٔ تغییر [#changes]
+
+<ChangeLog />

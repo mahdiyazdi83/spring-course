@@ -1,0 +1,79 @@
+---
+title: Bean scope — تعداد نمونه‌ها و مرز اشتراک
+description: تفاوت singleton، prototype، request scope و رفتار dependency با scope متفاوت در Spring.
+kb:
+  type: concept
+  id: bean-scope
+  status: complete
+  createdAt: '2026-09-30'
+  updatedAt: '2026-09-30'
+  sources:
+    gpt:
+      references:
+        - https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html
+        - ../teacher-files/session6/session6/src/main/java/ir/digixo/p01BeanScope
+        - ../teacher-files/session6/session6/src/main/java/ir/digixo/p04SingletonBeanswithPrototypeBeanDependencies
+  prerequisites: [bean, dependency-injection]
+  relatedConcepts: [bean-lifecycle, application-context]
+  changes:
+    - date: '2026-09-30'
+      type: initial
+      summary: افزودن مرجع scope بر اساس مثال‌ها و آزمایش‌های جلسهٔ ششم.
+---
+
+import SourceBlock from '../../../components/source/SourceBlock.astro';
+import PrerequisiteList from '../../../components/documentation/PrerequisiteList.astro';
+import ConceptAppearances from '../../../components/documentation/ConceptAppearances.astro';
+import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+
+## پیش‌نیاز [#prerequisites]
+
+<PrerequisiteList />
+
+## سؤال اصلی چیست؟ [#scope-contract]
+
+<SourceBlock id="scope-question" source="gpt">
+
+Scope مشخص می‌کند از یک Bean definition چند نمونه ساخته می‌شود و درخواست‌کنندگان چه زمانی همان نمونه یا نمونه‌ای دیگر می‌گیرند. در [مثال DAO جلسهٔ ششم](/tuesday/session-06/#singleton-scope)، با تغییر scope، کد Serviceها ثابت می‌ماند ولی هویت DAO دریافتی تغییر می‌کند.
+
+| Scope         | مرز نمونه                                                |
+| ------------- | -------------------------------------------------------- |
+| `singleton`   | یک نمونه برای هر Bean definition در هر کانتینر؛ پیش‌فرض  |
+| `prototype`   | نمونهٔ تازه در هر درخواست ساخت/دریافت آن Bean از کانتینر |
+| `request`     | یک نمونه برای هر HTTP request در context مناسب وب        |
+| `session`     | یک نمونه برای هر HTTP session                            |
+| `application` | یک نمونه برای ServletContext                             |
+
+کلمهٔ request در توضیح prototype به معنی HTTP request نیست. Scope با زمان eager/lazy ساخته‌شدن نیز دو سؤال جداست. [مرجع scopeها](https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html)
+
+</SourceBlock>
+
+## آزمایشی که تفاوت را نشان می‌دهد [#identity]
+
+<SourceBlock id="scope-experiments" source="gpt">
+
+سه آزمایش جلسهٔ ششم را می‌توان با مقایسهٔ referenceها دنبال کرد:
+
+1. `service1` و `service2` دو تعریف XML از یک کلاس‌اند؛ دو نمونه دارند، اما دریافت تکراری هر نام همان نمونه را می‌دهد.
+2. دو Service با DAO از نوع singleton، DAO مشترک دارند. با prototype شدن DAO، هنگام آماده‌سازی هر Service نمونهٔ جدا تحویل می‌شود.
+3. اگر یک singleton یک prototype را در فیلد نگه دارد، getter عادی همان reference را برمی‌گرداند؛ getter، درخواست تازه‌ای از کانتینر نیست.
+
+برای مورد سوم، [lookup-method، Aware و scoped proxy](/tuesday/session-06/#mixed-scopes) بررسی شده‌اند. در scoped proxy، ثابت‌بودن referenceِ proxy با تازه‌بودن target در هر فراخوانی قابل جمع است؛ این رفتار برای عملیات چندمرحله‌ایِ دارای state اهمیت دارد.
+
+</SourceBlock>
+
+## Scope، cleanup و thread safety [#boundaries]
+
+<SourceBlock id="scope-boundaries" source="gpt">
+
+singleton بودن به‌خودی‌خود state مشترک را thread-safe نمی‌کند. همچنین prototype شدن، دستور نابودی شیء در پایان یک متد یا HTTP request نیست. Spring initializationِ prototype را انجام می‌دهد ولی cleanup آن را مانند singleton مدیریت نمی‌کند؛ برای ارتباط این موضوع با callbackها، [Bean lifecycle](/concepts/bean-lifecycle/#cleanup) را بخوانید.
+
+</SourceBlock>
+
+## حضور در جلسات [#appearances]
+
+<ConceptAppearances />
+
+## سابقهٔ تغییر [#changes]
+
+<ChangeLog />

@@ -1,0 +1,1140 @@
+---
+title: جلسهٔ ششم — Bean scope، Environment و AOP
+description: singleton و prototype، Profile، MessageSource، eventها، ترکیب scopeها و مسیر proxy تا Advice و Pointcut با کد واقعی و توضیح حیدری.
+sidebar:
+  label: جلسهٔ ۶ — Scope و AOP
+  order: 6
+kb:
+  type: tuesday
+  id: tuesday-06
+  sessionNumber: 6
+  status: complete
+  createdAt: '2026-09-30'
+  updatedAt: '2026-09-30'
+  sources:
+    teacher:
+      recordings:
+        - id: teacher-06-part1
+          kind: video
+          location: ../records/tuesday-class-recordings/session6/2026-09-15 17-07-12.mkv
+          durationSeconds: 5953
+        - id: teacher-06-part2
+          kind: video
+          location: ../records/tuesday-class-recordings/session6/2026-09-15 19-07-21.mkv
+          durationSeconds: 6097
+      repository:
+        location: ../teacher-files
+        commit: 1346059f934c6599b07a81a32a9ef159fcc9b290
+        capturedAt: '2026-09-30'
+      references:
+        - ../teacher-files/session6/session6
+        - ../teacher-files/session6/dynamicProxy
+        - ../teacher-files/session6/_01SpringAOP-ClassicApi
+    heydari:
+      recordings:
+        - id: heydari-06-tuesday
+          kind: audio
+          location: ../records/mr.heydari-tuesday-audio/session6/سه شنبه ۲۴ شهریور.m4a
+          durationSeconds: 1186
+    gpt:
+      references:
+        - https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-method-injection.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/environment.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/context-introduction.html
+        - https://docs.spring.io/spring-framework/reference/core/aop/proxying.html
+        - https://docs.spring.io/spring-framework/reference/core/aop-api/advice.html
+        - https://docs.spring.io/spring-framework/reference/core/aop-api/pointcuts.html
+        - https://docs.spring.io/spring-framework/reference/core/aop/ataspectj/pointcuts.html
+        - https://projectlombok.org/setup/javac
+        - https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/beans/factory/annotation/AutowiredAnnotationBeanPostProcessor.html
+  prerequisites:
+    [bean, dependency-injection, application-context, bean-lifecycle, external-configuration]
+  prerequisiteSessions: [tuesday-05]
+  concepts:
+    - id: bean-scope
+      relation: introduced
+      anchor: singleton-scope
+    - id: bean-lifecycle
+      relation: expanded
+      anchor: prototype-scope
+    - id: external-configuration
+      relation: expanded
+      anchor: environment
+    - id: application-context
+      relation: expanded
+      anchor: events
+    - id: spring-aop
+      relation: introduced
+      anchor: aop-purpose
+    - id: reflection
+      relation: used-in-code
+      anchor: jdk-proxy
+  timeline:
+    - topic: Scope و singleton به‌ازای Bean definition؛ مثال XML و DAO مشترک
+      source: teacher
+      recording: teacher-06-part1
+      start: '00:00'
+      approximate: true
+    - topic: scopeهای Core و پیش‌نمایش scopeهای وب
+      source: teacher
+      recording: teacher-06-part1
+      start: '15:00'
+      approximate: true
+    - topic: prototype، دفعات ساخت و ارتباط با Lazy
+      source: teacher
+      recording: teacher-06-part1
+      start: '21:00'
+      approximate: true
+    - topic: Environment، Profile و محیط‌های اجرا
+      source: teacher
+      recording: teacher-06-part1
+      start: '36:00'
+      approximate: true
+    - topic: Profile روی Component، configuration و Bean؛ test در برابر stage
+      source: teacher
+      recording: teacher-06-part1
+      start: '45:00'
+      approximate: true
+    - topic: پیش‌نمایش تنظیم profile در Boot و خواندن properties با Environment
+      source: teacher
+      recording: teacher-06-part1
+      start: '54:15'
+      approximate: true
+    - topic: i18n در XML و Java Config؛ انتخاب پیام با Locale
+      source: teacher
+      recording: teacher-06-part1
+      start: '01:09:00'
+      approximate: true
+    - topic: Event و Listener، ContextStartedEvent و تمرین custom event
+      source: teacher
+      recording: teacher-06-part1
+      start: '01:17:30'
+      approximate: true
+    - topic: تمرین prototype در singleton و پیشنهاد سه راه دریافت نمونهٔ تازه
+      source: teacher
+      recording: teacher-06-part1
+      start: '01:30:00'
+      approximate: true
+    - topic: پاسخ تمرین prototype در singleton؛ lookup-method، scoped proxy و Aware
+      source: teacher
+      recording: teacher-06-part2
+      start: '01:25'
+      approximate: true
+    - topic: مرور نقشهٔ دوره و ورود به AOP و cross-cutting concern
+      source: teacher
+      recording: teacher-06-part2
+      start: '17:15'
+      approximate: true
+    - topic: Proxy، dynamic proxy و تفاوت دامنهٔ Spring AOP و AspectJ
+      source: teacher
+      recording: teacher-06-part2
+      start: '30:30'
+      approximate: true
+    - topic: اصطلاح‌های AOP با مثال ProductService
+      source: teacher
+      recording: teacher-06-part2
+      start: '45:00'
+      approximate: true
+    - topic: JDK dynamic proxy؛ interface، target و InvocationHandler
+      source: teacher
+      recording: teacher-06-part2
+      start: '01:00:00'
+      approximate: true
+    - topic: Pointcut expression، wildcardها و مرز designatorها
+      source: teacher
+      recording: teacher-06-part2
+      start: '01:03:40'
+      approximate: true
+    - topic: Classic API، HumanDecorator، ProxyFactory و انتخاب متدها
+      source: teacher
+      recording: teacher-06-part2
+      start: '01:14:10'
+      approximate: true
+    - topic: رویکرد declarative در برابر convention و مثال Stream
+      source: teacher
+      recording: teacher-06-part2
+      start: '01:30:00'
+      approximate: true
+    - topic: گفت‌وگوی Lombok، سازگاری نسخه‌ها و پرسش self-invocation
+      source: teacher
+      recording: teacher-06-part2
+      start: '01:33:00'
+      approximate: true
+    - topic: مرور ApplicationContext و i18n
+      source: heydari
+      recording: heydari-06-tuesday
+      start: '00:00'
+      approximate: true
+    - topic: Event و Listener، مثال پیامک و event سفارشی
+      source: heydari
+      recording: heydari-06-tuesday
+      start: '07:15'
+      approximate: true
+    - topic: تمرین prototype در singleton
+      source: heydari
+      recording: heydari-06-tuesday
+      start: '16:20'
+      approximate: true
+  changes:
+    - date: '2026-09-30'
+      type: initial
+      summary: استخراج منابع سه‌شنبهٔ ششم، تطبیق نمونه‌های Core و AOP و ثبت اصلاح‌های فنی کنار توضیح هر منبع.
+---
+
+import SourceBlock from '../../../components/source/SourceBlock.astro';
+import SourceFilter from '../../../components/source/SourceFilter.astro';
+import TechnicalCorrection from '../../../components/source/TechnicalCorrection.astro';
+import CodeExample from '../../../components/code/CodeExample.astro';
+import PrerequisiteList from '../../../components/documentation/PrerequisiteList.astro';
+import SessionTimeline from '../../../components/documentation/SessionTimeline.astro';
+import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+
+## پیش‌نیازها [#prerequisites]
+
+<PrerequisiteList />
+
+## ترتیب واقعی کلاس [#timeline]
+
+<SessionTimeline />
+
+<SourceFilter />
+
+<section data-source-group>
+
+## نقشهٔ جلسه؛ از عمر Bean تا رفتار Proxy [#overview]
+
+<SourceBlock id="source-map" source="gpt">
+
+در [جلسهٔ پنجم](/tuesday/session-05/) زمان آماده‌سازی و پایان کار Bean را دیدیم. این جلسه می‌پرسد «چند نمونه داریم و هر بار کدام نمونه به مصرف‌کننده می‌رسد؟» سپس Environment، قابلیت‌های ApplicationContext و AOP را به همین پرسش وصل می‌کند.
+
+منابع سه‌شنبه، دو ویدئوی استاد در ۱۵ سپتامبر ۲۰۲۶ و توضیح صوتی حیدری در همان روز هستند. [مرور پنج‌شنبهٔ ششم](/thursday/session-06/) درس مستقلی دارد. ترتیب زیر برای یادگیری تنظیم شده است؛ خط زمانی، ترتیب بحث‌های هر ضبط را جدا نشان می‌دهد.
+
+کد استاد سه پروژه دارد: `session6/session6` با Spring **7.0.9**، پروژهٔ مستقل `dynamicProxy` و `_01SpringAOP-ClassicApi` با Spring **6.2.10**. نسخهٔ AOP را نباید به‌اشتباه 7 فرض کرد. نمونه‌ها از commit همان روز انتخاب شده‌اند؛ ایرادهای مسیر و تنظیماتِ ذخیره‌شده زیر کدها توضیح داده می‌شوند.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## Singleton؛ به‌ازای Bean definition و کانتینر [#singleton-scope]
+
+<SourceBlock id="scope-definition" source="teacher" recording="teacher-06-part1" timestamp="00:30" summary="Spring singleton یک نمونه به‌ازای هر Bean definition در هر کانتینر نگه می‌دارد؛ دو تعریف از یک کلاس می‌توانند دو نمونه داشته باشند.">
+
+استاد scope را با محدودهٔ دسترسی و طول عمر متغیرها و سپس ServletContext یادآوری می‌کند. در Spring، سؤال عملی این است که یک Bean definition چگونه به نمونه‌های قابل تحویل تبدیل می‌شود. scope پیش‌فرض، `singleton` است.
+
+مثال مهم کلاس این است: دو تعریف XML به نام‌های `service1` و `service2` داریم که **هر دو از یک کلاس** ساخته می‌شوند. دو نمونهٔ مستقل ساخته شدن، singleton بودن آن‌ها را نقض نمی‌کند؛ هر تعریف در همان کانتینر نمونهٔ خودش را دارد. این قرارداد با Singleton design pattern، که ساخت نمونه را در خود کلاس محدود می‌کند، یکی نیست.
+
+</SourceBlock>
+
+<CodeExample id="two-singleton-definitions" source="teacher" lang="xml" filename="config.xml" repositoryPath="session6/session6/src/main/java/ir/digixo/p01BeanScope/p01Singleton/p02xml/config.xml" caption="دو Bean definition از C03ProductService1؛ نام service2 به معنی کلاس دوم نیست." code={"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<beans xmlns=\"http://www.springframework.org/schema/beans\"\n       xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n       xsi:schemaLocation=\"http://www.springframework.org/schema/beans\n       http://www.springframework.org/schema/beans/spring-beans.xsd\">\n\n    <!--business obj-->\n\n\n   <bean id=\"service1\" class=\"ir.digixo.p01BeanScope.p01Singleton.p02xml.C03ProductService1\"/>\n   <bean id=\"service2\" class=\"ir.digixo.p01BeanScope.p01Singleton.p02xml.C03ProductService1\"/>\n\n\n\n\n\n</beans>"} />
+
+<SourceBlock id="shared-dao" source="teacher" recording="teacher-06-part1" timestamp="10:30">
+
+در نسخهٔ annotation، دو Service به یک ProductDao وابسته‌اند. constructor هر Service، DAO را می‌گیرد؛ چون constructor یگانه است، نوشتن `@Autowired` ضروری نیست. وقتی DAO با scope پیش‌فرض ثبت شود، هر دو Service همان DAO را دریافت می‌کنند.
+
+می‌توان scope را صریح با `@Scope("singleton")` نوشت یا از ثابت‌های `BeanDefinition.SCOPE_SINGLETON` و `ConfigurableBeanFactory.SCOPE_SINGLETON` استفاده کرد. این‌ها شیوه‌های بیان یک تنظیم‌اند؛ حالت تازه‌ای از scope ایجاد نمی‌کنند.
+
+</SourceBlock>
+
+<CodeExample
+  id="singleton-dao"
+  source="teacher"
+  lang="java"
+  filename="C02ProductDao.java"
+  repositoryPath="session6/session6/src/main/java/ir/digixo/p01BeanScope/p01Singleton/p01Annotation/C02ProductDao.java"
+  caption="Scope صریح روی DAO؛ singleton بدون این annotation نیز پیش‌فرض است."
+  code={
+    'package ir.digixo.p01BeanScope.p01Singleton.p01Annotation;\n\nimport org.springframework.beans.factory.config.ConfigurableBeanFactory;\nimport org.springframework.context.annotation.Scope;\nimport org.springframework.stereotype.Component;\n\n@Component\n//@Singleton\n//@Scope("singleton")\n//@Scope(BeanDefinition.SCOPE_SINGLETON)\n@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)\npublic class C02ProductDao {\n}'
+  }
+/>
+
+<SourceBlock id="singleton-saved-config" source="gpt">
+
+در snapshot، annotationهای `@Configuration` و `@ComponentScan` در C01Config نسخهٔ singleton کامنت شده‌اند. بنابراین اجرای Test ذخیره‌شده به‌تنهایی آن Serviceها را ثبت نمی‌کند. برای بازسازی آزمایش، scanning را فعال کنید یا کلاس‌های DAO و دو Service را صریحاً به کانتکست بدهید. در بررسی مستقل، دو Service یک DAO مشترک گرفتند و دو تعریف XML از یک کلاس، دو singleton متفاوت داشتند.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## Prototype و scopeهای وب؛ درخواست از کانتینر را دقیق بخوانیم [#prototype-scope]
+
+<SourceBlock id="prototype-dao" source="teacher" recording="teacher-06-part1" timestamp="22:30">
+
+وقتی DAO را prototype می‌کنیم، هر بار که کانتینر باید آن Bean را برای یک مصرف‌کننده فراهم کند، نمونهٔ تازه می‌سازد. استاد ابتدا وابستگی Serviceها را کنار می‌گذارد: prototypeِ بدون مصرف‌کننده با بالا آمدن context ساخته نمی‌شود. با بازگرداندن وابستگی دو Service، دو بار پیام constructorِ DAO چاپ می‌شود؛ هر Service درخواست جداگانه‌ای برای dependency داشته است.
+
+در این مثال، «per request» یعنی درخواست آن Bean از کانتینر؛ هنوز دربارهٔ HTTP request حرف نمی‌زنیم. تفاوت singleton و prototype را می‌توان با گرفتن DAOهای دو Service و مقایسهٔ referenceها دید.
+
+</SourceBlock>
+
+<CodeExample
+  id="prototype-dao-code"
+  source="teacher"
+  lang="java"
+  filename="C02ProductDao.java"
+  repositoryPath="session6/session6/src/main/java/ir/digixo/p01BeanScope/p02Prototype/C02ProductDao.java"
+  caption="constructor برای مشاهدهٔ دفعات ساخت DAO پیام چاپ می‌کند."
+  code={
+    'package ir.digixo.p01BeanScope.p02Prototype;\n\nimport org.springframework.beans.factory.config.ConfigurableBeanFactory;\nimport org.springframework.context.annotation.Scope;\nimport org.springframework.stereotype.Component;\n\n@Component\n//@Singleton\n//@Scope("")\n//@Scope(BeanDefinition.SCOPE_SINGLETON)\n@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)\npublic class C02ProductDao {\n    public C02ProductDao() {\n        System.out.println("productdao created");\n    }\n}'
+  }
+/>
+
+<SourceBlock id="lazy-scope-recap" source="teacher" recording="teacher-06-part1" timestamp="31:20">
+
+استاد عنوان «Lazy only for singleton» را برای یادآوری رابطهٔ این مثال با جلسهٔ قبل می‌گذارد: singleton معمولاً در شروع کانتکست ساخته می‌شود و lazy می‌تواند آن را به زمان نیاز موکول کند؛ prototype از ابتدا برای هر درخواست ساخته می‌شود و پیش‌ساختن یک نمونهٔ بلااستفاده معنای همان آزمایش singleton را ندارد.
+
+</SourceBlock>
+
+<SourceBlock id="lazy-scope-precision" source="gpt">
+
+این عنوان را به همهٔ کاربردهای `@Lazy` تعمیم ندهید: lazy-init در Bean definition با lazy resolution در نقطهٔ injection دو کاربرد متمایز دارد. همچنین prototype وابسته به یک singletonِ eager می‌تواند همان زمان startup ساخته شود، چون مصرف‌کننده همان موقع آن را لازم دارد.
+
+پکیج‌های prototype و Lazy در snapshot هنوز basePackages قدیمی را scan می‌کنند. نام پوشه به‌تنهایی نشانهٔ فعال‌بودن تنظیم Lazy نیست؛ در کد ذخیره‌شدهٔ پوشهٔ سوم annotation فعال `@Lazy` نداریم. آزمایش مستقل با ثبت صریح کلاس‌های درست انجام شد.
+
+</SourceBlock>
+
+<SourceBlock id="web-scope-preview" source="teacher" recording="teacher-06-part1" timestamp="15:00">
+
+با وجود dependency مربوط به وب، IDE نام‌های `request`، `session` و `application` را هم نشان می‌دهد. استاد این scopeها را به بحث MVC موکول می‌کند؛ تمرکز فعلی روی singleton و prototype در مثال‌های Service و DAO است. این مرزبندی، محدودهٔ آموزش فعلی است و به معنی ممنوع‌بودن استفادهٔ لایهٔ Service از dependency با scope وب نیست.
+
+</SourceBlock>
+
+<SourceBlock id="heydari-scope-question" source="heydari" recording="heydari-06-tuesday" timestamp="16:20" context="scope-definition">
+
+حیدری در پایان توضیح سه‌شنبه، پرسش ترکیب scopeها را به تمرین تبدیل می‌کند: یک singleton به prototype وابسته است؛ دو بار مصرفش کنیم و ببینیم آیا dependency عوض می‌شود یا همان نمونهٔ قبلی می‌ماند. در توضیح او، prototype با ساخته‌شدن در هر request و پایان یافتن در انتهای آن توصیف می‌شود.
+
+</SourceBlock>
+
+<TechnicalCorrection id="prototype-request-correction" corrects="heydari-scope-question" statement="در مرور، prototype با پایان request از بین‌رفتنی توصیف می‌شود." correction="prototype در هر درخواست آن Bean از کانتینر نمونهٔ تازه می‌دهد؛ HTTP request scope نیست و Spring نابودی آن را در پایان request مدیریت نمی‌کند. در تزریق عادی به singleton نیز reference قبلی می‌ماند." reason="این تمایز، پاسخ درست تمرین و مسئولیت cleanup را مشخص می‌کند.">
+
+[Prototype و dependency داخل singleton](https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html)
+
+</TechnicalCorrection>
+
+</section>
+
+<section data-source-group>
+
+## Environment؛ انتخاب Profile و خواندن Properties [#environment]
+
+<SourceBlock id="environment-purpose" source="teacher" recording="teacher-06-part1" timestamp="36:00">
+
+Environment در این جلسه دو مسئولیت اصلی دارد: دسترسی به properties و تعیین profileهای فعال. بخش properties ادامهٔ بحث جلسهٔ پنجم است؛ profile کمک می‌کند گروه مشخصی از Bean definitionها در یک محیط ثبت شوند.
+
+استاد از محیط‌های development، test و production مثال می‌زند و سپس اختلاف تنظیمات هنگام اجرای برنامه روی ماشین محلی، container و محیط orchestration را مطرح می‌کند. مثلاً آدرس دسترسی به دیتابیس لزوماً در همهٔ محیط‌ها یکسان نیست. هدف، جداکردن تنظیم مناسب محیط از منطق اصلی برنامه است.
+
+</SourceBlock>
+
+<CodeExample
+  id="profile-bean"
+  source="teacher"
+  lang="java"
+  filename="BeanOne.java"
+  repositoryPath="session6/session6/src/main/java/ir/digixo/p02EnvironmentAbstraction/p01Profile/BeanOne.java"
+  caption="این Component فقط در صورت فعال‌بودن profileِ test ثبت می‌شود."
+  code={
+    'package ir.digixo.p02EnvironmentAbstraction.p01Profile;\n\nimport org.springframework.context.annotation.Profile;\nimport org.springframework.stereotype.Component;\n\n@Component\n@Profile(value ="test")\npublic class BeanOne {\n}'
+  }
+/>
+
+<SourceBlock id="profile-selection" source="teacher" recording="teacher-06-part1" timestamp="45:00">
+
+Profile را هم روی Component می‌توان نوشت، هم روی متد `@Bean` و هم روی کل کلاس configuration. در حالت آخر، تعریف‌های آن configuration با همان شرط محیط وارد کانتینر می‌شوند. برای نشان‌دادن این تفاوت، BeanOne/Two/Three با `test` و دو configuration با تنظیم‌های `dev` و `stage` کنار هم قرار می‌گیرند.
+
+در Test ابتدا context بدون refresh ساخته می‌شود؛ سپس با `getEnvironment().setActiveProfiles(...)` profile انتخاب می‌شود، configuration ثبت می‌شود و `refresh()` انجام می‌گیرد. استاد با عوض‌کردن test به stage، نبود BeanOne را نشان می‌دهد. این نام‌ها قراردادیِ برنامه‌اند، نه کلمات رزروشدهٔ framework.
+
+</SourceBlock>
+
+<CodeExample
+  id="profile-methods"
+  source="teacher"
+  lang="java"
+  filename="Config1.java"
+  repositoryPath="session6/session6/src/main/java/ir/digixo/p02EnvironmentAbstraction/p01Profile/Config1.java"
+  caption="Profile روی متدهای Bean؛ return null فقط placeholder است."
+  code={
+    'package ir.digixo.p02EnvironmentAbstraction.p01Profile;\n\nimport org.springframework.context.annotation.Bean;\nimport org.springframework.context.annotation.Configuration;\nimport org.springframework.context.annotation.Profile;\n\nimport javax.sql.DataSource;\n\n@Configuration\n//@Profile("dev")\npublic class Config1 {\n\n\n    @Bean\n    @Profile("dev")\n    public DataSource dataSource1()\n    {\n        //mysql\n        return null;\n    }\n    @Bean\n    @Profile("dev")\n    public DataSource dataSource2()\n    {\n        //oracle\n        return null;\n    }\n}'
+  }
+/>
+
+<CodeExample
+  id="profile-class"
+  source="teacher"
+  lang="java"
+  filename="Config2.java"
+  repositoryPath="session6/session6/src/main/java/ir/digixo/p02EnvironmentAbstraction/p01Profile/Config2.java"
+  caption="Profile روی کل configuration؛ هر دو DataSource هنوز placeholder هستند."
+  code={
+    'package ir.digixo.p02EnvironmentAbstraction.p01Profile;\n\nimport org.springframework.context.annotation.Bean;\nimport org.springframework.context.annotation.Configuration;\nimport org.springframework.context.annotation.Profile;\n\nimport javax.sql.DataSource;\n\n@Configuration\n@Profile("stage")\npublic class Config2 {\n\n\n    @Bean\n    public DataSource dataSource1()\n    {\n        //mysql\n        return null;\n    }\n    @Bean\n    public DataSource dataSource2()\n    {\n        //oracle\n        return null;\n    }\n}'
+  }
+/>
+
+<CodeExample
+  id="profile-bootstrap"
+  source="teacher"
+  lang="java"
+  filename="Test.java"
+  repositoryPath="session6/session6/src/main/java/ir/digixo/p02EnvironmentAbstraction/p01Profile/Test.java"
+  caption="انتخاب stage پیش از register و refresh؛ BeanOne در test تعریف شده است."
+  code={
+    'package ir.digixo.p02EnvironmentAbstraction.p01Profile;\n\nimport org.springframework.context.annotation.AnnotationConfigApplicationContext;\n\npublic class Test {\n    static void main() {\n        var context=new AnnotationConfigApplicationContext();\n        context.getEnvironment().setActiveProfiles("stage");\n        context.register(Config3.class);\n        context.refresh();\n\n        BeanOne bean = context.getBean(BeanOne.class);\n        System.out.println(bean);\n\n\n    }\n}'
+  }
+/>
+
+<SourceBlock id="profile-code-result" source="gpt">
+
+در اجرای snapshot، profileِ `stage` فعال است ولی Test، BeanOne را که `@Profile("test")` دارد می‌خواهد؛ نبودن آن Bean نتیجهٔ همین انتخاب است. در آزمایش مستقل با `stage`، BeanOne ثبت نشد و با `test` ثبت شد.
+
+متدهای DataSource در Config1 و Config2 مقدار `null` برمی‌گردانند؛ این کد الگوی انتخاب تعریف را نشان می‌دهد و یک اتصال واقعی به MySQL یا Oracle برقرار نمی‌کند. برای کار واقعی باید DataSource معتبر تنظیم شود. نام profile نیز صرفاً یک نام تنظیماتی است؛ Spring از روی آن محیط deployment را خودکار تشخیص نمی‌دهد.
+
+</SourceBlock>
+
+<CodeExample
+  id="environment-properties"
+  source="teacher"
+  lang="java"
+  filename="Config.java"
+  repositoryPath="session6/session6/src/main/java/ir/digixo/p02EnvironmentAbstraction/p02Properties/Config.java"
+  caption="خواندن jdbc.username با Environment به‌جای فیلد Valueِ کامنت‌شده."
+  code={
+    'package ir.digixo.p02EnvironmentAbstraction.p02Properties;\n\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.context.annotation.Bean;\nimport org.springframework.context.annotation.Configuration;\nimport org.springframework.context.annotation.PropertySource;\nimport org.springframework.core.env.Environment;\n\n@Configuration\n@PropertySource({"classpath:datasource.properties"})\npublic class Config {\n\n/*    @Value("${jdbc.username}")\n    String username;*/\n\n\n    @Autowired\n    Environment env;\n\n    @Bean\n    public BeanOne beanOne()\n    {\n        BeanOne beanOne=new BeanOne();\n       // beanOne.setName(username);\n        beanOne.setName(env.getProperty("jdbc.username"));\n        return beanOne;\n    }\n}'
+  }
+/>
+
+<SourceBlock id="environment-read-property" source="teacher" recording="teacher-06-part1" timestamp="58:00">
+
+استاد ابتدا روش جلسهٔ قبل، یعنی `@Value` و placeholderِ `jdbc.username`، را یادآوری می‌کند. سپس Environment را inject می‌کند و داخل متد سازندهٔ Bean، همان کلید را با `getProperty` می‌خواند. اینجا دیگر لازم نیست فقط برای انتقال یک مقدار به همان متد، یک فیلد username جدا نگه داریم.
+
+در پیش‌نمایش Spring Boot، انتخاب profile از تنظیمات برنامه توضیح داده می‌شود: Boot کار راه‌اندازی کانتکست و اعمال تنظیمات را ساده‌تر می‌کند، اما مفهوم Environment و profile پشت آن باقی می‌ماند. در این جلسه هدف، شناخت همین زیرساخت است؛ پروژهٔ Boot مستقلی در کد جلسه تحویل نشده است.
+
+</SourceBlock>
+
+<SourceBlock id="environment-verified" source="gpt">
+
+در این Config، `@PropertySource("classpath:datasource.properties")` فایل را معرفی می‌کند و `env.getProperty("jdbc.username")` مقدار را می‌خواند. در اجرای نمونه، نام BeanOne برابر `root` شد. خواندن این رشته، شاهد اتصال به دیتابیس نیست.
+
+برای تصمیم درست دو سؤال جدا بپرسید: «کدام Bean definition ثبت شود؟» مربوط به profile است؛ «مقدار این کلید چیست؟» مربوط به property resolution. شرح منبع و محل مصرف در [External configuration](/concepts/external-configuration/) آمده است.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## i18n؛ MessageSource و انتخاب پیام با Locale [#i18n]
+
+<SourceBlock id="i18n-context-capability" source="teacher" recording="teacher-06-part1" timestamp="01:09:00">
+
+استاد با مقایسهٔ BeanFactory و ApplicationContext به قابلیت‌های اضافهٔ context می‌رسد. نخستین مثال، internationalization یا i18n است: پیام‌ها در resource bundleها قرار می‌گیرند و مصرف‌کننده پیام مناسب زبان را دریافت می‌کند.
+
+در نسخهٔ XML، یک Bean به نام `messageSource` از نوع ResourceBundleMessageSource تعریف می‌شود. فهرست basenameها تعیین می‌کند پیام‌ها از کدام خانوادهٔ فایل‌ها خوانده شوند. فایل‌های فارسی، انگلیسی و فرانسوی در این مثال برای نشان‌دادن همین انتخاب ساخته شده‌اند.
+
+</SourceBlock>
+
+<CodeExample
+  id="message-source-config"
+  source="teacher"
+  lang="java"
+  filename="Config.java"
+  repositoryPath="session6/session6/src/main/java/ir/digixo/p03ApplicatioContextFeatures/p01i18n/p02annotaion/Config.java"
+  caption="MessageSource با basenameِ classpath:lang و encodingِ UTF-8."
+  code={
+    'package ir.digixo.p03ApplicatioContextFeatures.p01i18n.p02annotaion;\n\nimport org.springframework.context.MessageSource;\nimport org.springframework.context.annotation.Bean;\nimport org.springframework.context.annotation.Configuration;\nimport org.springframework.context.support.ReloadableResourceBundleMessageSource;\n\n@Configuration\npublic class Config {\n    @Bean\n    public MessageSource messageSource() {\n        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();\n        messageSource.setBasename("classpath:lang");\n        messageSource.setDefaultEncoding("UTF-8");\n\n        return messageSource;\n    }\n}'
+  }
+/>
+
+<SourceBlock id="locale-message-selection" source="teacher" recording="teacher-06-part1" timestamp="01:15:00">
+
+در Test، کلید `message` همراه Locale به `context.getMessage` داده می‌شود. استاد با انتخاب فارسی و انگلیسی خروجی را عوض می‌کند؛ قبل از نتیجه نیز تنظیم فایل‌ها و مقدار پیام را بازبینی می‌کند. در Java Config، ReloadableResourceBundleMessageSource با basenameِ `classpath:lang` و encodingِ UTF-8 همان مسئولیت دریافت پیام را فراهم می‌کند.
+
+این قابلیت از قراردادهای context می‌آید و در برنامهٔ وب نیز کاربرد دارد؛ نشان‌دادن نمونهٔ Core کمک می‌کند منشأ رفتاری را که بعداً در Boot آماده‌تر می‌بینیم بشناسیم.
+
+</SourceBlock>
+
+<SourceBlock id="message-source-result" source="gpt">
+
+کد Javaِ ذخیره‌شده، Beanای به نام `messageSource` ثبت می‌کند. برای Locale فارسی، کلید `message` مقدار آزمایشی `farsiiiii` و برای انگلیسی `englishhhhh` را می‌دهد؛ همین خروجی‌ها در اجرا تأیید شدند. این‌ها متن آزمایشیِ فایل‌ها هستند، نه ترجمه‌های نهایی یک محصول.
+
+نسخهٔ XML از ResourceBundleMessageSource و فهرست basenameها استفاده می‌کند. launcher آن هنوز مسیر مطلق پکیج قدیمی `p05ApplicatioContextFeatures` را دارد؛ مسیر فایل واقعی زیر `p03ApplicatioContextFeatures` را تنظیم کنید. تفاوت مسیر launcher با قرارداد MessageSource را جدا عیب‌یابی کنید.
+
+</SourceBlock>
+
+<SourceBlock id="heydari-context-features" source="heydari" recording="heydari-06-tuesday" timestamp="00:00">
+
+حیدری ApplicationContext را از سمت قابلیت‌های اضافه بر مدیریت Bean توضیح می‌دهد: در کنار امکانات BeanFactory، برای نیازهایی مثل چندزبانه‌بودن پیام‌ها و دریافت eventها نیز قرارداد آماده داریم. انتخاب پیاده‌سازی context به محیط برنامه وابسته است؛ در وب، پیاده‌سازی متناسب با همان محیط به کار می‌رود.
+
+در مرور i18n، مثال چند فایل زبان و دریافت پیام متناسب با Locale مطرح می‌شود. هدف این است که متنِ پیام با زبان موردنظر عوض شود و کدِ مصرف‌کننده برای هر زبان بازنویسی نشود. حیدری نام `lang` و محل فایل‌ها را در قالب convention نمونه بیان می‌کند.
+
+</SourceBlock>
+
+<TechnicalCorrection id="message-basename-correction" corrects="heydari-context-features" statement="در مرور حیدری، lang و یک پوشهٔ مشخص به‌صورت نام و جای الزامی فایل‌های زبان بیان می‌شوند." correction="در Spring Core، نام Beanِ messageSource اهمیت قراردادی دارد؛ basename و محل bundle را خودتان تنظیم می‌کنید. lang انتخاب این مثال است و پوشهٔ i18n الزام عمومی نیست." reason="کپی فایل‌ها به یک پوشهٔ دلخواه بدون هماهنگی تنظیم MessageSource، لزوماً پیام‌ها را قابل پیدا کردن نمی‌کند.">
+
+[قرارداد MessageSource](https://docs.spring.io/spring-framework/reference/core/beans/context-introduction.html)
+
+</TechnicalCorrection>
+
+</section>
+
+<section data-source-group>
+
+## Event و Listener؛ از رویداد کانتکست تا نیاز کسب‌وکار [#events]
+
+<SourceBlock id="context-events" source="teacher" recording="teacher-06-part1" timestamp="01:17:30">
+
+برای یادآوری event، استاد به listenerهای Jakarta برمی‌گردد: مثلاً اضافه‌شدن attribute به ServletContext می‌تواند رخدادی باشد که listener برایش واکنش دارد. در Spring نیز ApplicationListener رویداد مشخص را دریافت می‌کند؛ نمونهٔ این جلسه `ApplicationListener<ContextStartedEvent>` است.
+
+متد `onApplicationEvent` را framework فراخوانی می‌کند. نوع generic مشخص می‌کند listener در این مثال کدام event را می‌پذیرد. استاد بررسی فهرست eventهای استاندارد را برای مرور پیشنهاد می‌کند و به کاربردهای بعدی interceptor در وب اشاره می‌کند؛ پیاده‌سازی interceptor وب جزو این مثال نیست.
+
+</SourceBlock>
+
+<CodeExample
+  id="context-start-listener"
+  source="teacher"
+  lang="java"
+  filename="MyListener.java"
+  repositoryPath="session6/session6/src/main/java/ir/digixo/p03ApplicatioContextFeatures/p02standardEvent/MyListener.java"
+  caption="Listener فقط ContextStartedEvent را دریافت می‌کند."
+  code={
+    'package ir.digixo.p03ApplicatioContextFeatures.p02standardEvent;\n\nimport org.springframework.context.ApplicationListener;\nimport org.springframework.context.event.ContextStartedEvent;\nimport org.springframework.stereotype.Component;\n\n@Component\npublic class MyListener implements ApplicationListener<ContextStartedEvent> {\n    @Override\n    public void onApplicationEvent(ContextStartedEvent event) {\n        System.out.println("Context started");\n    }\n}'
+  }
+/>
+
+<CodeExample
+  id="context-start-test"
+  source="teacher"
+  lang="java"
+  filename="Test.java"
+  repositoryPath="session6/session6/src/main/java/ir/digixo/p03ApplicatioContextFeatures/p02standardEvent/Test.java"
+  caption="پس از ایجاد کانتکست، start صریح فراخوانی شده است."
+  code={
+    'package ir.digixo.p03ApplicatioContextFeatures.p02standardEvent;\n\nimport org.springframework.context.annotation.AnnotationConfigApplicationContext;\n\npublic class Test {\n    public static void main(String[] args) {\n\n\n        var context=new AnnotationConfigApplicationContext(Config.class);\n        context.start();\n\n\n        //\n\n\n    }\n}'
+  }
+/>
+
+<SourceBlock id="start-refresh-difference" source="gpt">
+
+در آزمایش، ساخت/refreshِ کانتکست یک ContextRefreshedEvent منتشر کرد و هنوز ContextStartedEvent نداشتیم. پس از `context.start()`، listener نمونه پیام `Context started` را چاپ کرد. بنابراین «برنامه بالا آمد» در زبان روزمره را با event مشخصِ Started یکی نگیرید؛ نوع event و عملی که آن را منتشر می‌کند تعیین‌کننده‌اند.
+
+</SourceBlock>
+
+<SourceBlock id="custom-event-exercise" source="teacher" recording="teacher-06-part1" timestamp="01:24:30">
+
+دو تمرین در کلاس تعیین می‌شود. نخست، فهرست eventهای استاندارد مربوط به context را بررسی کنیم و برای نمونه‌های مناسب listener بنویسیم. دوم، یک custom event متناسب با نیاز برنامه بسازیم و مسیر انتشار و دریافت آن را آزمایش کنیم.
+
+استاد با دنبال‌کردن سلسله‌مراتب ContextStartedEvent، به ApplicationEvent می‌رسد و روش سه‌مرحله‌ای را توضیح می‌دهد: کلاسی برای event بسازیم؛ با ApplicationEventPublisher و `publishEvent` آن را منتشر کنیم؛ و ApplicationListener با typeِ event خودمان داشته باشیم که `onApplicationEvent` آن اجرا شود. در بدنهٔ listener منطق دلخواه برنامه قرار می‌گیرد، ولی زمان فراخوانی آن را سازوکار انتشار event تعیین می‌کند.
+
+این بخش راهنمای تمرین است؛ در snapshot، پیاده‌سازی کامل custom event تحویل نشده و نباید آن را اجرای انجام‌شدهٔ کلاس معرفی کرد.
+
+</SourceBlock>
+
+<SourceBlock id="event-registration" source="gpt">
+
+برای مرور، چهار نام مشخصِ context عبارت‌اند از ContextRefreshedEvent، ContextStartedEvent، ContextStoppedEvent و ContextClosedEvent. نام‌های توصیفیِ شفاهی مثل «pause» را بدون بررسی، نام کلاس استاندارد فرض نکنید. در نمونهٔ موجود، MyListener با ComponentScan ثبت شده است؛ استانداردبودن event، یک کلاس listener دلخواه و ثبت‌نشده را خودکار فعال نمی‌کند.
+
+</SourceBlock>
+
+<SourceBlock id="heydari-event-analogy" source="heydari" recording="heydari-06-tuesday" timestamp="07:15">
+
+حیدری با مثال صدای افتادن یک شیء، دو بخش را جدا می‌کند: اتفاقی رخ می‌دهد و یک شنونده متوجه آن می‌شود. در برنامه نیز event اطلاعات رخداد را حمل می‌کند و listener واکنش موردنظر را انجام می‌دهد. صرفِ رخ‌دادن اتفاق، جای ثبت listener را نمی‌گیرد.
+
+برای event سفارشی، مثال برداشت از حساب یا انجام تراکنش مطرح می‌شود؛ برنامه رخداد را publish می‌کند و listener می‌تواند ارسال پیامک را بر عهده بگیرد. در این توضیح، جداشدن ارسال پیامک از پاسخ درخواست نیز مطرح می‌شود؛ قرارداد اجرای آن را باید مشخص کرد.
+
+</SourceBlock>
+
+<TechnicalCorrection id="events-sync-correction" corrects="heydari-event-analogy" statement="در مثال پیامک، انتشار event به‌گونه‌ای توضیح داده می‌شود که پاسخ درخواست منتظر listener نمی‌ماند." correction="eventهای معمول ApplicationContext به‌صورت پیش‌فرض synchronous اجرا می‌شوند. برای اجرای asynchronous باید تنظیم مناسب انجام شود؛ صرف publishEvent این تضمین را ایجاد نمی‌کند." reason="زمان پاسخ، انتشار exception و دسترسی به context اجرای درخواست به همین انتخاب وابسته‌اند.">
+
+[اجرای listenerها در Spring](https://docs.spring.io/spring-framework/reference/core/beans/context-introduction.html)
+
+</TechnicalCorrection>
+
+<SourceBlock id="event-logs-boundary" source="gpt">
+
+مثال log برای فهم مشاهدهٔ رخداد مفید است، اما هر خط log الزاماً خروجی یک Spring ApplicationEvent یا listener نیست. دربارهٔ اتصال DataSource، باید قابلیت واقعی همان کتابخانه را بررسی کرد؛ نمی‌توان از روی پیام «connected» نتیجه گرفت که event استانداردی با آن نام در Spring Core وجود دارد.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## Prototype داخل Singleton؛ چرا getter نمونهٔ تازه نمی‌دهد؟ [#mixed-scopes]
+
+<SourceBlock id="prototype-in-singleton" source="teacher" recording="teacher-06-part2" timestamp="01:25" summary="تزریق عادیِ prototype در singleton یک بار انجام می‌شود؛ getter عادی همان reference تزریق‌شده را برمی‌گرداند.">
+
+یک Bean با scope `prototype` داریم و یک singleton که به آن وابسته است. در XML، setterِ singleton یک بار با نمونهٔ prototype مقدار می‌گیرد. دو بار گرفتن singleton و خواندن dependency همان reference را نشان می‌دهد.
+
+استاد این حالت را رفتار پیش‌فرض معرفی می‌کند و سه راه برای دریافت نمونه‌های تازه بررسی می‌کند. مسئله در کلمهٔ «درخواست» است: فراخوانی getter عادیِ شیء، دوباره درخواست `getBean` از کانتینر نیست. singleton قبلاً ساخته شده و همان مقدار فیلد را نگه داشته است.
+
+</SourceBlock>
+
+<SourceBlock id="mixed-scope-assignment" source="teacher" recording="teacher-06-part1" timestamp="01:30:00">
+
+این پرسش در پایان بخش اول ضبط به‌عنوان تمرین مطرح شده بود: singleton را دو بار از context بگیرید و dependencyِ prototype آن را چاپ کنید؛ سپس بگویید آیا تعریف scopeها نقض شده است یا نه. توضیح راه‌حل در بخش دوم، ادامهٔ همان تمرین است.
+
+</SourceBlock>
+
+<CodeExample
+  id="mixed-scope-xml"
+  source="teacher"
+  lang="xml"
+  filename="config.xml"
+  repositoryPath="session6/session6/src/main/java/ir/digixo/p04SingletonBeanswithPrototypeBeanDependencies/problem/config.xml"
+  caption="reference به prototype هنگام آماده‌سازی singleton تزریق می‌شود."
+  code={
+    '<?xml version="1.0" encoding="UTF-8"?>\n<beans xmlns="http://www.springframework.org/schema/beans"\n       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n       xmlns:p="http://www.springframework.org/schema/p"\n       xsi:schemaLocation="\n       http://www.springframework.org/schema/beans\n        http://www.springframework.org/schema/beans/spring-beans.xsd\n">\n\n\n\n\n\n\n    <bean id="singleton" class="ir.digixo.p04SingletonBeanswithPrototypeBeanDependencies.problem.SingletonScope" scope="singleton" p:prototypeBean-ref="prototype"/>\n    <bean id="prototype" class="ir.digixo.p04SingletonBeanswithPrototypeBeanDependencies.problem.PrototypeScope" scope="prototype">\n        <property name="message" value="Test Message" />\n    </bean>\n</beans>'
+  }
+/>
+
+<SourceBlock id="scope-does-not-change" source="gpt" context="prototype-in-singleton">
+
+scope تعریفِ prototype به singleton تبدیل نشده است. اگر مستقیماً آن Bean را دوباره از کانتینر بگیریم، نمونهٔ تازه می‌گیریم؛ آنچه ثابت مانده reference ذخیره‌شده در مصرف‌کننده است. آزمایش این جلسه همین تفاوت را تأیید کرد.
+
+</SourceBlock>
+
+<SourceBlock id="lookup-method" source="teacher" recording="teacher-06-part2" timestamp="06:00">
+
+در راه اول، SingletonScope یک **abstract class** است و `getPrototypeBean()` را به‌صورت abstract اعلام می‌کند. XML با `lookup-method` می‌گوید این متد باید Bean مربوط به prototype را از کانتینر بگیرد. Spring پیاده‌سازی subclass را ایجاد می‌کند؛ نام `SpringCGLIB` در خروجی مثال دیده می‌شود. نتیجه: singleton همان است، اما هر lookup متد یک prototype تازه می‌گیرد.
+
+این مثال، نوع دیگری از Method Injection را نشان می‌دهد؛ نقش متد اینجا دریافت نمونه از کانتینر در زمان فراخوانی است، نه setter معمولی که قبلاً یک مقدار در فیلد گذاشته باشد.
+
+</SourceBlock>
+
+<CodeExample
+  id="lookup-abstract-class"
+  source="teacher"
+  lang="java"
+  filename="SingletonScope.java"
+  repositoryPath="session6/session6/src/main/java/ir/digixo/p04SingletonBeanswithPrototypeBeanDependencies/solved/p1methodinjection/SingletonScope.java"
+  caption="abstract class و متدی که Spring برای آن پیاده‌سازی می‌سازد."
+  code={
+    'package ir.digixo.p04SingletonBeanswithPrototypeBeanDependencies.solved.p1methodinjection;\n\npublic abstract   class SingletonScope {\n\n    public SingletonScope()\n    {\n        System.out.println("Singleton Bean Instantiated !!");\n    }\n\n    public abstract PrototypeScope getPrototypeBean();\n}'
+  }
+/>
+
+<CodeExample
+  id="lookup-xml"
+  source="teacher"
+  lang="xml"
+  filename="config.xml"
+  repositoryPath="session6/session6/src/main/java/ir/digixo/p04SingletonBeanswithPrototypeBeanDependencies/solved/p1methodinjection/config.xml"
+  caption="lookup-method نام متد و Bean مقصد را متصل می‌کند."
+  code={
+    '<?xml version="1.0" encoding="UTF-8"?>\n<beans xmlns="http://www.springframework.org/schema/beans"\n       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n       xsi:schemaLocation="\n       http://www.springframework.org/schema/beans\n        http://www.springframework.org/schema/beans/spring-beans.xsd\n">\n\n\n\n\n\n\n    <bean id="prototypeScope" class="ir.digixo.p04SingletonBeanswithPrototypeBeanDependencies.solved.p1methodinjection.PrototypeScope" scope="prototype">\n    </bean>\n    <bean id="singletonScope" class="ir.digixo.p04SingletonBeanswithPrototypeBeanDependencies.solved.p1methodinjection.SingletonScope" >\n        <lookup-method bean="prototypeScope" name="getPrototypeBean"/>\n    </bean>\n</beans>'
+  }
+/>
+
+<SourceBlock id="lookup-annotation-alternative" source="gpt">
+
+نمایش کلاس با XML انجام شده، اما Method Injection منحصر به XML نیست؛ `@Lookup` نیز وجود دارد. چون راه lookup به subclass متکی است، کلاس و متد مربوط نباید final باشند. این سازوکار را با اضافه‌کردن advice در AOP یکی نگیرید؛ هدف فعلی، جایگزینی پیاده‌سازی متد برای lookup است. [مرجع Method Injection](https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-method-injection.html)
+
+</SourceBlock>
+
+<SourceBlock id="scoped-proxy" source="teacher" recording="teacher-06-part2" timestamp="11:00">
+
+در راه دوم، `<aop:scoped-proxy/>` در تعریف Bean مربوط به prototype قرار می‌گیرد. singleton از طریق proxy به dependency دسترسی پیدا می‌کند. استاد با خروجی‌های متوالی، تغییر نمونهٔ پشت این واسطه را نشان می‌دهد و این کاربرد را مقدمه‌ای برای بحث AOP می‌گیرد.
+
+پیش از انتخاب راه‌حل، نیاز طراحی را بررسی می‌کنیم. استاد مانند بحث circular dependency تأکید می‌کند که صرف وجود راه‌حل فنی، دلیل انتخاب آن در هر طراحی نیست؛ اگر نیاز کسب‌وکار این ترکیب را لازم کند، ابزار مناسب را به کار می‌بریم.
+
+</SourceBlock>
+
+<CodeExample
+  id="scoped-proxy-xml"
+  source="teacher"
+  lang="xml"
+  filename="config.xml"
+  repositoryPath="session6/session6/src/main/java/ir/digixo/p04SingletonBeanswithPrototypeBeanDependencies/solved/p3aopscopedproxy/config.xml"
+  caption="proxy در تعریف dependency قرار گرفته است؛ singleton به همان Bean ارجاع می‌دهد."
+  code={
+    '<?xml version="1.0" encoding="UTF-8"?>\n<beans xmlns="http://www.springframework.org/schema/beans"\n       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n       xmlns:p="http://www.springframework.org/schema/p"\n       xmlns:aop="http://www.springframework.org/schema/aop"\n       xsi:schemaLocation="http://www.springframework.org/schema/beans\n        http://www.springframework.org/schema/beans/spring-beans.xsd\n        http://www.springframework.org/schema/aop\n        https://www.springframework.org/schema/aop/spring-aop.xsd">\n\n\n\n\n\n\n    <bean id="prototypeBean" class="ir.digixo.p04SingletonBeanswithPrototypeBeanDependencies.solved.p3aopscopedproxy.PrototypeScope" scope="prototype">\n        <property name="message" value="Test Message" />\n        <aop:scoped-proxy/>\n    </bean>\n    <bean id="singletonBean" class="ir.digixo.p04SingletonBeanswithPrototypeBeanDependencies.solved.p3aopscopedproxy.SingletonScope" p:prototypeBean-ref="prototypeBean" />\n\n\n\n</beans>'
+  }
+/>
+
+<SourceBlock id="proxy-target-identity" source="gpt">
+
+دو هویت را جدا کنید: **خود proxy** و **target پشت آن**. در آزمایش واقعی، دو بار getterِ singleton همان proxy را برگرداند (`==` درست بود)، ولی `setMessage("changed")` و سپس `getMessage()` روی prototype proxy، دو target جدا گرفتند؛ getter دوباره مقدار اولیهٔ `Test Message` را داد. بنابراین چاپ یک proxy یا hashِ نمایشی آن به‌تنهایی آزمون مناسبی برای هویت proxy نیست.
+
+اگر قرار است چند متد متوالی روی یک state مشترک کار کنند، دریافت یک prototype و نگه‌داشتن آن برای همان عملیات با target تازه در هر فراخوانی متد یکسان نیست. این انتخاب باید از نیاز عملیات بیاید.
+
+</SourceBlock>
+
+<SourceBlock id="aware-lookup" source="teacher" recording="teacher-06-part2" timestamp="14:50">
+
+راه سوم از `ApplicationContextAware` جلسهٔ قبل استفاده می‌کند: کانتکست به singleton داده می‌شود و متد آن، `applicationContext.getBean("prototypeBean")` را اجرا می‌کند. هر فراخوانی lookup تازه‌ای انجام می‌دهد. استاد این روش را به دلیل درگیرشدن مستقیم کد با کانتکست و پیچیدگی فراخوانی‌ها در اولویت پایین‌تر قرار می‌دهد.
+
+</SourceBlock>
+
+<CodeExample
+  id="aware-prototype-lookup"
+  source="teacher"
+  lang="java"
+  filename="SingletonBean.java"
+  repositoryPath="session6/session6/src/main/java/ir/digixo/p04SingletonBeanswithPrototypeBeanDependencies/solved/p2UseofApplicationContextAware/SingletonBean.java"
+  caption="وابستگی مستقیم مصرف‌کننده به ApplicationContext برای lookup."
+  code={
+    'package ir.digixo.p04SingletonBeanswithPrototypeBeanDependencies.solved.p2UseofApplicationContextAware;\n\nimport org.springframework.beans.BeansException;\nimport org.springframework.context.ApplicationContext;\nimport org.springframework.context.ApplicationContextAware;\n\npublic class SingletonBean implements ApplicationContextAware {\n    private PrototypeBean prototypeBean;\n    private ApplicationContext applicationContext;\n    public SingletonBean()\n    {\n        System.out.println("Singleton Bean Instantiated !!");\n    }\n    public PrototypeBean getPrototypeBean()\n    {\n        prototypeBean= (PrototypeBean)applicationContext.getBean("prototypeBean");\n        return prototypeBean;\n    }\n    @Override\n    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {\n        this.applicationContext=applicationContext;\n    }\n}'
+  }
+/>
+
+<SourceBlock id="aware-snapshot-fixes" source="gpt">
+
+XML نسخهٔ Aware در snapshot، prefixِ `ir.digixo.` را در نام کلاس‌ها ندارد و launcherها مسیرهای مطلق سیستم استاد را نگه داشته‌اند. همچنین `getBean(SingletonBean.class, "singletonBean")` دریافت بر اساس نام نیست؛ آرگومان دوم در این overload، آرگومان ساخت Bean است. برای دریافت با نام و نوع بنویسید `getBean("singletonBean", SingletonBean.class)`.
+
+در نسخهٔ آزمایشی، فقط مسیرها اصلاح شدند و سه رفتار تأیید شد: تزریق عادی reference ثابت دارد؛ lookup-method نمونهٔ تازه می‌دهد؛ lookup با Aware نیز نمونهٔ تازه می‌دهد. تغییرات آزمایش به Teacher Code نسبت داده نشده‌اند.
+
+</SourceBlock>
+
+<SourceBlock id="field-constructor-claim" source="teacher" recording="teacher-06-part2" timestamp="05:15">
+
+در مرور شیوه‌های DI هنگام ورود به Method Injection، توضیح کلاس، field injection را به constructor و زمان ساخت ارتباط می‌دهد. این نقطه نیاز به تفکیک مراحل دارد.
+
+</SourceBlock>
+
+<TechnicalCorrection id="field-constructor-correction" corrects="field-constructor-claim" statement="در مرور کلاس، field injection به اجرای constructor نسبت داده می‌شود." correction="در Spring، تزریق فیلدِ Autowired پس از ساخت شیء و پیش از callbackهای initialization انجام می‌شود؛ این همان constructor injection نیست." reason="دانستن ترتیب برای استفاده از dependency در constructor و PostConstruct ضروری است.">
+
+[زمان تزریق فیلد در Spring](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/beans/factory/annotation/AutowiredAnnotationBeanPostProcessor.html)
+
+</TechnicalCorrection>
+
+</section>
+
+<section data-source-group>
+
+## AOP؛ جداکردن concern مشترک از منطق اصلی [#aop-purpose]
+
+<SourceBlock id="aop-concerns" source="teacher" recording="teacher-06-part2" timestamp="20:00">
+
+استاد پس از مرور جایگاه مباحث Core، وارد ستون دوم بحث، AOP یا Aspect-Oriented Programming، می‌شود. در گفت‌وگوی کلاس، AOP به‌عنوان یک programming paradigm معرفی می‌شود و رابطه‌اش با OOP روشن می‌شود: این دو می‌توانند مکمل هم باشند. منطق اصلی سرویس همچنان در کلاس‌ها و متدها می‌ماند، اما concernهایی مثل logging، security و transaction ممکن است روی چندین بخش آن اثر بگذارند.
+
+برای توضیح cross-cutting concern، لایه‌های UI/Web handler، Service و Data access کنار هم قرار می‌گیرند. اگر پیاده‌سازی logging را در همهٔ این لایه‌ها تکرار کنیم، کد آن concern با منطق هر لایه گره می‌خورد. AOP راهی برای تعریف رفتار مشترک و محل اعمال آن، جدا از بدنهٔ تک‌تک متدهای اصلی فراهم می‌کند.
+
+</SourceBlock>
+
+<SourceBlock id="aop-proxy-intuition" source="teacher" recording="teacher-06-part2" timestamp="30:30">
+
+در تصویرسازی کلاس، proxy بین caller و target قرار می‌گیرد: caller همان قابلیت موردنیازش را می‌خواهد، ولی واسطه می‌تواند پیش یا پس از فراخوانی متد، کار دیگری هم انجام دهد. با ساخت این واسطه، target مجبور نیست برای هر concern تغییر کند.
+
+استاد از Proxy design pattern به dynamic proxy می‌رسد و Reflection را به نمونه‌های کانتینر دستیِ قبل پیوند می‌دهد. تفاوت موردنظر این است که به‌جای نوشتن تک‌تک واسطه‌ها به‌صورت دستی، بتوانیم بخشی از این کار را در زمان اجرا انجام دهیم.
+
+</SourceBlock>
+
+<SourceBlock id="spring-and-aspectj" source="teacher" recording="teacher-06-part2" timestamp="38:00">
+
+در معرفی ابزارها، AspectJ به‌عنوان چارچوب گسترده‌تر و Spring AOP به‌عنوان انتخابی با دامنهٔ محدودتر معرفی می‌شوند. استاد توضیح می‌دهد که شناخت AOP فقط برای نوشتن aspect سفارشی نیست؛ برای فهم رفتارهایی که خود Spring به برنامه اضافه می‌کند نیز لازم است. اشاره به هزینهٔ runtime در همین زمینه است؛ کلاس benchmark عددی برای مقایسهٔ ابزارها ارائه نمی‌کند.
+
+</SourceBlock>
+
+<SourceBlock id="aop-tool-boundary" source="gpt">
+
+AOP را در همهٔ ابزارها مساوی dynamic proxy نگیرید. مثال‌های فعلی Spring از proxy استفاده می‌کنند؛ AspectJ می‌تواند از weaving استفاده کند و دامنهٔ join pointهایش با Spring AOP یکسان نیست. افزودن dependency با نام `spring-aspects` به‌تنهایی weaving را فعال نمی‌کند. [مرجع مدل proxy در Spring](https://docs.spring.io/spring-framework/reference/core/aop/proxying.html)
+
+</SourceBlock>
+
+<SourceBlock id="aop-terminology" source="teacher" recording="teacher-06-part2" timestamp="45:00">
+
+برای به‌خاطرسپردن اصطلاح‌ها، استاد یک ProductService با متدهای createProduct و deleteProduct تصور می‌کند و می‌پرسد loggingِ حذف را کجا بگذاریم. اگر آن را در بدنهٔ deleteProduct بنویسیم، تغییر logging همان فایل منطق اصلی را هم درگیر می‌کند. در مدل AOP، concern جدا تعریف می‌شود و ارتباط آن با اجرای متد مشخص می‌شود.
+
+در این سناریو، **Aspect** محل بیان concern، **Advice** رفتار اضافه و زمان اجرای آن، **Pointcut** معیار انتخاب اجراهای موردنظر و **Target** شیء دارای منطق اصلی است. **Join point** نقطه‌ای از اجرای برنامه است که می‌توان رفتار را به آن متصل کرد. استاد تفاوت دامنهٔ join pointها را مطرح می‌کند و می‌گوید Spring AOP روی اجرای متد تمرکز دارد؛ در همین مقایسه، constructor هم در توضیح شفاهی به متد نسبت داده می‌شود.
+
+</SourceBlock>
+
+<TechnicalCorrection id="constructor-joinpoint-correction" corrects="aop-terminology" statement="هنگام محدودکردن join pointهای Spring AOP به method execution، constructor نیز نوعی متد شمرده می‌شود." correction="در Spring AOP مبتنی بر proxy، اجرای constructor یک join point قابل advice نیست. اجرای متدهای قابل فراخوانی از proxy با زمان ساخت شیء فرق دارد." reason="برای مداخله در constructor نمی‌توان صرفاً pointcut یک متد معمول Spring AOP نوشت؛ دامنهٔ ابزار باید متناسب باشد.">
+
+[مکانیزم و محدودیت Proxy در Spring](https://docs.spring.io/spring-framework/reference/core/aop/proxying.html)
+
+</TechnicalCorrection>
+
+<SourceBlock id="terminology-table" source="gpt">
+
+| سؤال در مثال حذف محصول                 | اصطلاح                                                    |
+| -------------------------------------- | --------------------------------------------------------- |
+| منطق حذف روی کدام شیء است؟             | Target: شیء ProductService                                |
+| concernِ جداشده چیست؟                  | Aspect مربوط به logging                                   |
+| چه عملی و چه زمانی انجام شود؟          | Advice، مثلاً logging پس از بازگشت موفق                   |
+| کدام اجراها انتخاب شوند؟               | Pointcut، مثلاً deleteProduct                             |
+| نقطهٔ اجرا از چه جنسی است؟             | Join point، اجرای متد در Spring AOP                       |
+| رفتار اضافه چگونه به اجرا متصل می‌شود؟ | Weaving؛ در مدل فعلی، ایجاد و به‌کارگیری proxy در runtime |
+
+این جدول، بازچینی آموزشیِ مثال شفاهی است؛ کد ProductService به‌عنوان فایل موجود در snapshot معرفی نشده است.
+
+</SourceBlock>
+
+<SourceBlock id="weaving-example" source="teacher" recording="teacher-06-part2" timestamp="57:00">
+
+در ادامهٔ اصطلاح‌ها، استاد فرآیند ساخت واسطه از target و اعمال advice بر اساس انتخاب‌های قبلی را با عنوان weaving معرفی می‌کند. در مثالی که این جلسه جلو می‌رود، این اتصال در زمان اجرا و با proxy دیده می‌شود.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## Pointcut expression؛ امضای متد و wildcardها [#pointcut-expressions]
+
+<SourceBlock id="expression-introduction" source="teacher" recording="teacher-06-part2" timestamp="01:03:40">
+
+پس از مثال dynamic proxy، استاد برای انتخاب متدهای create و delete به Pointcut expression می‌رسد. این syntax از زبان pointcut در AspectJ می‌آید. به‌جای حفظ‌کردن یک رشتهٔ طولانی، اجزای آن را با متد واقعی می‌خوانیم: access modifier، return type، نام کامل type و متد، و پارامترها.
+
+در مرور wildcardها، `*` برای بخش نامشخصِ الگو و `..` برای گسترهٔ package/subpackage یا آرگومان‌های متد مطرح می‌شود. استاد صفحهٔ pointcut designatorها را نیز باز می‌کند و مطالعهٔ مثال‌های همان صفحه را پیشنهاد می‌دهد. در بیان ابتدایی، محدودبودن join pointهای Spring AOP به method execution با کاربرد designatorهای دیگر کنار هم قرار می‌گیرد؛ سپس تعریف this و target از همان مرجع خوانده می‌شود و به وجود designatorهای پشتیبانی‌نشده هم اشاره می‌شود.
+
+</SourceBlock>
+
+<TechnicalCorrection id="pointcut-designator-correction" corrects="expression-introduction" statement="بیان ابتداییِ محدودیت Spring AOP و اشاره به تلفیق با AspectJ می‌تواند این برداشت را ایجاد کند که within، this و target در Spring AOP کار نمی‌کنند." correction="Spring AOP خودِ within، this، target و args را هم پشتیبانی می‌کند. همهٔ این‌ها در این مدل همچنان اجرای متد را انتخاب یا محدود می‌کنند؛ تعداد نوع join point با تعداد designator یکی نیست." reason="محدودبودن Spring AOP به method execution به معنی مجازبودن فقط کلمهٔ execution در expression نیست.">
+
+[Designatorهای پشتیبانی‌شده در Spring AOP](https://docs.spring.io/spring-framework/reference/core/aop/ataspectj/pointcuts.html)
+
+</TechnicalCorrection>
+
+<SourceBlock id="expression-reading" source="gpt">
+
+دو الگوی آموزشی را از هم تفکیک کنید:
+
+```text
+execution(* com.example.service.*.deleteProduct(..))
+execution(* com.example.service..*.deleteProduct(*))
+```
+
+در هر دو، اولین `*` یعنی return type محدود نشده است. اولی کلاس‌های package مشخص‌شده و deleteProduct با هر تعداد آرگومان را انتخاب می‌کند. دومی subpackageها را هم شامل می‌شود، اما `(*)` دقیقاً یک آرگومان با هر type می‌خواهد. `()` یعنی بدون آرگومان و `(..)` یعنی صفر یا بیشتر. این نام‌ها برای خواندن syntax انتخاب شده‌اند و فایل واقعی teacher repository نیستند.
+
+همچنین return type و access modifier اجزای pattern اینجا هستند؛ آن‌ها را با تعریف دقیق method signature در زبان Java یکی نگیرید. [مرجع expressionها](https://docs.spring.io/spring-framework/reference/core/aop/ataspectj/pointcuts.html)
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## JDK dynamic proxy؛ مسیر واقعی یک invocation [#jdk-proxy]
+
+<SourceBlock id="jdk-handler-walkthrough" source="teacher" recording="teacher-06-part2" timestamp="01:00:00">
+
+برای نشان‌دادن اینکه این ایده به APIهای Java تکیه دارد، استاد یک پروژهٔ مستقل dynamicProxy باز می‌کند. interfaceِ I متد m را اعلام می‌کند، Target پیام Hello را چاپ می‌کند و Client از getService یک شیء با قرارداد I می‌گیرد.
+
+IHandler مسیر invocation را کنترل می‌کند: قبل از اجرای target پیام می‌دهد، با Reflection متد واقعی را اجرا می‌کند و بعد رفتارهای اضافی را انجام می‌دهد. در اجرا، پیام Hello همان کار اصلی target است و پیام‌های before/after از handler آمده‌اند. بنابراین منطق Target برای اضافه‌شدن آن‌ها تغییر نکرده است.
+
+</SourceBlock>
+
+<SourceBlock id="handler-is-not-proxy" source="gpt">
+
+از نظر نقش دقیق، IHandler خودِ شیء proxy برگشتی نیست؛ یک InvocationHandler است که `Proxy.newProxyInstance` آن را به proxy ساخته‌شده متصل می‌کند. caller شیء پیاده‌ساز I را می‌بیند، handler نیز Method و آرگومان‌ها را برای هدایت فراخوانی دریافت می‌کند.
+
+</SourceBlock>
+
+<CodeExample
+  id="jdk-interface"
+  source="teacher"
+  lang="java"
+  filename="I.java"
+  repositoryPath="session6/dynamicProxy/src/ir/digixo/dynamicProxy/I.java"
+  caption="قرارداد مشترک caller و target، متد m است."
+  code={'package ir.digixo.dynamicProxy;\n\npublic interface I {\n    \n    void m();\n    \n}'}
+/>
+
+<CodeExample
+  id="jdk-invocation-handler"
+  source="teacher"
+  lang="java"
+  filename="IHandler.java"
+  repositoryPath="session6/dynamicProxy/src/ir/digixo/dynamicProxy/IHandler.java"
+  caption="ساخت proxy و عبور فراخوانی از InvocationHandler؛ کد عین snapshot است."
+  code={
+    'package ir.digixo.dynamicProxy;\n\nimport java.lang.reflect.*;\n\npublic class IHandler implements InvocationHandler {\n\n    private Object targetRef;\n\n    private IHandler(Object targetRef) {\n        this.targetRef = targetRef;\n    }\n\n    public static Object createFor(Object target) {\n        return java.lang.reflect.Proxy.newProxyInstance(target.getClass().getClassLoader(),\n                                                        target.getClass().getInterfaces(),\n                                                        new IHandler(target) );\n    }\n\n    // Called by dynamic proxy, when method is invoked\n    @Override\n    public Object invoke(Object dynamicProxy, Method m, Object[] args) throws Throwable {\n\n        //System.out.println( "Dynamic Proxy Class Name: " + dynamicProxy.getClass().getName() ); // com.sun.proxy.$Proxy0\n\n        Object result;\n        try {\n\n            System.out.println("before method " + m.getName());\n            long start = System.nanoTime();\n\n            result = m.invoke(targetRef, args); // call the Target method\n\n            long end = System.nanoTime();\n            System.out.println(String.format("%s took %d ns", m.getName(), (end - start)));\n\n        } catch (InvocationTargetException e) {\n            throw e.getTargetException();\n        } catch (Exception e) {\n            throw new RuntimeException("unexpected invocation exception: " + e.getMessage());\n        } finally {\n            System.out.println("after method " + m.getName());\n        }\n\n        return result;\n\n    }\n    \n}'
+  }
+/>
+
+<CodeExample
+  id="jdk-client"
+  source="teacher"
+  lang="java"
+  filename="Client.java"
+  repositoryPath="session6/dynamicProxy/src/ir/digixo/dynamicProxy/Client.java"
+  caption="caller خروجی getService را با typeِ interface مصرف می‌کند."
+  code={
+    'package ir.digixo.dynamicProxy;\n\npublic class Client {\n\n    public static void main(String[] args) {\n\n        getService().m(); // the method is called on dynamic proxy object\n        \n    }\n    \n    static I getService() {\n        \n        return (I) IHandler.createFor( new Target() ); // return the dynamic proxy for target\n        \n    }\n    \n}'
+  }
+/>
+
+<SourceBlock id="jdk-run-result" source="gpt">
+
+این پروژه بدون Spring کامپایل و اجرا شد. ترتیب خروجی `before method m`، سپس `Hello!`، بعد زمان اجرا و در پایان `after method m` بود. عدد زمان اجرا وابسته به همان اجراست و نتیجهٔ benchmark نیست.
+
+در handler، `Method.invoke` فراخوانی را به target می‌رساند. اگر target exception بدهد، کد `InvocationTargetException` را باز می‌کند و exception اصلی را دوباره پرتاب می‌کند. چاپ زمان بعد از بازگشت موفق قرار دارد، ولی چاپ `after method` داخل `finally` است؛ پس این دو در مسیر خطا رفتار یکسانی ندارند. خود target در این نمونه تغییر نمی‌کند و proxy از interfaceهای آن ساخته می‌شود.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## Classic Spring AOP؛ Target، Advice و ProxyFactory [#classic-aop]
+
+<SourceBlock id="classic-api-entry" source="teacher" recording="teacher-06-part2" timestamp="01:14:10">
+
+استاد دو رویکرد programmatic و declarative را از هم جدا می‌کند. برای فهم سازوکار، ابتدا API برنامه‌نویسی‌شده و پروژهٔ Classic API را باز می‌کند؛ قرار است بعداً اعلام رفتار با تنظیمات ساده‌تر شود، اما اکنون ساخت دستی proxy و اعمال advice دیده شود.
+
+Human دو متد `speak()` و `study()` دارد. در سناریوی شفاهی ابتدا speak به‌عنوان متد موردنظر انتخاب می‌شود و Human نقش target را دارد. منطق اضافه در HumanDecorator قرار می‌گیرد؛ این مثال برای وصل‌کردن اصطلاح‌های قبل به کد است.
+
+</SourceBlock>
+
+<CodeExample
+  id="human-around"
+  source="teacher"
+  lang="java"
+  filename="HumanDecorator.java"
+  repositoryPath="session6/_01SpringAOP-ClassicApi/src/main/java/p01helloworldinAOP/HumanDecorator.java"
+  caption="منطق پیرامون invocation در MethodInterceptor قرار می‌گیرد."
+  code={
+    'package p01helloworldinAOP;\n\nimport org.aopalliance.intercept.MethodInterceptor;\nimport org.aopalliance.intercept.MethodInvocation;\n//1,2-act as around advice in HumanDecorator aspect\npublic class HumanDecorator implements MethodInterceptor {\n    @Override\n    public Object invoke(MethodInvocation invocation) throws Throwable {\n        System.out.println("before ");\n        Object proceed = invocation.proceed();//call target method\n        System.out.println("after");\n        return proceed;\n    }\n    //\n    //m\n}'
+  }
+/>
+
+<SourceBlock id="interceptor-factory-flow" source="teacher" recording="teacher-06-part2" timestamp="01:18:00">
+
+HumanDecorator، interfaceِ MethodInterceptor از پکیج `org.aopalliance.intercept` را پیاده می‌کند. استاد این قرارداد را به بحث استانداردکردن APIهای AOP وصل می‌کند. متد invoke، یک MethodInvocation می‌گیرد و `proceed()` داخل آن، اجرای target را در مسیر نمونه جلو می‌برد؛ پیام‌های قبل و بعد، رفتار اضافه‌اند.
+
+در demo، ProxyFactory ساخته می‌شود، advice به آن اضافه می‌شود، Human به‌عنوان target تنظیم می‌شود و proxy گرفته می‌شود. استاد فراخوانی مستقیم `human.speak()` را با فراخوانی `proxy.speak()` مقایسه می‌کند: مسیر مستقیم، این advice را دور می‌زند. برای خواندن خروجی باید بدانیم کدام reference را صدا زده‌ایم.
+
+</SourceBlock>
+
+<SourceBlock id="default-method-selection" source="teacher" recording="teacher-06-part2" timestamp="01:25:40">
+
+پس از اجرا، استاد به همان پرسش pointcut برمی‌گردد: هنوز هیچ شرط محدودکننده‌ای تعریف نکرده‌ایم. بنابراین در این ProxyFactory، advice فقط به speak محدود نیست و study هم می‌تواند از همان مسیر عبور کند. انتخاب speak در سناریوی اولیه با اعمال شرط روی proxy دو کار جداست.
+
+</SourceBlock>
+
+<CodeExample
+  id="human-proxy-factory"
+  source="teacher"
+  lang="java"
+  filename="HumanAOPDemo.java"
+  repositoryPath="session6/_01SpringAOP-ClassicApi/src/main/java/p01helloworldinAOP/HumanAOPDemo.java"
+  caption="ساخت دستی ProxyFactory، ثبت advice و تنظیم target."
+  code={
+    'package p01helloworldinAOP;\n\nimport org.springframework.aop.framework.ProxyFactory;\n\n/**\n * Hello world!\n *\n */\npublic class HumanAOPDemo\n{\n    public static void main( String[] args )\n    {\n        Human human=new Human();\n\n\n\n        ProxyFactory proxyFactory=new ProxyFactory();\n        proxyFactory.addAdvice(new HumanDecorator());//all method as advice===>aspect\n        proxyFactory.setTarget(human);\n\n        Human humanProxy =(Human) proxyFactory.getProxy();//weaving\n\n\n     //   human.speak();\n      //  System.out.println("\\n############");\n       // humanProxy.speak();\n        humanProxy.study();\n    }\n}'
+  }
+/>
+
+<SourceBlock id="human-proxy-result" source="gpt">
+
+در snapshot، فراخوانی فعال `proxy.study()` است؛ `speak()` و بعضی فراخوانی‌های مستقیم کامنت شده‌اند. در آزمایش مستقل، هر دو متد speak و study از proxy عبور کردند و پیام‌های before/after گرفتند. چون pointcut محدودکننده‌ای اضافه نشده، توضیحی مانند «فقط speak انتخاب شده» از این کد نتیجه نمی‌شود.
+
+Human در نسخهٔ فعال final نیست. نسخهٔ class-based proxy به subclass نیاز دارد؛ final کردن کلاس یا متد قابل‌override، محدودیت واقعی ایجاد می‌کند. همچنین در HumanDecorator، خط after در `finally` نیست و فقط اگر `proceed()` معمولی برگردد اجرا می‌شود.
+
+</SourceBlock>
+
+<SourceBlock id="declarative-discussion" source="teacher" recording="teacher-06-part2" timestamp="01:30:00">
+
+در ادامه، پرسش کلاس از خود AOP به معنای declarative برمی‌گردد: برنامه‌نویس خواسته را اعلام می‌کند و جزئیات اجرای آن را به ابزار می‌سپارد. استاد از Stream و محاسبهٔ average مثال می‌زند و به OpenFeign در مباحث آینده اشاره می‌کند. در همین گفت‌وگو، convention over configuration با نمونه‌هایی مثل ساختار پوشه‌های Maven از AOP تفکیک می‌شود.
+
+</SourceBlock>
+
+<SourceBlock id="declarative-boundary" source="gpt">
+
+Declarative بودن یک API به‌تنهایی اثبات نمی‌کند پشت آن AOP یا proxy وجود دارد. برای مثال، بیان محاسبه با Stream را نباید با ساخت proxy برای Human یکی دانست. در این درس شواهد proxy مشخص‌اند: ProxyFactory، target، advice و شیء برگشتیِ proxy. دربارهٔ ابزار دیگر نیز باید سازوکار همان ابزار را بررسی کرد.
+
+</SourceBlock>
+
+<SourceBlock id="lombok-version-discussion" source="teacher" recording="teacher-06-part2" timestamp="01:33:00">
+
+Lombok نیز در گفت‌وگو به‌عنوان نمونه‌ای از اعلام نیاز با annotation مطرح می‌شود. در پاسخ به پرسش دربارهٔ استفاده‌نکردن از آن، استاد تجربهٔ خود از حساسیت سازگاری نسخه‌ها و annotation processing را بیان می‌کند: تغییر نسخه می‌تواند عیب‌یابی تیم را سخت کند. این قسمت بیان تجربه و ترجیح اوست؛ کلاس آزمایش تطبیقیِ نسخه‌های Lombok ارائه نمی‌کند.
+
+</SourceBlock>
+
+<SourceBlock id="lombok-processing" source="gpt">
+
+Lombok را با proxy زمان اجرای Spring AOP یکی نگیرید؛ در استفاده با javac، پردازش آن بخشی از فرایند کامپایل است. پروژهٔ Classic APIِ همراه جلسه نیز در POM وابستگی Lombok دارد، ولی مثال HumanDecorator با MethodInterceptor و ProxyFactory کار می‌کند. [تنظیم Lombok برای javac](https://projectlombok.org/setup/javac)
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## کد همراه: انواع Advice در مسیر موفق و خطا [#advice-types]
+
+<SourceBlock id="companion-code-scope" source="gpt" summary="نمونه‌های جداگانهٔ Advice و static/dynamic pointcut در کد همراه استاد موجودند، اما در این ضبط نمایش داده نشده‌اند؛ توضیح و بررسی اجرای آن‌ها افزودهٔ GPT است.">
+
+**مرز ضبط و کد همراه:** تدریس عملی AOP در این جلسه به مثال Human و ProxyFactory می‌رسد و سپس گفت‌وگو و پرسش پایانی ادامه پیدا می‌کند. پکیج‌های `p02advices` و `p03PointcutInterface` در همان snapshot وجود دارند، اما در این ضبط walkthrough جداگانهٔ آن‌ها انجام نشده است.
+
+دو بخش بعد، راهنمای GPT برای خواندن کد همراه‌اند؛ توضیحِ تدریس‌شده یا تکلیف صریح استاد معرفی نمی‌شوند. کدها عین فایل استاد باقی مانده‌اند و رفتارشان جداگانه آزمایش شده است. اگر فقط مسیر کلاس را دنبال می‌کنید، پس از مثال Human به [پرسش پایانی](/tuesday/session-06/#self-invocation) بروید.
+
+</SourceBlock>
+
+<CodeExample
+  id="before-advice"
+  source="teacher"
+  context="companion-code-scope"
+  lang="java"
+  filename="C01SimpleBeforeAdvice.java"
+  repositoryPath="session6/_01SpringAOP-ClassicApi/src/main/java/p02advices/p01before/C01SimpleBeforeAdvice.java"
+  caption="MethodBeforeAdvice و اطلاعات Method، args و target."
+  code={
+    'package p02advices.p01before;\n\n\nimport org.springframework.aop.MethodBeforeAdvice;\nimport org.springframework.aop.framework.ProxyFactory;\n\nimport java.lang.reflect.Method;\n\npublic class C01SimpleBeforeAdvice implements MethodBeforeAdvice {\n\n    @Override\n    public void before(Method method, Object[] args, Object target) throws Throwable {\n        System.out.println("before "+method.getName()+" prepare your desk");\n    }\n}'
+  }
+/>
+
+<CodeExample
+  id="after-returning-advice"
+  source="teacher"
+  context="companion-code-scope"
+  lang="java"
+  filename="C01SimpleAfterReturningAdvice.java"
+  repositoryPath="session6/_01SpringAOP-ClassicApi/src/main/java/p02advices/p02AfterReturningAdvice/C01SimpleAfterReturningAdvice.java"
+  caption="AfterReturningAdvice برای مسیر بازگشت موفق."
+  code={
+    'package p02advices.p02AfterReturningAdvice;\n\nimport org.springframework.aop.AfterReturningAdvice;\nimport org.springframework.aop.framework.ProxyFactory;\n\nimport java.lang.reflect.Method;\n\npublic class C01SimpleAfterReturningAdvice implements AfterReturningAdvice {\n\n    @Override\n    public void afterReturning(Object returnValue, Method method, Object[] args, Object target) throws Throwable {\n        System.out.println("\\nAfter \'" + method.getName()+ "\' clean your desk!!");\n    }\n}'
+  }
+/>
+
+<CodeExample
+  id="around-advice"
+  source="teacher"
+  context="companion-code-scope"
+  lang="java"
+  filename="C02AdviceInterceptor.java"
+  repositoryPath="session6/_01SpringAOP-ClassicApi/src/main/java/p02advices/p03aroundAdvice/C02AdviceInterceptor.java"
+  caption="proceed مسیر اجرا را به interceptor بعدی یا target می‌رساند."
+  code={
+    'package p02advices.p03aroundAdvice;\n\nimport org.aopalliance.intercept.MethodInterceptor;\nimport org.aopalliance.intercept.MethodInvocation;\n\npublic class C02AdviceInterceptor implements MethodInterceptor {\n    @Override\n    public Object invoke(MethodInvocation invocation) throws Throwable {\n        // run code before method execution\n        System.out.println("Before target method execution " + invocation.getMethod().getName());\n        // target method execution\n        Object retVal = invocation.proceed();\n        // run code after method execution\n        System.out.println("After target method execution " + invocation.getMethod().getName());\n        return retVal;\n    }\n}'
+  }
+/>
+
+<CodeExample
+  id="throws-advice"
+  source="teacher"
+  context="companion-code-scope"
+  lang="java"
+  filename="C02SimpleThrowsAdvice.java"
+  repositoryPath="session6/_01SpringAOP-ClassicApi/src/main/java/p02advices/p04throwsAdvice/C02SimpleThrowsAdvice.java"
+  caption="دو handler برای Exception عمومی و IllegalArgumentException اختصاصی."
+  code={
+    'package p02advices.p04throwsAdvice;\n\nimport org.springframework.aop.ThrowsAdvice;\nimport org.springframework.aop.framework.ProxyFactory;\n\nimport java.lang.reflect.Method;\n\npublic class C02SimpleThrowsAdvice implements ThrowsAdvice {\n\n\n    public void afterThrowing(Exception ex) throws Throwable {\n        System.out.println("***");\n        System.out.println("Generic Exception Capture");\n        System.out.println("Caught: " + ex.getClass().getName());\n        System.out.println("***\\n");\n    }\n    public void afterThrowing(Method method, Object[] args, Object target,\n                              IllegalArgumentException ex) throws Throwable {\n        System.out.println("***");\n        System.out.println("IllegalArgumentException Capture");\n        System.out.println("Caught: " + ex.getClass().getName());\n        System.out.println("Method: " + method.getName());\n        System.out.println("***\\n");\n    }\n\n}'
+  }
+/>
+
+<SourceBlock id="throws-verification" source="gpt">
+
+اجرای نمونهٔ ThrowsAdvice را با ناپدیدشدن خطا اشتباه نگیرید. در آزمایش، `m1()` handler عمومی و `m2()` handler اختصاصی IllegalArgumentException را فعال کردند؛ در هر دو حالت exception به caller رسید. launcher اصلی فقط `m2()` را فعال دارد و آن را catch نمی‌کند، بنابراین پایان با exception برای آن انتظار می‌رود.
+
+اگر around advice باید cleanup را حتی هنگام exception انجام دهد، کد بعد از `proceed()` به‌تنهایی کافی نیست؛ جای `try/finally` را آگاهانه انتخاب کنید. این تفاوت در [مرجع AOP](/concepts/spring-aop/#advice-kinds) نیز آمده است.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## کد همراه: Static و Dynamic pointcut [#pointcuts]
+
+<CodeExample
+  id="static-pointcut"
+  source="teacher"
+  context="companion-code-scope"
+  lang="java"
+  filename="SimpleStaticPointcut.java"
+  repositoryPath="session6/_01SpringAOP-ClassicApi/src/main/java/p03PointcutInterface/p01static/SimpleStaticPointcut.java"
+  caption="کلاس JavaProgrammer و متد code شرط انتخاب‌اند."
+  code={
+    'package p03PointcutInterface.p01static;\n\nimport org.springframework.aop.ClassFilter;\nimport org.springframework.aop.support.StaticMethodMatcherPointcut;\n\nimport java.lang.reflect.Method;\n\npublic class SimpleStaticPointcut extends StaticMethodMatcherPointcut {//which method\n   /* @Override\n    public boolean matches(Method method, Class<?> targetClass) {\n        return "code".equals(method.getName());\n    }*/\n      @Override\n    public boolean matches(Method method, Class<?> targetClass) {\n        System.out.println("Static check for " + method.getName());\n        return ("code".equals(method.getName()));\n    }\n\n   /* @Override\n    public ClassFilter getClassFilter() {\n        return clazz->clazz==JavaProgrammer.class;\n    }*/\n\n    @Override\n    public ClassFilter getClassFilter() {\n        return new ClassFilter() {\n            @Override\n            public boolean matches(Class<?> clazz) {\n                return clazz==JavaProgrammer.class;\n            }\n        };\n    }\n}'
+  }
+/>
+
+<CodeExample
+  id="dynamic-pointcut"
+  source="teacher"
+  context="companion-code-scope"
+  lang="java"
+  filename="C02SimpleDynamicPointcut.java"
+  repositoryPath="session6/_01SpringAOP-ClassicApi/src/main/java/p03PointcutInterface/p02dynamic/C02SimpleDynamicPointcut.java"
+  caption="شرط فعال runtime برابر x > 100 است؛ x != 100 کامنت شده است."
+  code={
+    'package p03PointcutInterface.p02dynamic;\n\nimport org.springframework.aop.ClassFilter;\nimport org.springframework.aop.support.DynamicMethodMatcherPointcut;\n\nimport java.lang.reflect.Method;\n\npublic class C02SimpleDynamicPointcut extends DynamicMethodMatcherPointcut {\n    @Override\n    public boolean matches(Method method, Class<?> targetClass, Object... args) {\n        System.out.println("Dynamic check for " + method.getName());\n        int x = ((Integer) args[0]).intValue();\n      //  return (x != 100);\n        return (x > 100);\n    }\n\n   /* @Override\n    public boolean matches(Method method, Class<?> targetClass) {\n        System.out.println("Static check for " + method.getName());\n        return ("m1".equals(method.getName()));\n    }*/\n   @Override\n   public boolean matches(Method method, Class<?> targetClass) {\n       return "m1".equals(method.getName());\n   }\n\n\n    @Override\n    public ClassFilter getClassFilter() {\n        return clazz->clazz==C01MyBean.class;\n    }\n}'
+  }
+/>
+
+<SourceBlock id="pointcut-results" source="gpt">
+
+در بررسی نمونهٔ static، JavaProgrammer و PhpProgrammer هر دو `code()` دارند، ولی فقط JavaProgrammer advice گرفت. پس نام متد به‌تنهایی تمام شرط نیست؛ ClassFilter هم نقش دارد.
+
+در نمونهٔ dynamic، static matcher ابتدا فقط `m1` را می‌پذیرد. runtime matcher سپس `args[0]` را می‌خواند و شرط `x > 100` را بررسی می‌کند. اجرای `m1(100)` بدون advice، `m1(101)` همراه advice و `m2()` بدون ورود به شرط آرگومان تأیید شد. آن prefilter برای متدِ بدون آرگومان مهم است؛ حذفش می‌تواند دسترسی به `args[0]` را نامعتبر کند.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## اجرای نمونه‌ها و تمرین مرور [#practice]
+
+<SourceBlock id="run-guide" source="gpt">
+
+از داخل `teacher-files/session6` سه پروژه را جدا در IDE باز کنید؛ POM اصلیِ Core یک پوشه پایین‌تر، در `session6/pom.xml` است و پروژهٔ AOP POM مستقل دارد. Core در فایل استاد Java 25 درخواست می‌کند؛ پروژهٔ AOP Java 21. برای بررسی این درس، Core در کپی خصوصی با target/source برابر 21 و dependencyهای اصلی 7.0.9 کامپایل شد؛ فایل استاد تغییر نکرده است.
+
+قبل از اجرای launcherهای Core، مسیرهای مطلق XML، نام package در XML و محدودهٔ ComponentScan را با فایل واقعی تطبیق دهید. در مثال Profile، انتخاب `stage` و گرفتن Beanِ `test` را عمداً با انتخاب درست مقایسه کنید. برای بحث scope به reference و دفعات constructor نگاه کنید؛ صرف متفاوت‌بودن متن چاپ‌شدهٔ proxy کافی نیست.
+
+بعضی Testهای Core، فرم `static void main()` بدون آرگومان دارند. برای اجرای همان launcher با Java 21 باید ورودی استاندارد `public static void main(String[] args)` داشته باشید؛ صرف کامپایل‌شدن کلاس، به معنی قابل اجرا بودن آن ورودی با launcher قدیمی نیست. آزمایش این درس از runner مستقل استفاده کرده است.
+
+برای پروژهٔ JDK proxy، `Client.main` نقطهٔ شروع است. برای AOP، demoهای هر پکیج را جدا اجرا کنید؛ بعضی خطوط فراخوانی کامنت‌اند و نمونهٔ throws انتظار exception دارد. این درس اتصال زندهٔ دیتابیس یا استقرار وب را آزمایش نمی‌کند.
+
+</SourceBlock>
+
+<SourceBlock id="review-exercises" source="gpt">
+
+برای مرور فعال، پیش از اجرا نتیجه را پیش‌بینی کنید:
+
+1. دو تعریف singleton از یک کلاس چند نمونه دارند؟ دو Service با DAO prototype چطور؟
+2. چرا getter عادیِ singleton نمونهٔ prototype تازه نمی‌دهد؟ بین lookup و scoped proxy چه تفاوتی در عملیات چندمتدی وجود دارد؟
+3. چرا با profileِ stage، BeanOne پیدا نمی‌شود؟ `refresh()` چه زمانی فراخوانی شده است؟
+4. آیا ساخت کانتکست به‌تنهایی listenerِ ContextStartedEvent را فعال می‌کند؟
+5. در JDK handler و HumanDecorator، رفتار «بعد از متد» هنگام exception چه تفاوتی دارد؟
+6. در dynamic pointcut، ورودی‌های 100 و 101 چه تفاوتی دارند؟ چرا m2 بدون آرگومان مشکلی ایجاد نمی‌کند؟
+
+این‌ها تمرین‌های تدوین‌شده برای مرور درس‌اند؛ تکلیف‌های بیان‌شده در ضبط، در بخش مربوط به همان منبع مشخص شده‌اند.
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## پرسش پایانی؛ چرا self-invocation از advice عبور نمی‌کند؟ [#self-invocation]
+
+<SourceBlock id="self-invocation-question" source="teacher" recording="teacher-06-part2" timestamp="01:37:30">
+
+در پایان کلاس، یکی از دانشجویان تجربهٔ logging ورودی و خروجی متد را مطرح می‌کند: فراخوانی بیرونی کار می‌کرد، اما وقتی متد از داخل همان کلاس صدا زده می‌شد، رفتار موردنظر اجرا نمی‌شد. استاد مسئله را به proxy و ارتباط‌های درونی نسبت می‌دهد و از پیچیدگی این ارتباط‌ها صحبت می‌کند. برای نتیجه‌گیری عملی، مسیر دقیق فراخوانی را باید روشن کرد.
+
+</SourceBlock>
+
+<TechnicalCorrection id="self-invocation-correction" corrects="self-invocation-question" statement="در پاسخ پایانی، اجرا نشدن advice برای فراخوانی درونی با پیچیدگی ارتباط‌ها و weaving توضیح داده می‌شود." correction="در مدل معمول Spring AOP، فراخوانی متد روی this از proxy بیرونی عبور نمی‌کند؛ به همین دلیل advice آن مسیر فعال نمی‌شود. صرف پیچیده‌بودن یا زیادبودن فراخوانی‌ها علت اصلی این رفتار نیست." reason="برای عیب‌یابی ابتدا referenceِ caller و مرز proxy را مشخص کنید؛ تغییر pointcut به‌تنهایی مسیر this را از proxy عبور نمی‌دهد.">
+
+[Self-invocation و مرز Proxy](https://docs.spring.io/spring-framework/reference/core/aop/proxying.html)
+
+</TechnicalCorrection>
+
+<SourceBlock id="proxy-call-boundary" source="gpt">
+
+وقتی advice را انتظار دارید، بررسی کنید caller واقعاً proxy را صدا می‌زند یا target را مستقیم در اختیار دارد. همچنین فراخوانی یک متد از متد دیگرِ همان شیء با `this`، در مدل معمول Spring AOP از proxy بیرونی عبور نمی‌کند. این نکته برای فهم رفتارهای بعدی مثل transaction اهمیت دارد، اما این جلسه هنوز آموزش کامل transaction نیست. [محدودیت self-invocation](https://docs.spring.io/spring-framework/reference/core/aop/proxying.html)
+
+</SourceBlock>
+
+</section>
+
+<section data-source-group>
+
+## موضوعی که خوب است گفته شود؛ state مشترک [#further-context]
+
+<SourceBlock id="shared-state-boundary" source="gpt">
+
+در طراحی scopeها، singleton بودن تضمین thread safety نیست. اگر state قابل تغییر را میان چند درخواست مشترک نگه می‌دارید، باید قرارداد هم‌زمانی آن را جدا بررسی کنید؛ تغییر scope بدون شناخت نیاز، جای این تصمیم را نمی‌گیرد.
+
+همچنین هزینهٔ proxy را از روی نام CGLIB یا Reflection حدس نزنید. ایجاد proxy و اجرای متد از مسیر آن دو هزینهٔ متفاوت‌اند. برای تصمیم دربارهٔ عملکرد، workload واقعی و اندازه‌گیری لازم است؛ مثال‌های این جلسه برای مشاهدهٔ سازوکارند، نه benchmark.
+
+</SourceBlock>
+
+</section>
+
+## سابقهٔ تغییر [#changes]
+
+<ChangeLog />

@@ -1,0 +1,250 @@
+---
+title: جلسهٔ ششم پنج‌شنبه — Scope، ObjectProvider و سازوکار Proxy
+description: مرور مستقل حیدری؛ از کانتینر دستی و reference وابستگی تا ObjectProvider، Proxy دستی و Lookup مبتنی بر CGLIB.
+sidebar:
+  label: جلسهٔ ۶ — Scope و Proxy
+  order: 6
+kb:
+  type: thursday
+  id: thursday-06
+  sessionNumber: 6
+  status: complete
+  createdAt: '2026-09-30'
+  updatedAt: '2026-09-30'
+  sources:
+    heydari:
+      recordings:
+        - id: heydari-06-thursday
+          location: ../records/mr.heydari-thursday-audio/session6/جلسه ۵شنبه مرور جلسه ششم اسپرینگ ۱۴۰۵۰۶۲۶.m4a
+          kind: audio
+          durationSeconds: 3801
+    gpt:
+      references:
+        - https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-method-injection.html
+        - https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/beans/factory/ObjectProvider.html
+  prerequisites: [bean, dependency-injection, reflection, bean-scope]
+  prerequisiteSessions: [tuesday-06]
+  relatedSessions: [tuesday-06]
+  concepts:
+    - id: dependency-injection
+      relation: reviewed
+      anchor: di-participants
+    - id: reflection
+      relation: reviewed
+      anchor: di-participants
+    - id: bean-scope
+      relation: expanded
+      anchor: object-provider
+    - id: spring-aop
+      relation: reviewed
+      anchor: manual-proxy
+  timeline:
+    - topic: Bean و اهمیت فهم سازوکار framework
+      source: heydari
+      recording: heydari-06-thursday
+      start: '00:00'
+      approximate: true
+    - topic: نقش‌های DI، annotation، کلید تنظیمات و Reflection در کانتینر دستی
+      source: heydari
+      recording: heydari-06-thursday
+      start: '04:30'
+      approximate: true
+    - topic: تعداد و عمر نمونه‌ها؛ مرور scope
+      source: heydari
+      recording: heydari-06-thursday
+      start: '18:00'
+      approximate: true
+    - topic: referenceِ prototype در singleton و چرایی تکرارنشدن injection
+      source: heydari
+      recording: heydari-06-thursday
+      start: '22:15'
+      approximate: true
+    - topic: ObjectProvider و دریافت نمونهٔ تازه با getObject
+      source: heydari
+      recording: heydari-06-thursday
+      start: '33:20'
+      approximate: true
+    - topic: ارتباط Lookup با Proxy؛ نوشتن interface، target و proxy دستی
+      source: heydari
+      recording: heydari-06-thursday
+      start: '41:10'
+      approximate: true
+    - topic: subclass تولیدشده با CGLIB و lookup در زمان اجرا
+      source: heydari
+      recording: heydari-06-thursday
+      start: '55:25'
+      approximate: true
+    - topic: جمع‌بندی مسیر دسترسی به BeanFactory
+      source: heydari
+      recording: heydari-06-thursday
+      start: '01:00:00'
+      approximate: true
+  changes:
+    - date: '2026-09-30'
+      type: initial
+      summary: بررسی کامل ضبط پنج‌شنبهٔ ششم، ثبت مرور مستقل و نمونهٔ اجرایی GPT برای ObjectProvider.
+---
+
+import SourceBlock from '../../../components/source/SourceBlock.astro';
+import CodeExample from '../../../components/code/CodeExample.astro';
+import PrerequisiteList from '../../../components/documentation/PrerequisiteList.astro';
+import SessionTimeline from '../../../components/documentation/SessionTimeline.astro';
+import ChangeLog from '../../../components/documentation/ChangeLog.astro';
+
+## پیش‌نیازها [#prerequisites]
+
+<PrerequisiteList />
+
+## ترتیب مرور [#timeline]
+
+<SessionTimeline />
+
+## هدف مرور؛ فهم سازوکار پشت annotation [#understand-the-container]
+
+<SourceBlock id="thursday-purpose" source="heydari" recording="heydari-06-thursday" timestamp="00:00">
+
+مرور با تعریف Bean آغاز می‌شود: شیئی که ساخت و مدیریت آن را به Spring سپرده‌ایم. حیدری تأکید می‌کند استفاده از یک annotation، با فهمیدن سازوکار پشت آن یکی نیست. مثلاً فعال‌کردن transaction یک سطح از مهارت است و توضیح اینکه این رفتار چگونه به متد اضافه می‌شود، سطح عمیق‌تری از شناخت framework می‌خواهد.
+
+این جلسه برای بازکردن همین سازوکار، از DI و کانتینر دستی قبلی شروع می‌کند و به scope و ترکیب singleton با prototype می‌رسد. قرار نیست تمام APIها را حفظ کنیم؛ باید بتوانیم نقش هر بخش را در یک مثال کوچک دنبال کنیم.
+
+</SourceBlock>
+
+## سه نقش در Dependency Injection [#di-participants]
+
+<SourceBlock id="di-three-parts" source="heydari" recording="heydari-06-thursday" timestamp="04:30">
+
+حیدری سه نقش را در مثال DI جدا می‌کند: مصرف‌کننده‌ای که dependency می‌خواهد، بخشی که آن را می‌سازد و راهی که نیازمندی را به سازنده اعلام می‌کند. در کانتینر دستیِ جلسات قبل، annotation روی فیلد اعلام می‌کرد این قسمت نیاز به مقدار دارد و یک کلید، پیاده‌سازی موردنظر را مشخص می‌کرد.
+
+آن کلید به‌تنهایی نام کامل کلاس نیست. فایل تنظیمات، کلید را به نام کامل کلاس نگاشت می‌کرد؛ سازنده با خواندن آن، کلاس را پیدا می‌کرد و با Reflection نمونه می‌ساخت. سپس reference را به مصرف‌کننده می‌رساند. بنابراین قرار دادن annotation بدون کدی که آن را بخواند، این رفتار را خودبه‌خود ایجاد نمی‌کند.
+
+در این مرور، BeanDefinition به‌عنوان دستور ساخت Bean و BeanFactory به‌عنوان بخش مسئول فراهم‌کردن آن دوباره مطرح می‌شوند. برای دیدن کد واقعی کانتینر دستی، به [جلسهٔ سوم](/tuesday/session-03/) و [مرجع Reflection](/concepts/reflection/) برگردید.
+
+</SourceBlock>
+
+<SourceBlock id="manual-vs-spring" source="gpt">
+
+نگاشت کلید به نام کلاس، مدل سادهٔ آموزشیِ همان کانتینر دستی است؛ BeanDefinition واقعی Spring فقط یک رشتهٔ نام کلاس نیست. اطلاعات scope، وابستگی‌ها و شیوهٔ آماده‌سازی نیز در metadata نقش دارند. همچنین `@Autowired` الزاماً یک کلید متنی مثل مثال دستی نمی‌خواهد؛ در [Autowiring](/concepts/autowiring/)، نقش type و انتخاب candidateها توضیح داده شده است.
+
+</SourceBlock>
+
+## Scope را از تعداد و عمر نمونه بخوانیم [#scope-recap]
+
+<SourceBlock id="scope-lifetime-recap" source="heydari" recording="heydari-06-thursday" timestamp="18:00">
+
+حیدری انتخاب scope را ادامهٔ مسئولیت ساخت شیء می‌داند: وقتی framework ساخت را در دست دارد، باید بداند چند نمونه می‌خواهیم و مرز استفاده از هر نمونه چیست. برای توضیح، نگه‌داشتن شیء در فیلد را با ساخت آن در محدودهٔ یک عملیات مقایسه می‌کند؛ سپس singleton پیش‌فرض و prototype را مرور می‌کند.
+
+در این تشبیه، پایان متد یا request با پایان عمر شیء مرتبط بیان می‌شود. برای انتقال این تصویر به Java و Spring باید دو مرز را روشن نگه داشت.
+
+</SourceBlock>
+
+<SourceBlock id="scope-lifetime-precision" source="gpt">
+
+پایان scope یک متغیر محلی به معنی نابودی فوری شیء نیست؛ اگر reference آن در جای دیگری باقی بماند، شیء هنوز قابل دسترسی است. زمان آزادسازی حافظه نیز با GC تعیین می‌شود. از طرف دیگر، prototype قرارداد «نمونهٔ تازه در هر درخواست آن Bean از کانتینر» است؛ پایان HTTP request قرارداد نابودی آن نیست. [Scopeهای Spring](https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html)
+
+singleton هم به‌ازای هر Bean definition در هر کانتینر است، نه الزاماً فقط یک شیء از آن کلاس در تمام برنامه. برای آزمایش دو تعریف از یک کلاس، [مثال سه‌شنبه](/tuesday/session-06/#singleton-scope) را ببینید.
+
+</SourceBlock>
+
+## چرا dependency خودبه‌خود جایگزین نمی‌شود؟ [#prototype-dependency]
+
+<SourceBlock id="singleton-state-review" source="heydari" recording="heydari-06-thursday" timestamp="22:15">
+
+پرسش اصلی مرور این است: singleton آماده‌ای داریم که فیلدش reference یک prototype را گرفته است. درخواست بعدی همان singleton را تحویل می‌گیرد. چرا باید انتظار داشته باشیم مقدار فیلد آن بدون رفتار اضافه، عوض شده باشد؟
+
+حیدری مسیر ساخت را مرحله‌به‌مرحله باز می‌کند: برای آماده‌کردن مصرف‌کننده، dependency فراهم شده و مقدار آن در شیء قرار گرفته است. در مراجعهٔ بعدی، همان شیء آماده وجود دارد. اعلام prototype برای dependency به‌تنهایی به معنی تکرار injection در هر استفاده از singleton نیست.
+
+سپس مسئلهٔ طراحی را به این پرسش تبدیل می‌کند که در زمان اجرا چگونه dependency تازه‌ای در دسترس عملیات قرار دهیم. در بیان شفاهی، از تغییر reference داخل شیء برای تصویرسازی استفاده می‌شود.
+
+</SourceBlock>
+
+<SourceBlock id="lookup-reference-precision" source="gpt">
+
+برای دریافت نمونهٔ تازه، لازم نیست تمام راه‌حل‌ها فیلد singleton را در هر بار استفاده بازنویسی کنند. در lookup-method، نتیجهٔ متد از کانتینر گرفته می‌شود؛ در scoped proxy، referenceِ proxy می‌تواند ثابت بماند و target پشت آن عوض شود. همچنین scopeِ Bean definition تغییر نکرده است؛ عبارت «prototype داخل singleton، singleton می‌شود» فقط می‌تواند تشبیهی به ثابت‌ماندن reference باشد.
+
+سه راهِ بررسی‌شده و نتیجهٔ اجرای آن‌ها در [بخش ترکیب scopeها](/tuesday/session-06/#mixed-scopes) کنار هم آمده‌اند.
+
+</SourceBlock>
+
+## ObjectProvider؛ به‌جای نمونه، راه دریافت نمونه را بدهیم [#object-provider]
+
+<SourceBlock id="provider-analogy" source="heydari" recording="heydari-06-thursday" timestamp="33:20">
+
+حیدری با تشبیه «روش به‌دست‌آوردن را بده، نه فقط یک نتیجه را» راه‌حل را توضیح می‌دهد. singleton به‌جای نگه‌داشتن مستقیم PrototypeBean، یک `ObjectProvider<PrototypeBean>` دریافت می‌کند. هر بار که به نمونه نیاز دارد، از provider آن را می‌گیرد.
+
+در مقایسهٔ دو نسخه، نسخهٔ اول همان نمونهٔ قبلاً تزریق‌شده را برمی‌گرداند؛ نسخهٔ دوم در متد دریافت، `getObject()` را فراخوانی می‌کند. به این ترتیب، singleton می‌تواند ثابت بماند ولی هر فراخوانیِ درخواست prototype، نتیجهٔ تازه داشته باشد. provider نیز از constructor وارد مصرف‌کننده می‌شود.
+
+</SourceBlock>
+
+<SourceBlock id="provider-contract" source="gpt">
+
+ObjectProvider یک interface است. خود provider تضمین نمی‌کند هر Bean حتماً تازه ساخته شود؛ این نتیجه در مثال از scopeِ `prototype` می‌آید. اگر Bean مقصد singleton باشد، lookupهای provider همان نمونه را می‌گیرند. همچنین provider را یک بار صدا زدن و ذخیرهٔ نتیجه در فیلد، رفتارِ «در هر عملیات نمونهٔ تازه» را از بین می‌برد.
+
+کد بعدی بازسازی آموزشی GPT است؛ فایل کد مستقلی برای مثال صوتی پنج‌شنبه ارائه نشده است. همین الگو در یک کانتکست مستقل با Spring 7.0.9 اجرا شد: Service ثابت ماند و دو `getObject()`، دو Item متفاوت برگرداندند.
+
+</SourceBlock>
+
+<CodeExample
+  id="provider-example"
+  source="gpt"
+  lang="java"
+  filename="ProviderDemo.java"
+  caption="نمونهٔ مستقلِ آزموده‌شده؛ خروجی true و سپس false است."
+  code={
+    'import org.springframework.beans.factory.ObjectProvider;\nimport org.springframework.context.annotation.*;\n\npublic class ProviderDemo {\n    static class Item {}\n\n    static class Service {\n        private final ObjectProvider<Item> items;\n\n        Service(ObjectProvider<Item> items) {\n            this.items = items;\n        }\n\n        Item next() {\n            return items.getObject();\n        }\n    }\n\n    @Configuration\n    static class Config {\n        @Bean\n        @Scope("prototype")\n        Item item() {\n            return new Item();\n        }\n\n        @Bean\n        Service service(ObjectProvider<Item> items) {\n            return new Service(items);\n        }\n    }\n\n    public static void main(String[] args) {\n        try (var context = new AnnotationConfigApplicationContext(Config.class)) {\n            Service service = context.getBean(Service.class);\n            System.out.println(service == context.getBean(Service.class)); // true\n            System.out.println(service.next() == service.next()); // false\n        }\n    }\n}'
+  }
+/>
+
+## Proxy دستی؛ قرارداد مشترک و رفتار پیرامون target [#manual-proxy]
+
+<SourceBlock id="manual-proxy-walkthrough" source="heydari" recording="heydari-06-thursday" timestamp="42:00">
+
+برای فهم اتفاق پشت framework، حیدری ساخت یک Proxy ساده را پیشنهاد می‌کند. یک interface به نام ITarget متد `m()` دارد. Target آن را پیاده می‌کند و پیام اصلی را چاپ می‌کند. TargetProxy هم همان interface را پیاده می‌کند، referenceِ Target را نگه می‌دارد و در متد خودش سه کار انجام می‌دهد: پیام شروع proxy، فراخوانی `target.m()` و پیام پایان proxy.
+
+Client با typeِ ITarget کار می‌کند و یک TargetProxy می‌گیرد. چون Target و TargetProxy هر دو قرارداد مشترک را دارند، caller به رفتار اصلی موردنیازش می‌رسد؛ واسطه می‌تواند رفتار اضافه‌ای مثل logging یا کنترل دسترسی به target را مدیریت کند. در این مرحله proxy را خودمان نوشته‌ایم تا ترتیب فراخوانی‌ها قابل دیدن باشد.
+
+</SourceBlock>
+
+<SourceBlock id="manual-proxy-exercise" source="gpt">
+
+این تمرین را با چهار نقش بنویسید: ITarget، Target، TargetProxy و Client. پیش از اجرا، خروجی را به ترتیب «شروع proxy → پیام target → پایان proxy» پیش‌بینی کنید. سپس target را مستقیم صدا بزنید و تفاوت را ببینید. اگر target exception بدهد، کد پایانِ بعد از فراخوانی الزاماً اجرا نمی‌شود؛ برای cleanup تضمین‌شده به `finally` نیاز دارید.
+
+این مدل از نظر هدف با [JDK dynamic proxy سه‌شنبه](/tuesday/session-06/#jdk-proxy) مرتبط است، اما در مثال سه‌شنبه ساخت proxy به API جاوا واگذار شده و InvocationHandler مسیر فراخوانی را کنترل می‌کند.
+
+</SourceBlock>
+
+## Lookup و CGLIB؛ چیزی که annotation پنهان می‌کند [#lookup-generated-subclass]
+
+<SourceBlock id="lookup-generated-code" source="heydari" recording="heydari-06-thursday" timestamp="55:25">
+
+حیدری دوباره به `@Lookup` برمی‌گردد: annotation به framework می‌گوید برای متد دریافت dependency، پیاده‌سازی لازم را فراهم کند. در تصویرِ کلاس تولیدشده، نام SingletonService با بخش `SpringCGLIB` دیده می‌شود و subclass، رفتار متد را طوری تغییر می‌دهد که هر بار نمونه را از BeanFactory بگیرد.
+
+از نگاه caller هنوز با قرارداد همان Service کار می‌کنیم؛ اما implementation زمان اجرا، lookup تازه را انجام می‌دهد. این همان هدفی است که پیش‌تر با ObjectProvider به‌صورت صریح بیان کردیم. حیدری تأکید می‌کند فهم این مرحله از حفظ‌کردن اینکه «کدام annotation را کجا بگذاریم» مهم‌تر است.
+
+</SourceBlock>
+
+<SourceBlock id="lookup-boundaries" source="gpt">
+
+lookup method به پیاده‌سازی subclass نیاز دارد؛ کلاس و متد موردنظر نباید final باشند. این روش با تزریق یک شیء ثابت در فیلد تفاوت دارد و صرف نام `@Lookup` نیز scopeِ مقصد را prototype نمی‌کند. مقصد باید همان scope موردنظر را داشته باشد. [مرجع Method Injection](https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-method-injection.html)
+
+</SourceBlock>
+
+## مسیر دسترسی را دنبال کنیم [#review]
+
+<SourceBlock id="factory-responsibility" source="heydari" recording="heydari-06-thursday" timestamp="01:00:00">
+
+در جمع‌بندی، حیدری مسیر direct injection را کنار dynamic lookup می‌گذارد: در مسیر اول dependency یک بار فراهم می‌شود؛ در مسیر دوم هر بار lookup به BeanFactory می‌رسد. در مثال Lookup، proxy مسیر دسترسی را تغییر می‌دهد و مسئولیت فراهم‌کردن Bean مطابق scope همچنان با factory است.
+
+برای مرور، بتوانید روی کاغذ بگویید caller کدام شیء را صدا می‌زند، متد بعدی چیست و در کدام نقطه درخواست تازه‌ای برای prototype به کانتینر می‌رسد. همین دنبال‌کردن مسیر، فرق استفادهٔ صرف از annotation با فهم مثال را روشن می‌کند.
+
+</SourceBlock>
+
+<SourceBlock id="provider-reference" source="gpt">
+
+برای جزئیات قرارداد provider به [ObjectProvider API](https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/beans/factory/ObjectProvider.html) و برای اجرای سه راه دیگر به [جلسهٔ سه‌شنبه](/tuesday/session-06/#mixed-scopes) مراجعه کنید. این صفحه بر ضبط مستقلِ حدود ۶۳ دقیقه‌ای پنج‌شنبه تکیه دارد؛ مثال Java بالا بازسازی آموزشیِ بررسی‌شده است و به‌عنوان کد عین فایل استاد ارائه نشده است.
+
+</SourceBlock>
+
+## سابقهٔ تغییر [#changes]
+
+<ChangeLog />

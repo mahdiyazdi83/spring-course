@@ -22,6 +22,7 @@ kb:
         - https://docs.spring.io/spring-framework/reference/core/beans/beanfactory.html
         - https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-lazy-init.html
         - https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/context/ConfigurableApplicationContext.html
+        - https://docs.spring.io/spring-framework/reference/core/beans/context-introduction.html
   prerequisites: [bean]
   relatedConcepts: [bean, dependency-injection]
   changes:
@@ -37,6 +38,9 @@ kb:
     - date: '2026-09-30'
       type: concept-update
       summary: افزودن مدیریت پایان عمر context و ارجاع به Aware و shutdown hook جلسهٔ پنجم.
+    - date: '2026-09-30'
+      type: concept-update
+      summary: افزودن MessageSource و eventها با تفاوت refresh و start در جلسهٔ ششم.
 ---
 
 import SourceBlock from '../../../components/source/SourceBlock.astro';
@@ -91,6 +95,16 @@ Bean شیء مدیریت‌شده است؛ ApplicationContext محیط مدیر�
 در برنامهٔ مستقل، مالک context باید به پایان عمر آن هم فکر کند. قرارداد `ConfigurableApplicationContext` امکانات `close()` و `registerShutdownHook()` را دارد؛ این امکانات مخصوص GenericApplicationContext نیستند. [مثال جلسهٔ پنجم](/tuesday/session-05/#aware-shutdown) تفاوت بسته‌شدن صریح، shutdown hook و دسترسی از طریق Aware را نشان می‌دهد.
 
 خود ApplicationContext قابل تزریق نیز هست؛ نیاز به این قابلیت زیرساختی را با دریافت همهٔ وابستگی‌های سرویس از طریق `getBean` یکی نگیرید. توضیح callbackهای آماده‌سازی و cleanup در [Bean lifecycle](/concepts/bean-lifecycle/) آمده است.
+
+</SourceBlock>
+
+## MessageSource و Eventها [#context-features]
+
+<SourceBlock id="context-extra-features" source="gpt">
+
+ApplicationContext فقط محل نگهداری Beanها نیست. در [جلسهٔ ششم](/tuesday/session-06/#i18n)، `getMessage` با کلید و Locale، متن را از MessageSource می‌گیرد؛ در [نمونهٔ event](/tuesday/session-06/#events)، listener به رخداد مشخصِ کانتکست واکنش نشان می‌دهد.
+
+`ContextRefreshedEvent` با `ContextStartedEvent` یکی نیست: نمونهٔ این جلسه برای دریافت دومی، `context.start()` را صریح فراخوانی می‌کند. همچنین انتشار event معمولی به معنی اجرای asynchronous نیست؛ این انتخاب به تنظیم listener و multicaster وابسته است. [قابلیت‌های ApplicationContext](https://docs.spring.io/spring-framework/reference/core/beans/context-introduction.html)
 
 </SourceBlock>
 

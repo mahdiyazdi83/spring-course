@@ -12,12 +12,16 @@ kb:
       references:
         - https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/value-annotations.html
         - ../teacher-files/session5/src/main/java/ir/digixo/p06Properties
+        - https://docs.spring.io/spring-framework/reference/core/beans/environment.html
   prerequisites: [bean, dependency-injection]
   relatedConcepts: [application-context]
   changes:
     - date: '2026-09-30'
       type: initial
       summary: افزودن مرجع تنظیم مقادیر بیرونی با properties و مثال DataSource جلسهٔ پنجم.
+    - date: '2026-09-30'
+      type: concept-update
+      summary: اتصال Environment و Profile جلسهٔ ششم به property resolution.
 ---
 
 import SourceBlock from '../../../components/source/SourceBlock.astro';
@@ -46,6 +50,16 @@ External configuration یعنی مقادیری مانند نشانی دیتاب�
 سه پرسش را جدا کنید: فایل کجاست؟ نام کلید چیست؟ مقدار به کدام فیلد یا property می‌رود؟ در نسخهٔ XML، `context:property-placeholder` منبع را معرفی می‌کند و عبارتی مانند `${jdbc.url}` مقدار کلید را مصرف می‌کند. در نسخهٔ Java، `@PropertySource` منبع را اضافه می‌کند و `@Value("${jdbc.url}")` محل دریافت مقدار است.
 
 خود `@Value` فایل دلخواهی را پیدا نمی‌کند. همچنین فایل زیر `src/main/java` الزاماً resource خروجی Maven نیست؛ برای استفاده از classpath باید آن را واقعاً در مسیر منابعِ build قرار دهید. [مرجع Value](https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/value-annotations.html)
+
+</SourceBlock>
+
+## Environment و Profile [#environment]
+
+<SourceBlock id="environment-profiles" source="gpt">
+
+در [جلسهٔ ششم](/tuesday/session-06/#environment)، همان property با `Environment.getProperty` خوانده می‌شود. Environment علاوه بر resolve کردن propertyها، profileهای فعال را هم در اختیار کانتینر می‌گذارد. Profile انتخاب می‌کند کدام گروه از Bean definitionها ثبت شوند؛ جایگزینِ مقدار یک property نیست.
+
+در مثال، BeanOne با profileِ `test` تعریف شده و launcher، `stage` را فعال می‌کند؛ پس آن Bean موجود نیست. Profile را پیش از `refresh()` تنظیم کنید. تغییر دادن یک نام پس از آماده‌شدن کانتینر، خودبه‌خود Beanهای موجود را با مجموعه‌ای تازه جایگزین نمی‌کند. [مرجع Environment](https://docs.spring.io/spring-framework/reference/core/beans/environment.html)
 
 </SourceBlock>
 
