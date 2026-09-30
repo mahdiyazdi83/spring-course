@@ -1,6 +1,6 @@
 ---
 title: جلسهٔ چهارم — تعریف Bean، روش‌های تزریق و انتخاب وابستگی
-description: ثبت Bean با XML و Java، تزریق سازنده و setter، Qualifier، استانداردهای Jakarta و جزئیات پایانی XML با مثال‌های بررسی‌شده.
+description: ثبت Bean با XML و Java، constructor injection و setter، Qualifier، استانداردهای Jakarta و جزئیات پایانی XML با مثال‌های بررسی‌شده.
 sidebar:
   label: جلسهٔ ۴ — تعریف و اتصال Beanها
   order: 4
@@ -10,7 +10,7 @@ kb:
   sessionNumber: 4
   status: complete
   createdAt: '2026-09-28'
-  updatedAt: '2026-09-28'
+  updatedAt: '2026-09-30'
   sources:
     teacher:
       recordings:
@@ -94,22 +94,22 @@ kb:
       recording: teacher-04-part1
       start: '46:00'
       approximate: true
-    - topic: Repository انتزاعی، Oracle و MySQL؛ ابهام و Qualifier
+    - topic: قرارداد Repository، Oracle و MySQL؛ ابهام و Qualifier
       source: teacher
       recording: teacher-04-part1
       start: '52:30'
       approximate: true
-    - topic: تزریق سازنده؛ XML، component-scan و پیکربندی Java
+    - topic: constructor injection؛ XML، component-scan و پیکربندی Java
       source: teacher
       recording: teacher-04-part1
       start: '01:05:00'
       approximate: true
-    - topic: ترجیح سازنده، مقایسه با setter و اجرای سه شکل setter injection
+    - topic: ترجیح constructor، مقایسه با setter و اجرای سه شکل setter injection
       source: teacher
       recording: teacher-04-part1
       start: '01:25:00'
       approximate: true
-    - topic: چرخهٔ سازنده، رفع خطا با setter و اصلاح Component به Configuration
+    - topic: چرخهٔ constructor، رفع خطا با setter و اصلاح Component به Configuration
       source: teacher
       recording: teacher-04-part1
       start: '01:36:00'
@@ -139,7 +139,7 @@ kb:
       recording: teacher-04-part2
       start: '40:30'
       approximate: true
-    - topic: حذف سازندهٔ بدون آرگومان و تزریق خودکار تک‌سازنده
+    - topic: حذف constructor بدون آرگومان و تزریق خودکار با یک constructor
       source: teacher
       recording: teacher-04-part2
       start: '54:00'
@@ -166,6 +166,9 @@ kb:
     - date: '2026-09-28'
       type: correction
       summary: تفکیک نسخهٔ کد از زمان ضبط، ثبت محدودیت مثال‌های ناقص و روشن‌کردن تفاوت استانداردهای تزریق.
+    - date: '2026-09-30'
+      type: content-update
+      summary: یکدست‌سازی نام‌های فنی انگلیسی در توضیح فارسی، بدون تغییر محتوای آموزشی.
 ---
 
 import SourceBlock from '../../../components/source/SourceBlock.astro';
@@ -212,19 +215,19 @@ import ChangeLog from '../../../components/documentation/ChangeLog.astro';
 
 <section data-source-group>
 
-## مرور XML: سازنده، property و فضای نام [#xml-properties]
+## مرور XML: constructor، property و فضای نام [#xml-properties]
 
 <SourceBlock id="xml-properties-explanation" source="teacher" recording="teacher-04-part1" timestamp="03:00">
 
-در تعریف XML، `class` نوع شیء و `name` یا `id` نام Bean را مشخص می‌کند. `constructor-arg` ورودی ساخت شیء را می‌دهد و `property` پس از ساخت، property را از مسیر setter مقداردهی می‌کند. فضای نام `c` شکل کوتاه ورودی سازنده و فضای نام `p` شکل کوتاه property است.
+در تعریف XML، `class` نوع شیء و `name` یا `id` نام Bean را مشخص می‌کند. `constructor-arg` ورودی ساخت شیء را می‌دهد و `property` پس از ساخت، property را از مسیر setter مقداردهی می‌کند. فضای نام `c` شکل کوتاه ورودی constructor و فضای نام `p` شکل کوتاه property است.
 
-در مثال `BeanOne`، مقدار `nahid` به سازنده می‌رسد و سپس setter مقدار را به `nahid1` تغییر می‌دهد. بنابراین مقدار نهایی با ورودی اولیه فرق می‌کند. حذف سازندهٔ بدون آرگومان زمانی مسئله می‌شود که پیکربندی هنوز انتظار ساخت بدون آرگومان داشته باشد؛ با معرفی ورودی سازنده، وجود چنین سازنده‌ای الزامی نیست.
+در مثال `BeanOne`، مقدار `nahid` به constructor می‌رسد و سپس setter مقدار را به `nahid1` تغییر می‌دهد. بنابراین مقدار نهایی با ورودی اولیه فرق می‌کند. حذف constructor بدون آرگومان زمانی مسئله می‌شود که پیکربندی هنوز انتظار ساخت بدون آرگومان داشته باشد؛ با معرفی ورودی constructor، وجود چنین constructor‌ای الزامی نیست.
 
 نام فضای XML فقط یک پیشوند ظاهری نیست؛ تعریف namespace و schema باید درست باشد. در اجرای کلاس، خطای namespace دیده و اصلاح می‌شود؛ هنگام عیب‌یابی XML ابتدا خطای parser و مسیر فایل را از خطای تزریق جدا کنید.
 
 </SourceBlock>
 
-<CodeExample id="xml-properties-code" source="teacher" lang="xml" filename="config.xml" repositoryPath="session4/src/main/java/ir/digixo/p01beanDefinition/p01xmlBeanOne/config.xml" caption="XML نسخهٔ موجود: مقدار سازنده سپس مقدار property اعمال می‌شود." code={"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<beans xmlns=\"http://www.springframework.org/schema/beans\"\n       xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n       xmlns:c=\"http://www.springframework.org/schema/c\"\n       xmlns:p=\"http://www.springframework.org/schema/p\"\n       xsi:schemaLocation=\"http://www.springframework.org/schema/beans\n       http://www.springframework.org/schema/beans/spring-beans.xsd\">\n\n    <!--business obj-->\n\n\n    <bean class=\"ir.digixo.p01beanDefinition.p01xmlBeanOne.BeanOne\" name=\"one\"\n          c:name=\"nahid\" p:name=\"nahid1\"  >\n\n       <!-- <constructor-arg value=\"nahid\"/>\n        <property name=\"name\" value=\"nahid1\"/>-->\n    </bean>\n\n\n\n</beans>"} />
+<CodeExample id="xml-properties-code" source="teacher" lang="xml" filename="config.xml" repositoryPath="session4/src/main/java/ir/digixo/p01beanDefinition/p01xmlBeanOne/config.xml" caption="XML نسخهٔ موجود: مقدار constructor سپس مقدار property اعمال می‌شود." code={"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<beans xmlns=\"http://www.springframework.org/schema/beans\"\n       xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n       xmlns:c=\"http://www.springframework.org/schema/c\"\n       xmlns:p=\"http://www.springframework.org/schema/p\"\n       xsi:schemaLocation=\"http://www.springframework.org/schema/beans\n       http://www.springframework.org/schema/beans/spring-beans.xsd\">\n\n    <!--business obj-->\n\n\n    <bean class=\"ir.digixo.p01beanDefinition.p01xmlBeanOne.BeanOne\" name=\"one\"\n          c:name=\"nahid\" p:name=\"nahid1\"  >\n\n       <!-- <constructor-arg value=\"nahid\"/>\n        <property name=\"name\" value=\"nahid1\"/>-->\n    </bean>\n\n\n\n</beans>"} />
 
 </section>
 
@@ -270,7 +273,7 @@ import ChangeLog from '../../../components/documentation/ChangeLog.astro';
 
 برای خواندن XML از `GenericXmlApplicationContext` استفاده می‌شود. در شیوهٔ گام‌به‌گام، کانتینر بدون آرگومان ساخته می‌شود، `load(...)` تعریف‌ها را می‌خواند و `refresh()` آماده‌سازی کانتینر را انجام می‌دهد. پیشوند `file:` فایل روی سیستم و `classpath:` منبع داخل classpath را مشخص می‌کند.
 
-در کلاس، ابتدا مسیر به سازنده داده می‌شود و سپس `refresh()` هم صدا زده می‌شود؛ خطای حاصل باعث می‌شود استاد روش را به سازندهٔ خالی، `load` و یک `refresh` تغییر دهد. این یک مرحلهٔ رفع خطا در کلاس است، نه الگوی دوبار refresh. پس از آماده‌سازی، `getBean(MyService.class)` سرویس را می‌گیرد و `getMyRepository()` نشان می‌دهد تزریق انجام شده است.
+در کلاس، ابتدا مسیر به constructor داده می‌شود و سپس `refresh()` هم صدا زده می‌شود؛ خطای حاصل باعث می‌شود استاد روش را به constructor خالی، `load` و یک `refresh` تغییر دهد. این یک مرحلهٔ رفع خطا در کلاس است، نه الگوی دوبار refresh. پس از آماده‌سازی، `getBean(MyService.class)` سرویس را می‌گیرد و `getMyRepository()` نشان می‌دهد تزریق انجام شده است.
 
 وقتی چند Bean هم‌نوع داریم، تنها نوع برای انتخاب همیشه کافی نیست؛ نام یا قاعدهٔ انتخاب لازم می‌شود. این ابهام در ادامه با Repositoryهای MySQL و Oracle به‌صورت عملی بررسی می‌شود.
 
@@ -320,7 +323,7 @@ import ChangeLog from '../../../components/documentation/ChangeLog.astro';
 
 <SourceBlock id="java-config-explanation" source="teacher" recording="teacher-04-part1" timestamp="25:30">
 
-به‌جای فایل XML، یک کلاس پیکربندی می‌تواند تعریف‌ها را در اختیار Spring قرار دهد. با `@Bean` روی متد، شیء بازگشتی آن متد به‌عنوان Bean معرفی می‌شود. تفاوتی که استاد بر آن تأکید می‌کند، حضور مستقیم کد ساخت در پیکربندی است: درون متد می‌توانیم `new`، سازنده و مقداردهی را خودمان بنویسیم.
+به‌جای فایل XML، یک کلاس پیکربندی می‌تواند تعریف‌ها را در اختیار Spring قرار دهد. با `@Bean` روی متد، شیء بازگشتی آن متد به‌عنوان Bean معرفی می‌شود. تفاوتی که استاد بر آن تأکید می‌کند، حضور مستقیم کد ساخت در پیکربندی است: درون متد می‌توانیم `new`، constructor و مقداردهی را خودمان بنویسیم.
 
 راه دیگر، قرار دادن `@ComponentScan` روی کلاس پیکربندی و علامت‌گذاری کلاس‌های برنامه است. `AnnotationConfigApplicationContext(Config.class)` نقطهٔ شروع این شیوه است. روش‌های XML، annotation و Java لزوماً جزیره‌های جدا نیستند و می‌توانند در یک برنامه ترکیب شوند.
 
@@ -370,7 +373,7 @@ import ChangeLog from '../../../components/documentation/ChangeLog.astro';
 
 همهٔ کلاس‌ها در اختیار ما نیستند که رویشان annotation بگذاریم؛ گاهی یک کتابخانه یا کد بیرونی شیء را فراهم کرده است. استاد برای این وضعیت overloadهای `registerBean` را نشان می‌دهد: ثبت با نام و نوع، ثبت با `Supplier`ِ تأمین‌کنندهٔ نمونه، و ثبت همراه `BeanDefinitionCustomizer` برای تغییر metadata.
 
-در کد، `service01` از نوع `MyService` ثبت می‌شود؛ `service02` و `service03` از Supplier استفاده می‌کنند. این بخش به [Supplier و رابط‌های تابعی](/concepts/functional-interface/) جلسهٔ دوم متصل است: lambda تعیین می‌کند هنگام درخواست ساخت، چه شیئی تحویل داده شود. در مثال، هر دو lambda همان متغیر `myService` را برمی‌گردانند؛ دو نام الزاماً به دو نمونهٔ متفاوت منجر نمی‌شود.
+در کد، `service01` از نوع `MyService` ثبت می‌شود؛ `service02` و `service03` از Supplier استفاده می‌کنند. این بخش به [Supplier و functional interfaceها](/concepts/functional-interface/) جلسهٔ دوم متصل است: lambda تعیین می‌کند هنگام درخواست ساخت، چه شیئی تحویل داده شود. در مثال، هر دو lambda همان متغیر `myService` را برمی‌گردانند؛ دو نام الزاماً به دو نمونهٔ متفاوت منجر نمی‌شود.
 
 Customizer به تعریف Bean دسترسی می‌دهد. `setLazyInit(true)` و `setPrimary(true)` نمونهٔ تغییر تنظیمات همان تعریف‌اند؛ XML و annotation نیز در نهایت اطلاعاتی از همین جنس در اختیار کانتینر قرار می‌دهند. استاد با مرور متدهای BeanDefinition نشان می‌دهد که پشت شکل‌های مختلف پیکربندی، یک مدل مدیریت Bean وجود دارد.
 
@@ -392,7 +395,7 @@ Customizer به تعریف Bean دسترسی می‌دهد. `setLazyInit(true)` 
 
 این فایل نمونهٔ API ثبت است و یک سرویس آمادهٔ استفادهٔ کامل نیست: `Config` خالی است و `MyRepository` ثبت نشده. در آزمایش، ثبت تعریف ممکن بود ولی `getBean("service01")` به `UnsatisfiedDependencyException` رسید. برای استفاده باید وابستگی سرویس را نیز ثبت کنید؛ `@Component` روی Repository بدون اسکن، آن را وارد این context نمی‌کند.
 
-همچنین `lazy` در تعریف نمی‌تواند ساختی را که خودتان قبلاً با `new MyService()` انجام داده‌اید به عقب بیندازد. Supplierِ بازگردانندهٔ شیء موجود را با Supplierِ سازندهٔ نمونهٔ جدید در لحظهٔ فراخوانی اشتباه نگیرید.
+همچنین `lazy` در تعریف نمی‌تواند ساختی را که خودتان قبلاً با `new MyService()` انجام داده‌اید به عقب بیندازد. Supplierِ بازگردانندهٔ شیء موجود را با Supplierِ constructor نمونهٔ جدید در لحظهٔ فراخوانی اشتباه نگیرید.
 
 </SourceBlock>
 
@@ -422,7 +425,7 @@ Customizer به تعریف Bean دسترسی می‌دهد. `setLazyInit(true)` 
   }
 />
 
-<CodeExample id="static-factory-xml" source="teacher" lang="xml" filename="config.xml" repositoryPath="session4/src/main/java/ir/digixo/p01beanDefinition/p05staticFactoryMethod/config.xml" caption="کلاس کارخانه و نام متد سازندهٔ محصول در XML." code={"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<beans xmlns=\"http://www.springframework.org/schema/beans\"\n       xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n       xmlns:c=\"http://www.springframework.org/schema/c\"\n       xmlns:p=\"http://www.springframework.org/schema/p\"\n       xsi:schemaLocation=\"http://www.springframework.org/schema/beans\n       http://www.springframework.org/schema/beans/spring-beans.xsd\">\n\n    <!--business obj-->\n\n\n   <bean class=\"ir.digixo.p01beanDefinition.p05staticFactoryMethod.BeanOneFactory\" id=\"beanOne\"\n         factory-method=\"getInstance\"/>\n\n\n\n</beans>"} />
+<CodeExample id="static-factory-xml" source="teacher" lang="xml" filename="config.xml" repositoryPath="session4/src/main/java/ir/digixo/p01beanDefinition/p05staticFactoryMethod/config.xml" caption="کلاس کارخانه و نام متد constructor محصول در XML." code={"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<beans xmlns=\"http://www.springframework.org/schema/beans\"\n       xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n       xmlns:c=\"http://www.springframework.org/schema/c\"\n       xmlns:p=\"http://www.springframework.org/schema/p\"\n       xsi:schemaLocation=\"http://www.springframework.org/schema/beans\n       http://www.springframework.org/schema/beans/spring-beans.xsd\">\n\n    <!--business obj-->\n\n\n   <bean class=\"ir.digixo.p01beanDefinition.p05staticFactoryMethod.BeanOneFactory\" id=\"beanOne\"\n         factory-method=\"getInstance\"/>\n\n\n\n</beans>"} />
 
 <SourceBlock id="factory-singleton-distinction" source="gpt">
 
@@ -462,17 +465,17 @@ Customizer به تعریف Bean دسترسی می‌دهد. `setLazyInit(true)` 
 
 <section data-source-group>
 
-## تزریق از سازنده در سه نوع پیکربندی [#constructor-injection]
+## تزریق از طریق constructor در سه نوع پیکربندی [#constructor-injection]
 
 <SourceBlock id="constructor-injection-explanation" source="teacher" recording="teacher-04-part1" timestamp="01:05:00">
 
-سرویس برای ساخته‌شدن، `Repository` می‌گیرد. همان کلاس می‌تواند با XML، annotation یا پیکربندی Java متصل شود؛ تغییر شکل پیکربندی، نقش پارامتر سازنده را عوض نمی‌کند. interface بودن پارامتر مانع تزریق نیست؛ نمونهٔ واقعی باید پیاده‌سازی سازگار آن باشد.
+سرویس برای ساخته‌شدن، `Repository` می‌گیرد. همان کلاس می‌تواند با XML، annotation یا پیکربندی Java متصل شود؛ تغییر شکل پیکربندی، نقش پارامتر constructor را عوض نمی‌کند. interface بودن پارامتر مانع تزریق نیست؛ نمونهٔ واقعی باید پیاده‌سازی سازگار آن باشد.
 
 در XML، دو Repository با نام `repo1` و `repo2` تعریف شده‌اند و `c:_0-ref="repo2"` به آرگومان شمارهٔ صفر، ارجاع Oracle می‌دهد. `ref` ارجاع به Bean است و با مقدار رشته‌ای ساده تفاوت دارد. شماره‌گذاری آرگومان‌ها از صفر شروع می‌شود.
 
-در نسخهٔ annotation، سازنده با `@Autowired` مشخص و پارامتر با `@Qualifier("oracle")` محدود می‌شود. استاد همین‌جا توضیح می‌دهد که `component-scan` پردازش annotationهای تزریق را نیز فعال می‌کند؛ افزودن جداگانهٔ `annotation-config` در حالت معمول این مثال تکراری است.
+در نسخهٔ annotation، constructor با `@Autowired` مشخص و پارامتر با `@Qualifier("oracle")` محدود می‌شود. استاد همین‌جا توضیح می‌دهد که `component-scan` پردازش annotationهای تزریق را نیز فعال می‌کند؛ افزودن جداگانهٔ `annotation-config` در حالت معمول این مثال تکراری است.
 
-در نسخهٔ Java، خود متد `@Bean` یک Repository با qualifier می‌گیرد و با `new MyService(repository)` به سازنده می‌دهد. ابتدا `@Primary` هم برای حل ابهام امتحان می‌شود، سپس استاد به Qualifier صریح برمی‌گردد. هر سه نسخهٔ موجود در بررسی اجرا، Oracle را انتخاب کردند.
+در نسخهٔ Java، خود متد `@Bean` یک Repository با qualifier می‌گیرد و با `new MyService(repository)` به constructor می‌دهد. ابتدا `@Primary` هم برای حل ابهام امتحان می‌شود، سپس استاد به Qualifier صریح برمی‌گردد. هر سه نسخهٔ موجود در بررسی اجرا، Oracle را انتخاب کردند.
 
 </SourceBlock>
 
@@ -496,7 +499,7 @@ Customizer به تعریف Bean دسترسی می‌دهد. `setLazyInit(true)` 
   lang="java"
   filename="Config.java"
   repositoryPath="session4/src/main/java/ir/digixo/p03DI/p01constructor/p03ClassConfig/Config.java"
-  caption="پارامتر متد Bean را Spring فراهم می‌کند؛ انتقال آن به سازنده صریح است."
+  caption="پارامتر متد Bean را Spring فراهم می‌کند؛ انتقال آن به constructor صریح است."
   code={
     'package ir.digixo.p03DI.p01constructor.p03ClassConfig;\n\nimport org.springframework.beans.factory.annotation.Qualifier;\nimport org.springframework.context.annotation.Bean;\nimport org.springframework.stereotype.Component;\n\n@Component\npublic class Config {\n\n    @Bean\n    public MyService myService(@Qualifier("oracle") Repository repository)\n    {\n        return new MyService(repository);\n    }\n\n    @Bean("oracle")\n    public Repository OracleRepository()\n    {\n        return new OracleRepository();\n    }\n    @Bean("mysql")\n    public Repository mysqlRepository()\n    {\n        return new MysqlRepository();\n    }\n}'
   }
@@ -520,11 +523,11 @@ Customizer به تعریف Bean دسترسی می‌دهد. `setLazyInit(true)` 
 
 نتیجهٔ بررسی نسخه‌های مخزن: XMLِ setter، MySQL و دو نسخهٔ annotation و Java، Oracle را دریافت می‌کنند. پس تفاوت خروجی این فایل‌ها از انتخاب پیکربندی می‌آید؛ «setter» خودش قاعده‌ای برای ترجیح یک پایگاه داده ندارد. هنگام نوشتن Java Config، هشدار فراخوانی مستقیم متد Bean دیده می‌شود؛ استاد کمی بعد متوجه می‌شود کلاس را Component گذاشته و آن را به Configuration اصلاح می‌کند. توضیح تفاوت این دو حالت در یادداشت بعد از کد آمده است.
 
-استاد دلیل ترجیح سازنده را آماده‌شدن شیء همراه با وابستگی‌هایش توضیح می‌دهد و برای وابستگی فراهم‌نشده در زمان startup، setter را مطرح می‌کند. این بخش از مقایسه نیاز به محدودیت دقیق زیر دارد.
+استاد دلیل ترجیح constructor را آماده‌شدن شیء همراه با وابستگی‌هایش توضیح می‌دهد و برای وابستگی فراهم‌نشده در زمان startup، setter را مطرح می‌کند. این بخش از مقایسه نیاز به محدودیت دقیق زیر دارد.
 
 </SourceBlock>
 
-<TechnicalCorrection id="setter-timing-correction" corrects="setter-injection-explanation" statement="اگر وابستگی هنگام startup فراهم نیست، می‌توان به‌جای سازنده از setter استفاده کرد." correction="تزریق معمول setter نیز هنگام آماده‌سازی Bean انجام می‌شود؛ یک setterِ Autowired با وابستگی اجباریِ موجودنبودنی همچنان خطا می‌دهد. setter به‌خودی‌خود سازوکار انتظار تا بعد از startup نیست." reason="اگر وابستگی واقعاً دیرتر فراهم می‌شود، باید طراحیِ دریافت دیرهنگام یا اختیاری بودن آن را صریح مشخص کرد؛ عوض‌کردن سازنده با setter کافی نیست.">
+<TechnicalCorrection id="setter-timing-correction" corrects="setter-injection-explanation" statement="اگر وابستگی هنگام startup فراهم نیست، می‌توان به‌جای constructor از setter استفاده کرد." correction="تزریق معمول setter نیز هنگام آماده‌سازی Bean انجام می‌شود؛ یک setterِ Autowired با وابستگی اجباریِ موجودنبودنی همچنان خطا می‌دهد. setter به‌خودی‌خود سازوکار انتظار تا بعد از startup نیست." reason="اگر وابستگی واقعاً دیرتر فراهم می‌شود، باید طراحیِ دریافت دیرهنگام یا اختیاری بودن آن را صریح مشخص کرد؛ عوض‌کردن constructor با setter کافی نیست.">
 
 [ترتیب ایجاد و مقداردهی وابستگی‌ها در Spring](https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html).
 
@@ -546,7 +549,7 @@ Customizer به تعریف Bean دسترسی می‌دهد. `setLazyInit(true)` 
 
 <SourceBlock id="configuration-methods" source="gpt">
 
-در نمونهٔ setter، کلاس دارای `@Configuration` است و با تنظیم پیش‌فرض، فراخوانی `oracleRepository()` از متد دیگر از مدیریت Spring عبور می‌کند. در مقابل، کلاس `Config` نمونهٔ سازنده فقط `@Component` دارد و از پارامتر متد برای دریافت وابستگی استفاده می‌کند. در حالت سبک یا `proxyBeanMethods=false`، فراخوانی مستقیم متد `@Bean` یک فراخوانی معمول Java است؛ این دو الگو را بی‌توجه به تنظیم کلاس جابه‌جا نکنید. [تفاوت حالت‌های پیکربندی Java](https://docs.spring.io/spring-framework/reference/core/beans/java/basic-concepts.html)
+در نمونهٔ setter، کلاس دارای `@Configuration` است و با تنظیم پیش‌فرض، فراخوانی `oracleRepository()` از متد دیگر از مدیریت Spring عبور می‌کند. در مقابل، کلاس `Config` نمونهٔ constructor فقط `@Component` دارد و از پارامتر متد برای دریافت وابستگی استفاده می‌کند. در حالت سبک یا `proxyBeanMethods=false`، فراخوانی مستقیم متد `@Bean` یک فراخوانی معمول Java است؛ این دو الگو را بی‌توجه به تنظیم کلاس جابه‌جا نکنید. [تفاوت حالت‌های پیکربندی Java](https://docs.spring.io/spring-framework/reference/core/beans/java/basic-concepts.html)
 
 </SourceBlock>
 
@@ -554,13 +557,13 @@ Customizer به تعریف Bean دسترسی می‌دهد. `setLazyInit(true)` 
 
 <section data-source-group>
 
-## وابستگی دوری: ساخت کدام شیء باید اول تمام شود؟ [#circular-dependencies]
+## circular dependency: ساخت کدام شیء باید اول تمام شود؟ [#circular-dependencies]
 
 <SourceBlock id="circular-dependencies-explanation" source="teacher" recording="teacher-04-part1" timestamp="01:36:00">
 
-در ضبط، ابتدا `BeanOne` برای ساخت به `BeanTwo` احتیاج دارد و BeanTwo نیز در سازنده BeanOne می‌خواهد. ساخت کانتینر به خطای وابستگی دوری می‌رسد: هیچ‌کدام نمی‌تواند ساخت کامل دیگری را پیش‌نیاز خود قرار دهد. استاد این وضعیت را نشانهٔ مسئله در طراحی می‌داند و توصیه می‌کند از رسیدن به چنین وابستگی‌ای جلوگیری شود.
+در ضبط، ابتدا `BeanOne` برای ساخت به `BeanTwo` احتیاج دارد و BeanTwo نیز در constructor BeanOne می‌خواهد. ساخت کانتینر به خطای circular dependency می‌رسد: هیچ‌کدام نمی‌تواند ساخت کامل دیگری را پیش‌نیاز خود قرار دهد. استاد این وضعیت را نشانهٔ مسئله در طراحی می‌داند و توصیه می‌کند از رسیدن به چنین وابستگی‌ای جلوگیری شود.
 
-سپس مثال به سازندهٔ بدون آرگومان و setterِ علامت‌خورده با `@Autowired` تبدیل می‌شود و در کلاس اجرا می‌شود. فایل‌های موجود `p03DI/p03` همین حالت دوم را نگه داشته‌اند؛ اجرای آن‌ها در یک `AnnotationConfigApplicationContext` معمولی نیز موفق بود. این نمونه تفاوت مرحلهٔ ساخت و مرحلهٔ مقداردهی را نشان می‌دهد، نه توصیه به ایجاد چرخه.
+سپس مثال به constructor بدون آرگومان و setterِ علامت‌خورده با `@Autowired` تبدیل می‌شود و در کلاس اجرا می‌شود. فایل‌های موجود `p03DI/p03` همین حالت دوم را نگه داشته‌اند؛ اجرای آن‌ها در یک `AnnotationConfigApplicationContext` معمولی نیز موفق بود. این نمونه تفاوت مرحلهٔ ساخت و مرحلهٔ مقداردهی را نشان می‌دهد، نه توصیه به ایجاد چرخه.
 
 تمرین مطرح‌شده برای جلسهٔ بعد: دو راه دیگرِ برخورد با این مسئله را بررسی کنید. پاسخ این تمرین در ضبط حاضر داده نمی‌شود؛ آن را به‌عنوان محتوای تدریس‌شده بازسازی نمی‌کنیم.
 
@@ -580,9 +583,9 @@ Customizer به تعریف Bean دسترسی می‌دهد. `setLazyInit(true)` 
 
 <SourceBlock id="circular-limits" source="gpt">
 
-چرخهٔ سازندهٔ مستقیم، مانند A که برای ساخته‌شدن B می‌خواهد و B که A می‌خواهد، بدون راهکار واسط قابل حل نیست. بعضی چرخه‌های setter میان singletonها در Spring Framework قابل مدیریت‌اند؛ این نتیجه را به هر scope، proxy یا تنظیم Spring Boot تعمیم ندهید.
+چرخهٔ constructor مستقیم، مانند A که برای ساخته‌شدن B می‌خواهد و B که A می‌خواهد، بدون راهکار واسط قابل حل نیست. بعضی چرخه‌های setter میان singletonها در Spring Framework قابل مدیریت‌اند؛ این نتیجه را به هر scope، proxy یا تنظیم Spring Boot تعمیم ندهید.
 
-برای وابستگی ضروری، سازنده قرارداد روشن‌تری می‌سازد و امکان فیلد `final` را می‌دهد. برخورد با چرخه معمولاً فرصتی برای بازبینی مسئولیت‌هاست؛ صرفاً برای خاموش‌کردن خطا همه‌چیز را setter نکنید. [مرجع DI و چرخه‌ها](https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html)
+برای وابستگی ضروری، constructor قرارداد روشن‌تری می‌سازد و امکان فیلد `final` را می‌دهد. برخورد با چرخه معمولاً فرصتی برای بازبینی مسئولیت‌هاست؛ صرفاً برای خاموش‌کردن خطا همه‌چیز را setter نکنید. [مرجع DI و چرخه‌ها](https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html)
 
 </SourceBlock>
 
@@ -642,7 +645,7 @@ Customizer به تعریف Bean دسترسی می‌دهد. `setLazyInit(true)` 
 
 <SourceBlock id="resource-inject-targets" source="gpt">
 
-`@Inject` می‌تواند روی سازنده، فیلد یا متد قرار گیرد. `@Resource` برای فیلد و متد است و جایگزین annotation سازنده نیست. همچنین `@Resource` بدون نام صریح در Spring قواعد پیش‌فرض انتخاب نام و سپس fallback نوع دارد؛ آن را در تمام وضعیت‌ها معادل `@Autowired` یا الزاماً جست‌وجوی JNDI ندانید. [Resource در Spring](https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/resource.html) و [پشتیبانی JSR-330](https://docs.spring.io/spring-framework/reference/core/beans/standard-annotations.html)
+`@Inject` می‌تواند روی constructor، فیلد یا متد قرار گیرد. `@Resource` برای فیلد و متد است و جایگزین annotation constructor نیست. همچنین `@Resource` بدون نام صریح در Spring قواعد پیش‌فرض انتخاب نام و سپس fallback نوع دارد؛ آن را در تمام وضعیت‌ها معادل `@Autowired` یا الزاماً جست‌وجوی JNDI ندانید. [Resource در Spring](https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/resource.html) و [پشتیبانی JSR-330](https://docs.spring.io/spring-framework/reference/core/beans/standard-annotations.html)
 
 در پاسخ پایانی کلاس، `@Named` در امتداد بحث استاندارد قدیمی و JNDI توضیح داده می‌شود؛ برای تشخیص منشأ API به import نگاه کنید: `jakarta.inject.Named` متعلق به خانوادهٔ JSR-330 است، نه JSR-250. ترکیب Named و Resource در یک کلاس، استفاده از دو API متفاوت است.
 
@@ -692,15 +695,15 @@ Customizer به تعریف Bean دسترسی می‌دهد. `setLazyInit(true)` 
 
 <section data-source-group>
 
-## یک سازندهٔ مشخص؛ بدون Autowired هم تزریق می‌شود [#single-constructor]
+## یک constructor مشخص؛ بدون Autowired هم تزریق می‌شود [#single-constructor]
 
 <SourceBlock id="single-constructor-explanation" source="teacher" recording="teacher-04-part2" timestamp="54:00">
 
-در نسخهٔ annotation، کلاس‌های مثال با `@Component` ثبت می‌شوند و پکیجشان اسکن می‌شود. استاد مشاهده می‌کند که وقتی کلاس Target فقط **یک سازنده** دارد، وابستگی‌های پارامترهای آن بدون نوشتن `@Autowired` تأمین می‌شوند. شرط دربارهٔ تعداد سازنده‌های کلاس است، نه تعداد پارامترهای سازنده.
+در نسخهٔ annotation، کلاس‌های مثال با `@Component` ثبت می‌شوند و پکیجشان اسکن می‌شود. استاد مشاهده می‌کند که وقتی کلاس Target فقط **یک constructor** دارد، وابستگی‌های پارامترهای آن بدون نوشتن `@Autowired` تأمین می‌شوند. شرط دربارهٔ تعداد constructorهای کلاس است، نه تعداد پارامترهای constructor.
 
-در ادامه یکی از وابستگی‌ها از ورودی سازنده حذف می‌شود. همان دو پارامتر باقی‌مانده تزریق می‌شوند؛ فیلدی که دیگر نه در سازنده مقدار گرفته و نه نقطهٔ تزریق دیگری دارد، خودبه‌خود مقدار نمی‌گیرد. نسخهٔ نهایی مخزن هر سه پارامتر را دارد و اجرای آن نیز تزریق را تأیید کرد.
+در ادامه یکی از وابستگی‌ها از ورودی constructor حذف می‌شود. همان دو پارامتر باقی‌مانده تزریق می‌شوند؛ فیلدی که دیگر نه در constructor مقدار گرفته و نه نقطهٔ تزریق دیگری دارد، خودبه‌خود مقدار نمی‌گیرد. نسخهٔ نهایی مخزن هر سه پارامتر را دارد و اجرای آن نیز تزریق را تأیید کرد.
 
-در آزمایش قبلی، باقی‌ماندن سازندهٔ بدون آرگومان مسیر ساخت را تغییر داده بود. اگر چند سازنده دارید، قاعدهٔ تک‌سازنده دیگر کافی نیست و باید انتخاب سازنده و annotationها را دقیق بررسی کنید.
+در آزمایش قبلی، باقی‌ماندن constructor بدون آرگومان مسیر ساخت را تغییر داده بود. اگر چند constructor دارید، قاعدهٔ مربوط به داشتن فقط یک constructor دیگر کافی نیست و باید انتخاب constructor و annotationها را دقیق بررسی کنید.
 
 </SourceBlock>
 
@@ -710,7 +713,7 @@ Customizer به تعریف Bean دسترسی می‌دهد. `setLazyInit(true)` 
   lang="java"
   filename="Target.java"
   repositoryPath="session4/src/main/java/ir/digixo/p03DI/p06autowiring/p02annotation/Target.java"
-  caption="یک سازنده با سه وابستگی؛ تعداد آرگومان‌ها محدود به یک نیست."
+  caption="یک constructor با سه وابستگی؛ تعداد آرگومان‌ها محدود به یک نیست."
   code={
     'package ir.digixo.p03DI.p06autowiring.p02annotation;\n\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.stereotype.Component;\n\n@Component\npublic class Target {\n    //todo: only one constructor\n\n    private BeanOne beanOne;\n    private BeanTwo beanTwo;\n    private BeanThree beanThree;\n\n\n\n\n    //@Autowired\n    public Target(BeanOne beanOne, BeanTwo beanTwo, BeanThree beanThree) {\n        this.beanOne = beanOne;\n        this.beanTwo = beanTwo;\n        this.beanThree = beanThree;\n    }\n\n    public BeanOne getBeanOne() {\n        return beanOne;\n    }\n\n    public void setBeanOne(BeanOne beanOne) {\n        this.beanOne = beanOne;\n    }\n\n    public BeanTwo getBeanTwo() {\n        return beanTwo;\n    }\n\n    public void setBeanTwo(BeanTwo beanTwo) {\n        this.beanTwo = beanTwo;\n    }\n\n    public BeanThree getBeanThree() {\n        return beanThree;\n    }\n\n    public void setBeanThree(BeanThree beanThree) {\n        this.beanThree = beanThree;\n    }\n}'
   }
@@ -718,7 +721,7 @@ Customizer به تعریف Bean دسترسی می‌دهد. `setLazyInit(true)` 
 
 <SourceBlock id="single-constructor-limit" source="gpt">
 
-این قاعده وجود Beanهای موردنیاز را تضمین نمی‌کند: اگر برای یک پارامتر هیچ کاندیدا یا چند کاندیدای حل‌نشده وجود داشته باشد، ساخت سرویس شکست می‌خورد. وابستگی اختیاری و انتخاب میان چند سازنده قواعد جداگانه دارند. [مرجع Autowired و سازنده‌ها](https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/autowired.html)
+این قاعده وجود Beanهای موردنیاز را تضمین نمی‌کند: اگر برای یک پارامتر هیچ کاندیدا یا چند کاندیدای حل‌نشده وجود داشته باشد، ساخت سرویس شکست می‌خورد. وابستگی اختیاری و انتخاب میان چند constructor قواعد جداگانه دارند. [مرجع Autowired و constructorها](https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/autowired.html)
 
 </SourceBlock>
 
@@ -768,7 +771,7 @@ Inner Bean برای دریافت مستقل از کانتینر با یک نام
 
 <SourceBlock id="depends-on-explanation" source="teacher" recording="teacher-04-part2" timestamp="01:12:00">
 
-در آخرین مثال، سه Bean فقط در سازنده پیام چاپ می‌کنند. ابتدا آماده‌سازی eagerِ singletonهای معمول دیده می‌شود؛ سپس `lazy-init` زمان ساخت را تغییر می‌دهد. استاد برای BeanOne می‌نویسد `depends-on="beanTwo,beanThree"` تا وابستگی ترتیب مقداردهی را اعلام کند.
+در آخرین مثال، سه Bean فقط در constructor پیام چاپ می‌کنند. ابتدا آماده‌سازی eagerِ singletonهای معمول دیده می‌شود؛ سپس `lazy-init` زمان ساخت را تغییر می‌دهد. استاد برای BeanOne می‌نویسد `depends-on="beanTwo,beanThree"` تا وابستگی ترتیب مقداردهی را اعلام کند.
 
 حتی اگر BeanTwo و BeanThree lazy باشند، وقتی BeanOne برای آماده‌شدن به آن‌ها وابسته اعلام شده، باید پیش از آن آماده شوند. خروجی نسخهٔ بررسی‌شده به‌ترتیب «bean two created»، «bean three created» و «bean one created» بود. این خروجی از شروع کانتینر به‌دست می‌آید؛ کلاس Context نیازی به `getBean` جداگانه برای این آزمایش ندارد.
 
@@ -780,7 +783,7 @@ Inner Bean برای دریافت مستقل از کانتینر با یک نام
 
 <SourceBlock id="depends-on-not-injection" source="gpt">
 
-`depends-on` خودش هیچ فیلد یا setterی را مقداردهی نمی‌کند؛ اعلام ترتیب و پیش‌نیاز مقداردهی است. اگر مصرف‌کننده به خود شیء احتیاج دارد، تزریق سازنده، setter یا روش مناسب دیگر همچنان لازم است. برای singletonها این رابطه روی ترتیب تخریب هم اثر دارد. [مرجع depends-on](https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-dependson.html)
+`depends-on` خودش هیچ فیلد یا setterی را مقداردهی نمی‌کند؛ اعلام ترتیب و پیش‌نیاز مقداردهی است. اگر مصرف‌کننده به خود شیء احتیاج دارد، constructor injection، setter یا روش مناسب دیگر همچنان لازم است. برای singletonها این رابطه روی ترتیب تخریب هم اثر دارد. [مرجع depends-on](https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-dependson.html)
 
 </SourceBlock>
 

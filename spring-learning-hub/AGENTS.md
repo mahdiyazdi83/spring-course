@@ -3,6 +3,9 @@
 Read `agent/README.md` first. This directory is the complete site project; sibling
 `../records/` and `../teacher-files/` are source inputs, not site assets.
 
+For educational writing, follow `agent/TERMINOLOGY.md`: retain workplace-standard
+English technical names and explain them in natural Persian without overtranslation.
+
 Current milestone: **Phase 5 template plus authorized session-2, session-3 and session-4 documentation**.
 The user authorized processing these sessions, including independent Thursday recordings when supplied.
 See `agent/logs/2026-09-26-session-2.md` and `agent/logs/2026-09-28-session-3.md`

@@ -12,7 +12,7 @@ kb:
   status: draft
   demo: true
   createdAt: '2026-09-26'
-  updatedAt: '2026-09-26'
+  updatedAt: '2026-09-30'
   sources:
     gpt:
       references:
@@ -37,7 +37,7 @@ kb:
   timeline:
     - topic: مرور مفاهیم سه‌شنبه
       source: gpt
-    - topic: گفت‌وگو دربارهٔ تزریق وابستگی
+    - topic: گفت‌وگو دربارهٔ Dependency Injection
       source: gpt
     - topic: جمع‌بندی و پرسش‌ها
       source: gpt
@@ -54,6 +54,9 @@ kb:
     - date: '2026-09-26'
       type: concept-update
       summary: افزودن پیوندهای مفهومی و نشانی‌های پایدار برای مرور و جست‌وجو.
+    - date: '2026-09-30'
+      type: content-update
+      summary: یکدست‌سازی نام‌های فنی انگلیسی در توضیح فارسی، بدون تغییر محتوای آموزشی.
 ---
 
 import SessionTimeline from '../../../components/documentation/SessionTimeline.astro';
@@ -77,7 +80,7 @@ import SourceBlock from '../../../components/source/SourceBlock.astro';
 
 <SourceBlock id="thursday-recap" source="gpt">
 
-مفهوم [تزریق وابستگی](/concepts/dependency-injection/) در [نمونهٔ جلسهٔ ۱ سه‌شنبه](/tuesday/session-01/) معرفی شد. در این جلسه به‌جای تکرار تعریف، روی پیدا کردن وابستگی در سازنده و توضیح نقش آن تمرکز می‌کنیم.
+مفهوم [Dependency Injection](/concepts/dependency-injection/) در [نمونهٔ جلسهٔ ۱ سه‌شنبه](/tuesday/session-01/) معرفی شد. در این جلسه به‌جای تکرار تعریف، روی پیدا کردن وابستگی در constructor و توضیح نقش آن تمرکز می‌کنیم.
 
 بدون نگاه‌کردن به کد، توضیح دهید یک شیء چگونه نیازهایش را از بیرون دریافت می‌کند. سپس پاسخ را با کد همان جلسه مقایسه کنید.
 
@@ -88,7 +91,7 @@ import SourceBlock from '../../../components/source/SourceBlock.astro';
 <SourceBlock id="thursday-questions" source="gpt">
 
 1. وابستگی یک کلاس را از کجا پیدا می‌کنید؟
-2. سازنده چگونه نیازهای کلاس را آشکار می‌کند؟
+2. constructor چگونه نیازهای کلاس را آشکار می‌کند؟
 3. چه چیزی در مثال `NotificationService` هنوز پیاده‌سازی نشده است؟
 
 به جای حفظ‌کردن تعریف‌ها، مثال کوچکی از پروژهٔ خودتان پیدا کنید و مسئولیت هر کلاس را توضیح دهید.
@@ -99,7 +102,7 @@ import SourceBlock from '../../../components/source/SourceBlock.astro';
 
 <SourceBlock id="thursday-further" source="gpt">
 
-این دو پرسش به نمونهٔ نمایشی اضافه شده‌اند و گزارش گفت‌وگوی یک کلاس واقعی نیستند. در [Reflection](/concepts/reflection/)، تفاوت بررسی اعضای یک کلاس با تزریق وابستگی چیست؟ خواندن اطلاعات یک متد به‌تنهایی وابستگی‌های یک شیء را فراهم نمی‌کند.
+این دو پرسش به نمونهٔ نمایشی اضافه شده‌اند و گزارش گفت‌وگوی یک کلاس واقعی نیستند. در [Reflection](/concepts/reflection/)، تفاوت بررسی اعضای یک کلاس با Dependency Injection چیست؟ خواندن اطلاعات یک متد به‌تنهایی وابستگی‌های یک شیء را فراهم نمی‌کند.
 
 دربارهٔ [@Transactional](/concepts/transactional/) هم مسیر فراخوانی را رسم کنید: فراخوانی از بیرونِ proxy با فراخوانی داخلی از طریق `this` چه تفاوتی دارد؟ نکتهٔ اصلیِ مرور، شناخت مرز اعمال رفتار تراکنشی است؛ پاسخ و مرجع رسمی در صفحهٔ مفهوم آمده است.
 

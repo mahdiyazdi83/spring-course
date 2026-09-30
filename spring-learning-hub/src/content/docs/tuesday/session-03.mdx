@@ -1,8 +1,8 @@
 ---
-title: 'جلسهٔ سوم — از تزریق وابستگی تا کانتینر Spring'
+title: 'جلسهٔ سوم — از Dependency Injection تا کانتینر Spring'
 description: از coupling و کانتینر دستی Java تا DI در Spring و Weld، تعریف Bean با XML و تفاوت BeanFactory با ApplicationContext.
 sidebar:
-  label: جلسهٔ ۳ — تزریق وابستگی و کانتینر
+  label: جلسهٔ ۳ — Dependency Injection و کانتینر
   order: 3
 kb:
   type: tuesday
@@ -11,7 +11,7 @@ kb:
   status: complete
   demo: false
   createdAt: '2026-09-28'
-  updatedAt: '2026-09-28'
+  updatedAt: '2026-09-30'
   sources:
     teacher:
       recordings:
@@ -66,7 +66,7 @@ kb:
       recording: teacher-03-part1
       start: '00:00'
       approximate: true
-    - topic: interface، Factory و سپردن تزریق وابستگی به بیرون کلاس
+    - topic: interface، Factory و سپردن Dependency Injection به بیرون کلاس
       source: teacher
       recording: teacher-03-part1
       start: '06:00'
@@ -156,7 +156,7 @@ kb:
       recording: teacher-03-part2
       start: '01:01:00'
       approximate: true
-    - topic: BeanDefinition به‌عنوان دستور ساخت و شروع مثال سازنده
+    - topic: BeanDefinition به‌عنوان دستور ساخت و شروع مثال constructor
       source: teacher
       recording: teacher-03-part2
       start: '01:07:00'
@@ -173,6 +173,9 @@ kb:
     - date: '2026-09-28'
       type: correction
       summary: ثبت خروجی واقعی processorها و اصلاح نسبت Spring MVC با Jersey؛ تکمیل خط زمانی هر دو ضبط.
+    - date: '2026-09-30'
+      type: content-update
+      summary: یکدست‌سازی نام‌های فنی انگلیسی در توضیح فارسی، بدون تغییر محتوای آموزشی.
 ---
 
 import SourceBlock from '../../../components/source/SourceBlock.astro';
@@ -231,11 +234,11 @@ import * as examples from '../../../data/course/session3';
 
 ## ۲. DI و IoC؛ جابه‌جایی مسئولیت ساخت [#dependency-injection]
 
-<SourceBlock id="teacher-di" source="teacher" recording="teacher-03-part1" timestamp="09:00" summary="در تزریق وابستگی، مصرف‌کننده نیازش را مشخص می‌کند و یک بخش بیرونی شیء مناسب را ساخته و در اختیارش می‌گذارد.">
+<SourceBlock id="teacher-di" source="teacher" recording="teacher-03-part1" timestamp="09:00" summary="در Dependency Injection، مصرف‌کننده نیازش را مشخص می‌کند و یک بخش بیرونی شیء مناسب را ساخته و در اختیارش می‌گذارد.">
 
 در [Dependency Injection](/concepts/dependency-injection/)، مصرف‌کننده منتظر دریافت همکار است؛ مسئولیت انتخاب، ساخت و اتصال آن به بخش بیرونی منتقل می‌شود. استاد این مسئله و راه‌حل را به‌عنوان یک الگوی طراحی توضیح می‌دهد و تأکید می‌کند که می‌توان آن را با Java معمولی هم پیاده کرد.
 
-تفاوت با Factory از دید مصرف‌کننده روشن می‌شود: در حالت Factory، کلاس خودش سراغ سازندهٔ اشیا می‌رود و درخواست می‌دهد؛ در حالت DI، وابستگی به کلاس تحویل داده می‌شود. بحث IoC یا وارونگی کنترل نیز همین جابه‌جایی جهت کنترل را توضیح می‌دهد: تمام کارها از داخل مصرف‌کننده آغاز نمی‌شوند.
+تفاوت با Factory از دید مصرف‌کننده روشن می‌شود: در حالت Factory، کلاس خودش سراغ constructor اشیا می‌رود و درخواست می‌دهد؛ در حالت DI، وابستگی به کلاس تحویل داده می‌شود. بحث IoC یا وارونگی کنترل نیز همین جابه‌جایی جهت کنترل را توضیح می‌دهد: تمام کارها از داخل مصرف‌کننده آغاز نمی‌شوند.
 
 استاد برای تصویرسازی context، محلی را در نظر می‌گیرد که اشیا را با شناسه نگه می‌دارد و امکان دسترسی و اتصال آن‌ها را فراهم می‌کند. تعبیر «context pattern» در این بخش، نام‌گذاری آموزشی خود اوست؛ نباید آن را نام قطعی یک الگوی GoF تلقی کرد.
 
@@ -243,7 +246,7 @@ import * as examples from '../../../data/course/session3';
 
 <GptNote id="gpt-injection-shapes" context="teacher-di">
 
-سازنده و setter دو مسیر اصلی و روشن برای دریافت وابستگی‌اند. در همین کدهای جلسه، تزریق روی **فیلد** هم دیده می‌شود: نمونهٔ دستی با Reflection فیلد را مقداردهی می‌کند و نمونهٔ Spring از `@Autowired` روی فیلد استفاده می‌کند. پس DI را به وجود setter یا annotation خاص محدود نکنید.
+constructor و setter دو مسیر اصلی و روشن برای دریافت وابستگی‌اند. در همین کدهای جلسه، تزریق روی **فیلد** هم دیده می‌شود: نمونهٔ دستی با Reflection فیلد را مقداردهی می‌کند و نمونهٔ Spring از `@Autowired` روی فیلد استفاده می‌کند. پس DI را به وجود setter یا annotation خاص محدود نکنید.
 
 </GptNote>
 
@@ -304,7 +307,7 @@ import * as examples from '../../../data/course/session3';
 
 جریان `MyContext` را در دو مرحله بخوانید:
 
-1. `getBean("bank")` فایل تنظیمات را می‌خواند، نام کلاس را پیدا می‌کند و با `Class.forName` و سازندهٔ بدون آرگومان نمونه می‌سازد.
+1. `getBean("bank")` فایل تنظیمات را می‌خواند، نام کلاس را پیدا می‌کند و با `Class.forName` و constructor بدون آرگومان نمونه می‌سازد.
 2. `injectIn(client)` فیلدهای تعریف‌شدهٔ کلاس را بررسی می‌کند؛ اگر annotation سفارشی وجود داشته باشد، مقدار `id` آن را می‌گیرد و با `Field.set` نمونهٔ ساخته‌شده را در فیلد می‌گذارد.
 
 بنابراین annotation فقط نشانه است؛ کدی که آن را می‌خواند، رفتار تزریق را اجرا می‌کند. نام `Autowired` در این پروژه نباید ما را گمراه کند: import آن از `ir.digixo` است و annotation خود Spring نیست. برای خواندن آن در زمان اجرا، retention روی `RUNTIME` تنظیم شده است. [مرجع Reflection](/concepts/reflection/)
@@ -465,7 +468,7 @@ DI یک روش طراحی است؛ **Jakarta CDI مشخصات استاندارد
 
 <GptNote id="gpt-container-resources" context="teacher-containers">
 
-فایل‌های داخل `src/main/resources` در build معمول Maven وارد classpath می‌شوند؛ XMLهای قرارگرفته زیر `src/main/java` الزاماً resource خروجی نیستند. هنگام تغییر یک مثال از مسیر فایل به classpath، فقط نام سازنده را عوض نکنید؛ محل کپی‌شدن منبع را هم بررسی کنید. [پیکربندی و راه‌اندازی کانتینر](https://docs.spring.io/spring-framework/reference/core/beans/basics.html)
+فایل‌های داخل `src/main/resources` در build معمول Maven وارد classpath می‌شوند؛ XMLهای قرارگرفته زیر `src/main/java` الزاماً resource خروجی نیستند. هنگام تغییر یک مثال از مسیر فایل به classpath، فقط نام constructor را عوض نکنید؛ محل کپی‌شدن منبع را هم بررسی کنید. [پیکربندی و راه‌اندازی کانتینر](https://docs.spring.io/spring-framework/reference/core/beans/basics.html)
 
 </GptNote>
 
@@ -475,9 +478,9 @@ DI یک روش طراحی است؛ **Jakarta CDI مشخصات استاندارد
 
 ## ۷. تعریف Bean، نام و مقداردهی [#bean-definition]
 
-<SourceBlock id="teacher-bean-definition" source="teacher" summary="در XML می‌توان چند تعریف از یک کلاس داشت، برای Bean نام گذاشت و ورودی سازنده و propertyهای آن را جدا پیکربندی کرد.">
+<SourceBlock id="teacher-bean-definition" source="teacher" summary="در XML می‌توان چند تعریف از یک کلاس داشت، برای Bean نام گذاشت و ورودی constructor و propertyهای آن را جدا پیکربندی کرد.">
 
-[Bean](/concepts/bean/) را از کلاس و تعریف آن جدا کنید. در `config.xml` زیر، دو تعریف مستقل از `BeanOne` وجود دارد؛ یک تعریف دیگر نیز `BeanTwo` را با نام `two` معرفی می‌کند. اجرای کانتینر این فایل، سه بار پیام سازنده‌ها را چاپ کرد.
+[Bean](/concepts/bean/) را از کلاس و تعریف آن جدا کنید. در `config.xml` زیر، دو تعریف مستقل از `BeanOne` وجود دارد؛ یک تعریف دیگر نیز `BeanTwo` را با نام `two` معرفی می‌کند. اجرای کانتینر این فایل، سه بار پیام constructorها را چاپ کرد.
 
 وقتی نام صریح نداده‌ایم، کانتینر برای تعریف نام تولید می‌کند. این با alias متفاوت است: چند alias می‌توانند به یک Bean اشاره کنند، اما دو تعریف مستقل لزوماً یک شیء نیستند.
 
@@ -506,15 +509,15 @@ DI یک روش طراحی است؛ **Jakarta CDI مشخصات استاندارد
 
 مدیریت‌شدن یک شیء در کانتینر، زمینهٔ استفاده از قابلیت‌های Spring را فراهم می‌کند؛ اما Bean شدن به‌تنهایی همهٔ قابلیت‌های امنیت، تراکنش و ثبت رخداد را خودکار فعال نمی‌کند. هر قابلیت، وابستگی و پیکربندی متناسب خودش را می‌خواهد. در این مثال‌های کوچک، فعلاً ساخت و اتصال اشیا را مشاهده می‌کنیم.
 
-همچنین singleton در Spring به هر **تعریف Bean در هر کانتینر** مربوط است؛ دو تعریف از یک کلاس یا دو کانتینر مستقل می‌توانند نمونه‌های جدا داشته باشند. چند بار چاپ‌شدن سازنده در این وضعیت، پیش‌فرض singleton را نقض نمی‌کند. [مرجع scopeها](https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html)
+همچنین singleton در Spring به هر **تعریف Bean در هر کانتینر** مربوط است؛ دو تعریف از یک کلاس یا دو کانتینر مستقل می‌توانند نمونه‌های جدا داشته باشند. چند بار چاپ‌شدن constructor در این وضعیت، پیش‌فرض singleton را نقض نمی‌کند. [مرجع scopeها](https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html)
 
 </GptNote>
 
 <SourceBlock id="teacher-bean-properties" source="teacher">
 
-در مثال `p04beanDefinition`، `BeanOne` سازنده‌ای با ورودی `name` و یک setter برای همان ویژگی دارد. XML فعال از `c:name="nahid"` برای آرگومان سازنده و `p:name="nahid1"` برای property استفاده می‌کند. ابتدا شیء ساخته می‌شود و سپس setter مقدار را عوض می‌کند؛ در بررسی اجرا با مسیر فایلِ متناسب با این دستگاه، خروجی نهایی `nahid1` بود.
+در مثال `p04beanDefinition`، `BeanOne` constructor‌ای با ورودی `name` و یک setter برای همان ویژگی دارد. XML فعال از `c:name="nahid"` برای آرگومان constructor و `p:name="nahid1"` برای property استفاده می‌کند. ابتدا شیء ساخته می‌شود و سپس setter مقدار را عوض می‌کند؛ در بررسی اجرا با مسیر فایلِ متناسب با این دستگاه، خروجی نهایی `nahid1` بود.
 
-این دو namespace شکل کوتاه‌تر پیکربندی سازنده و property هستند؛ نمونه‌های بلندتر `constructor-arg` و `property` در کامنت‌های فایل حفظ شده‌اند. بخش `p02annotationxml` در snapshot این جلسه فقط یک کلاس خالی دارد؛ هنوز مثال کامل آن روش نیست.
+این دو namespace شکل کوتاه‌تر پیکربندی constructor و property هستند؛ نمونه‌های بلندتر `constructor-arg` و `property` در کامنت‌های فایل حفظ شده‌اند. بخش `p02annotationxml` در snapshot این جلسه فقط یک کلاس خالی دارد؛ هنوز مثال کامل آن روش نیست.
 
 </SourceBlock>
 
@@ -546,7 +549,7 @@ DI یک روش طراحی است؛ **Jakarta CDI مشخصات استاندارد
 
 پروژهٔ `BeanFactoryVSApplicationContext` با **Spring Context 6.1.3** دو مسیر را مقایسه می‌کند. در مسیر اول، `XmlBeanDefinitionReader` تعریف‌ها را وارد `DefaultListableBeanFactory` می‌کند؛ در مسیر دوم، `ClassPathXmlApplicationContext` راه‌اندازی کامل‌تری را انجام می‌دهد.
 
-فیلد boolean در کلاس `Product` ابتدا `false` است و در متد `init()` به `true` تبدیل می‌شود. XML این متد را به‌عنوان `init-method` معرفی کرده است. پس آنچه چاپ می‌شود مستقیماً اجرای callback مقداردهی را نشان می‌دهد، نه یک شمارندهٔ مستقل برای فراخوانی سازنده.
+فیلد boolean در کلاس `Product` ابتدا `false` است و در متد `init()` به `true` تبدیل می‌شود. XML این متد را به‌عنوان `init-method` معرفی کرده است. پس آنچه چاپ می‌شود مستقیماً اجرای callback مقداردهی را نشان می‌دهد، نه یک شمارندهٔ مستقل برای فراخوانی constructor.
 
 </SourceBlock>
 
@@ -615,7 +618,7 @@ XML ذخیره‌شده فقط همین دو processor را معرفی می‌ک
 
 برای تمرین، پیش از اجرای هر نسخه پیش‌بینی کنید کدام بانک انتخاب می‌شود: در نمونهٔ دستی، فایل تنظیمات را بخوانید؛ در Spring، مقدار Qualifier و نام Componentها را کنار هم بگذارید؛ در Weld، Named و پیکربندی کشف Bean را بررسی کنید. نتیجهٔ درست، فهم محل تصمیم است؛ صرف دیدن پیام خروجی کافی نیست.
 
-سپس یک نسخهٔ مستقل با تزریق از سازنده بنویسید و یک پیاده‌سازی آزمایشی به آن بدهید که نتیجهٔ مشخصی برگرداند. اگر بدون راه‌اندازی کانتینر توانستید منطق مصرف‌کننده را بررسی کنید، مرز بین طراحی DI و ابزار اجرای آن را درست تشخیص داده‌اید. [مثال مستقل با سازنده](/concepts/dependency-injection/#java-example)
+سپس یک نسخهٔ مستقل با تزریق از طریق constructor بنویسید و یک پیاده‌سازی آزمایشی به آن بدهید که نتیجهٔ مشخصی برگرداند. اگر بدون راه‌اندازی کانتینر توانستید منطق مصرف‌کننده را بررسی کنید، مرز بین طراحی DI و ابزار اجرای آن را درست تشخیص داده‌اید. [مثال مستقل با constructor](/concepts/dependency-injection/#java-example)
 
 </SourceBlock>
 

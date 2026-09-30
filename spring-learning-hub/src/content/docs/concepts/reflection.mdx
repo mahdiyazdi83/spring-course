@@ -1,6 +1,6 @@
 ---
 title: 'Reflection — بررسی ساختار کلاس'
-description: آشنایی با بررسی اعضای کلاس در Java و تفاوت آن با تزریق وابستگی.
+description: آشنایی با بررسی اعضای کلاس در Java و تفاوت آن با Dependency Injection.
 sidebar:
   label: Reflection
 kb:
@@ -9,7 +9,7 @@ kb:
   status: complete
   demo: false
   createdAt: '2026-09-26'
-  updatedAt: '2026-09-28'
+  updatedAt: '2026-09-30'
   sources:
     teacher:
       repository:
@@ -30,6 +30,9 @@ kb:
     - date: '2026-09-28'
       type: concept-update
       summary: جایگزینی محتوای نمایشی با مرجع مرتبط با کد واقعی جلسهٔ سوم و مستندات رسمی.
+    - date: '2026-09-30'
+      type: content-update
+      summary: یکدست‌سازی نام‌های فنی انگلیسی در توضیح فارسی، بدون تغییر محتوای آموزشی.
 ---
 
 import SourceBlock from '../../../components/source/SourceBlock.astro';
@@ -41,7 +44,7 @@ import ChangeLog from '../../../components/documentation/ChangeLog.astro';
 
 <SourceBlock id="reflection-overview" source="gpt">
 
-Reflection امکان بررسی نوع‌ها، سازنده‌ها، فیلدها و متدها را در زمان اجرا می‌دهد. همچنین با رعایت قواعد دسترسی می‌توان سازنده یا متد را اجرا کرد و مقدار فیلد را خواند یا نوشت. این ابزار زیربنایی را باید از الگوی طراحی [تزریق وابستگی](/concepts/dependency-injection/) جدا دانست.
+Reflection امکان بررسی نوع‌ها، constructorها، فیلدها و متدها را در زمان اجرا می‌دهد. همچنین با رعایت قواعد دسترسی می‌توان constructor یا متد را اجرا کرد و مقدار فیلد را خواند یا نوشت. این ابزار زیربنایی را باید از الگوی طراحی [Dependency Injection](/concepts/dependency-injection/) جدا دانست.
 
 </SourceBlock>
 
@@ -49,7 +52,7 @@ Reflection امکان بررسی نوع‌ها، سازنده‌ها، فیلد�
 
 <SourceBlock id="reflection-java-example" source="teacher">
 
-در `MyContext`، نام کلاس از فایل تنظیمات خوانده می‌شود؛ `Class.forName(className)` نوع را پیدا می‌کند و `getConstructor().newInstance()` سازندهٔ public بدون آرگومان را اجرا می‌کند. سپس `injectIn` فیلدهای تعریف‌شده روی کلاس مصرف‌کننده را می‌گیرد، annotation سفارشی `@Autowired(id="bank")` را می‌خواند و شیء ساخته‌شده را با `Field.set` قرار می‌دهد.
+در `MyContext`، نام کلاس از فایل تنظیمات خوانده می‌شود؛ `Class.forName(className)` نوع را پیدا می‌کند و `getConstructor().newInstance()` constructor public بدون آرگومان را اجرا می‌کند. سپس `injectIn` فیلدهای تعریف‌شده روی کلاس مصرف‌کننده را می‌گیرد، annotation سفارشی `@Autowired(id="bank")` را می‌خواند و شیء ساخته‌شده را با `Field.set` قرار می‌دهد.
 
 این annotation متعلق به پکیج `ir.digixo` است، نه Spring. نگه‌داری آن با `RetentionPolicy.RUNTIME` اجازه می‌دهد کد Reflection در زمان اجرا آن را بخواند. [کد کامل و توضیح مسیر تزریق](/tuesday/session-03/#manual-container)
 
@@ -59,7 +62,7 @@ Reflection امکان بررسی نوع‌ها، سازنده‌ها، فیلد�
 
 <SourceBlock id="reflection-pitfalls" source="gpt">
 
-`getDeclaredFields()` فیلدهای تعریف‌شده روی همان کلاس را می‌گیرد؛ فیلدهای ارث‌رسیده را به‌طور خودکار پیمایش نمی‌کند. همچنین نام اشتباه کلاس، نبود سازندهٔ مناسب، ناسازگاری نوع فیلد یا محدودیت دسترسی می‌تواند اجرای این مسیر را شکست دهد.
+`getDeclaredFields()` فیلدهای تعریف‌شده روی همان کلاس را می‌گیرد؛ فیلدهای ارث‌رسیده را به‌طور خودکار پیمایش نمی‌کند. همچنین نام اشتباه کلاس، نبود constructor مناسب، ناسازگاری نوع فیلد یا محدودیت دسترسی می‌تواند اجرای این مسیر را شکست دهد.
 
 `setAccessible(true)` تضمین دسترسی به هر عضو در هر ماژول نیست؛ قواعد ماژول‌های Java همچنان اهمیت دارند. در نمونهٔ آموزشی، Reflection ابزار پیاده‌سازی تزریق است؛ خود DI الزاماً به Reflection یا annotation احتیاج ندارد. [Java 21 — Class](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html)، [Java 21 — Field](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/reflect/Field.html)
 

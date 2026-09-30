@@ -1,6 +1,6 @@
 ---
 title: Autowiring — انتخاب و اتصال خودکار وابستگی
-description: تفاوت ثبت Bean با تزریق، انتخاب بین چند پیاده‌سازی و نقش Qualifier، Primary و سازنده در Spring.
+description: تفاوت ثبت Bean با تزریق، انتخاب بین چند پیاده‌سازی و نقش Qualifier، Primary و constructor در Spring.
 sidebar:
   label: انتخاب وابستگی — Autowiring
 kb:
@@ -8,7 +8,7 @@ kb:
   id: autowiring
   status: complete
   createdAt: '2026-09-28'
-  updatedAt: '2026-09-28'
+  updatedAt: '2026-09-30'
   sources:
     teacher:
       repository:
@@ -28,6 +28,9 @@ kb:
     - date: '2026-09-28'
       type: initial
       summary: ایجاد مرجع انتخاب و اتصال وابستگی با مثال‌های نسخه‌دار جلسهٔ چهارم و تفکیک خطاهای ابهام.
+    - date: '2026-09-30'
+      type: content-update
+      summary: یکدست‌سازی نام‌های فنی انگلیسی در توضیح فارسی، بدون تغییر محتوای آموزشی.
 ---
 
 import SourceBlock from '../../../components/source/SourceBlock.astro';
@@ -55,7 +58,7 @@ import ChangeLog from '../../../components/documentation/ChangeLog.astro';
 
 در `session4/p02abstraction`، سرویس یک `Repository` می‌خواهد و MySQL و Oracle هر دو این قرارداد را پیاده‌سازی می‌کنند. در نسخهٔ موجود، `@Autowired` روی setter و `@Qualifier("mysql")` روی پارامتر آن است. اجرای بررسی‌شده، MySQL را انتخاب کرد. سرویس همچنان به interface وابسته است؛ qualifier تصمیم اتصال این نمونه را روشن می‌کند.
 
-مثال‌های سازنده و setter نیز همین مسئله را با XML، annotation و Java Config تکرار می‌کنند. در XMLِ صریح، ارجاع `repo1` یا `repo2` انتخاب را تعیین می‌کند. [شرح و کدهای جلسهٔ چهارم](/tuesday/session-04/#abstraction-and-qualifier)
+مثال‌های constructor و setter نیز همین مسئله را با XML، annotation و Java Config تکرار می‌کنند. در XMLِ صریح، ارجاع `repo1` یا `repo2` انتخاب را تعیین می‌کند. [شرح و کدهای جلسهٔ چهارم](/tuesday/session-04/#abstraction-and-qualifier)
 
 </SourceBlock>
 
@@ -75,17 +78,17 @@ Qualifier فقط معادل عمومیِ «جست‌وجو با نام» نیس�
 
 </SourceBlock>
 
-## سازنده و محل تزریق [#constructor]
+## constructor و محل تزریق [#constructor]
 
 <SourceBlock id="constructor-rule" source="teacher">
 
-در `p03DI/p06autowiring/p02annotation`، کلاس Target فقط یک سازنده با سه پارامتر دارد. نسخهٔ موجود بدون `@Autowired` روی سازنده، هر سه وابستگی را دریافت می‌کند. شرط مطرح‌شده یک سازنده است، نه یک پارامتر. اگر یک فیلد از ورودی سازنده حذف شود و جای دیگری مقدار نگیرد، صرف وجودش در کلاس برای تزریق کافی نیست.
+در `p03DI/p06autowiring/p02annotation`، کلاس Target فقط یک constructor با سه پارامتر دارد. نسخهٔ موجود بدون `@Autowired` روی constructor، هر سه وابستگی را دریافت می‌کند. شرط مطرح‌شده یک constructor است، نه یک پارامتر. اگر یک فیلد از ورودی constructor حذف شود و جای دیگری مقدار نگیرد، صرف وجودش در کلاس برای تزریق کافی نیست.
 
 </SourceBlock>
 
 <SourceBlock id="constructor-caveat" source="gpt">
 
-تک‌سازنده بودن ابهام یا نبودن Bean وابسته را حل نمی‌کند. با چند سازنده، annotation و قواعد انتخاب سازنده را جدا بررسی کنید. همچنین setter اجباریِ Autowired هم هنگام آماده‌سازی Bean به وابستگی احتیاج دارد؛ setter به‌خودی‌خود راهی برای انتظار تا بعد از startup نیست. [مرجع Autowired](https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/autowired.html)
+داشتن فقط یک constructor ابهام یا نبودن Bean وابسته را حل نمی‌کند. با چند constructor، annotation و قواعد انتخاب constructor را جدا بررسی کنید. همچنین setter اجباریِ Autowired هم هنگام آماده‌سازی Bean به وابستگی احتیاج دارد؛ setter به‌خودی‌خود راهی برای انتظار تا بعد از startup نیست. [مرجع Autowired](https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/autowired.html)
 
 </SourceBlock>
 

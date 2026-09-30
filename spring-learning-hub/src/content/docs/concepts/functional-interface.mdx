@@ -1,12 +1,12 @@
 ---
 title: 'Functional Interface — قرارداد یک رفتار'
-description: ارتباط رابط تابعی، Lambda و Method Reference با مثال‌های کد جلسهٔ دوم.
+description: ارتباط functional interface، Lambda و Method Reference با مثال‌های کد جلسهٔ دوم.
 kb:
   type: concept
   id: functional-interface
   status: complete
   createdAt: '2026-09-26'
-  updatedAt: '2026-09-28'
+  updatedAt: '2026-09-30'
   sources:
     gpt:
       references:
@@ -20,6 +20,9 @@ kb:
     - date: '2026-09-28'
       type: content-update
       summary: افزودن تمایز قرارداد مشترک با یکسان‌بودن Lambda و کلاس بی‌نام، در پی مرور پنج‌شنبه.
+    - date: '2026-09-30'
+      type: content-update
+      summary: یکدست‌سازی نام‌های فنی انگلیسی در توضیح فارسی، بدون تغییر محتوای آموزشی.
 ---
 
 import SourceBlock from '../../../components/source/SourceBlock.astro';
@@ -30,19 +33,19 @@ import ChangeLog from '../../../components/documentation/ChangeLog.astro';
 
 <SourceBlock id="gpt-functional-contract" source="gpt">
 
-رابط تابعی قرارداد یک رفتار را با یک متد abstract مشخص می‌کند. متدهای default مانع تابعی‌بودن رابط نیستند. annotationِ `@FunctionalInterface` از کامپایلر می‌خواهد این شرط را بررسی کند؛ وجود خود annotation برای استفاده از لامبدا الزامی نیست.
+functional interface قرارداد یک رفتار را با یک متد abstract مشخص می‌کند. متدهای default مانع تابعی‌بودن interface نیستند. annotationِ `@FunctionalInterface` از کامپایلر می‌خواهد این شرط را بررسی کند؛ وجود خود annotation برای استفاده از لامبدا الزامی نیست.
 
 در کد جلسهٔ دوم، `C01CheckProgrammer` یک برنامه‌نویس می‌گیرد و `boolean` برمی‌گرداند. بنابراین لامبدای `programmer -> programmer.canDoc()` با قرارداد آن سازگار است. انتخاب نام پارامتر آزاد است، اما نوع ورودی و نتیجه باید با قرارداد هماهنگ باشد.
 
 </SourceBlock>
 
-## انتخاب رابط آماده [#selection]
+## انتخاب interface آماده [#selection]
 
 <SourceBlock id="gpt-functional-selection" source="gpt">
 
-برای تولید مقدار از `Supplier`، مصرف مقدار از `Consumer`، بررسی شرط از `Predicate` و تبدیل مقدار از `Function` استفاده می‌شود. گونه‌های `Bi` دو ورودی دارند؛ Operatorها نوع ورودی و خروجی یکسانی دارند. رابط‌های ویژهٔ primitive، مانند `BooleanSupplier`، قرارداد متناظر را بدون نوع wrapper بیان می‌کنند.
+برای تولید مقدار از `Supplier`، مصرف مقدار از `Consumer`، بررسی شرط از `Predicate` و تبدیل مقدار از `Function` استفاده می‌شود. گونه‌های `Bi` دو ورودی دارند؛ Operatorها نوع ورودی و خروجی یکسانی دارند. interfaceهای ویژهٔ primitive، مانند `BooleanSupplier`، قرارداد متناظر را بدون نوع wrapper بیان می‌کنند.
 
-Method Reference هنگامی خواناست که رفتار موردنیاز از قبل در یک متد یا سازنده وجود داشته باشد. مانند لامبدا، سازگاری آن را باید با امضای رابط مقصد سنجید. [مرجع رسمی java.util.function](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/package-summary.html)
+Method Reference هنگامی خواناست که رفتار موردنیاز از قبل در یک متد یا constructor وجود داشته باشد. مانند لامبدا، سازگاری آن را باید با امضای interface مقصد سنجید. [مرجع رسمی java.util.function](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/package-summary.html)
 
 </SourceBlock>
 
@@ -50,7 +53,7 @@ Method Reference هنگامی خواناست که رفتار موردنیاز ا
 
 <SourceBlock id="gpt-functional-implementation-boundary" source="gpt">
 
-یک کلاس نام‌دار، کلاس بی‌نام و Lambda می‌توانند رفتار یک قرارداد تابعی را پیاده کنند، اما از نظر سازهٔ زبان یکسان نیستند. برای نمونه، `this` در Lambda به زمینهٔ پیرامونی اشاره می‌کند، نه به شیء تازه‌ای مانند نمونهٔ کلاس بی‌نام. قیاس کوتاه‌شدن کد را به یکسان‌بودن کامل آن‌ها تعمیم ندهید؛ [توضیح مرتبط در پنج‌شنبهٔ دوم](/thursday/session-02/#lambda) این مرز را نشان می‌دهد.
+یک کلاس نام‌دار، anonymous class و Lambda می‌توانند رفتار یک قرارداد تابعی را پیاده کنند، اما از نظر سازهٔ زبان یکسان نیستند. برای نمونه، `this` در Lambda به زمینهٔ پیرامونی اشاره می‌کند، نه به شیء تازه‌ای مانند نمونهٔ anonymous class. قیاس کوتاه‌شدن کد را به یکسان‌بودن کامل آن‌ها تعمیم ندهید؛ [توضیح مرتبط در پنج‌شنبهٔ دوم](/thursday/session-02/#lambda) این مرز را نشان می‌دهد.
 
 </SourceBlock>
 

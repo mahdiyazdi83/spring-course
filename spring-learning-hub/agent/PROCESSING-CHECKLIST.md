@@ -5,6 +5,8 @@
 - Inventory actual sources; never invent absent recordings, timestamps, speakers or repository revisions.
 - Keep Tuesday follow-ups in their original session; keep Thursday events independent.
 - Preserve stable route, content ID, block IDs and heading anchors when updating material.
+- Apply `TERMINOLOGY.md` to titles, summaries and prose; explain new English terms
+  in Persian, preserving code, source meaning and familiar Persian wording.
 - Separate learning order from the actual recording timeline; each timestamp belongs to its own recording.
 - Attribute teacher/Heydari material independently; label generated explanations and code as GPT.
 - Use Teacher Code only with a verified historical repository pin and matching path/snippet.

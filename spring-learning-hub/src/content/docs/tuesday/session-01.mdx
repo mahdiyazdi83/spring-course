@@ -1,6 +1,6 @@
 ---
 draft: true
-title: آشنایی با IoC و تزریق وابستگی
+title: آشنایی با IoC و Dependency Injection
 description: نمونهٔ چندمنبعی برای مطالعهٔ توضیح استاد، مرور حیدری و تکمیل GPT.
 sidebar:
   label: جلسهٔ ۱ (نمونه)
@@ -12,7 +12,7 @@ kb:
   status: in-progress
   demo: true
   createdAt: '2026-09-26'
-  updatedAt: '2026-09-26'
+  updatedAt: '2026-09-30'
   sources:
     teacher:
       recordings:
@@ -54,12 +54,12 @@ kb:
       recording: teacher-demo-01
       start: '00:00'
       end: '12:40'
-    - topic: دریافت وابستگی در سازنده
+    - topic: دریافت وابستگی در constructor
       source: teacher
       recording: teacher-demo-01
       start: '12:40'
       end: '31:10'
-    - topic: اشاره به scope و بازگشت به تزریق وابستگی
+    - topic: اشاره به scope و بازگشت به Dependency Injection
       source: teacher
       recording: teacher-demo-01
       start: '31:10'
@@ -83,6 +83,9 @@ kb:
     - date: '2026-09-26'
       type: concept-update
       summary: افزودن پیوندهای مفهومی و نشانی‌های پایدار برای مرور و جست‌وجو.
+    - date: '2026-09-30'
+      type: content-update
+      summary: یکدست‌سازی نام‌های فنی انگلیسی در توضیح فارسی، بدون تغییر محتوای آموزشی.
 ---
 
 import SourceBlock from '../../../components/source/SourceBlock.astro';
@@ -119,11 +122,11 @@ import * as examples from '../../../data/fixtures/gpt-examples';
 
 ### وابستگی از کجا پیدا می‌شود؟ [#dependency-problem]
 
-<SourceBlock id="teacher-dependency" source="teacher" recording="teacher-demo-01" timestamp="04:20" summary="در نمونهٔ کلاس، NotificationService برای ارسال پیام به MessageSender نیاز دارد و این همکار را در سازنده دریافت می‌کند.">
+<SourceBlock id="teacher-dependency" source="teacher" recording="teacher-demo-01" timestamp="04:20" summary="در نمونهٔ کلاس، NotificationService برای ارسال پیام به MessageSender نیاز دارد و این همکار را در constructor دریافت می‌کند.">
 
 فرض کنید `NotificationService` باید پیامی ارسال کند. ارسال پیام مسئولیت دیگری است که در یک شیء با نام `MessageSender` قرار گرفته است. اگر سرویس درون خودش دربارهٔ ساختن این شیء تصمیم بگیرد، هم منطق اعلان را مدیریت می‌کند و هم به روش مشخصی از ارسال پیام وابسته می‌شود. برای تغییر روش ارسال یا آزمایش رفتار سرویس، ناچار می‌شویم همین تصمیم داخلی را هم در نظر بگیریم.
 
-می‌توان این دو مسئولیت را از هم جدا کرد. سرویس نیازش را اعلام می‌کند و شیء آماده از بیرون به آن داده می‌شود. خوانندهٔ کلاس از روی سازنده می‌فهمد برای ساخته‌شدن آن چه چیزی لازم است. این ایده ابتدا با Java معمولی قابل فهم است و بعد می‌توان نقش `ApplicationContext` را در ساخت و اتصال اشیا بررسی کرد.
+می‌توان این دو مسئولیت را از هم جدا کرد. سرویس نیازش را اعلام می‌کند و شیء آماده از بیرون به آن داده می‌شود. خوانندهٔ کلاس از روی constructor می‌فهمد برای ساخته‌شدن آن چه چیزی لازم است. این ایده ابتدا با Java معمولی قابل فهم است و بعد می‌توان نقش `ApplicationContext` را در ساخت و اتصال اشیا بررسی کرد.
 
 </SourceBlock>
 
@@ -135,7 +138,7 @@ import * as examples from '../../../data/fixtures/gpt-examples';
 
 <GptNote id="gpt-constructor" context="teacher-dependency">
 
-سازنده مثل فهرست نیازهای شیء است: اگر `NotificationService` بدون یک `MessageSender` ساخته نمی‌شود، این نیاز از همان نقطهٔ ساخت روشن است. خودِ دریافت وابستگی از بیرون به `@Service` وابسته نیست.
+constructor مثل فهرست نیازهای شیء است: اگر `NotificationService` بدون یک `MessageSender` ساخته نمی‌شود، این نیاز از همان نقطهٔ ساخت روشن است. خودِ دریافت وابستگی از بیرون به `@Service` وابسته نیست.
 
 </GptNote>
 
@@ -214,7 +217,7 @@ import * as examples from '../../../data/fixtures/gpt-examples';
 </ScrollableTable>
 
 1. مسئولیت اصلی سرویس را در یک جمله توضیح دهید.
-2. سازنده را بررسی کنید.
+2. constructor را بررسی کنید.
    - چه ورودی‌ای می‌گیرد؟
    - کدام متد از آن استفاده می‌کند؟
 3. تغییر روش ارسال پیام را تصور کنید.
@@ -231,9 +234,9 @@ import * as examples from '../../../data/fixtures/gpt-examples';
 
 <SourceBlock id="gpt-supplement" source="gpt">
 
-**شفافیت وابستگی‌ها در نگهداری کد.** در این نمونه فقط به دریافت یک همکار پرداختیم. وقتی نیازهای شیء در سازنده مشخص باشند، تغییر آن‌ها هنگام خواندن و بازبینی کد آسان‌تر دیده می‌شود.
+**شفافیت وابستگی‌ها در نگهداری کد.** در این نمونه فقط به دریافت یک همکار پرداختیم. وقتی نیازهای شیء در constructor مشخص باشند، تغییر آن‌ها هنگام خواندن و بازبینی کد آسان‌تر دیده می‌شود.
 
-اگر تعداد ورودی‌های سازنده زیاد شد، پیش از پنهان‌کردن آن‌ها نقش کلاس را دوباره بررسی کنید. این نشانه می‌تواند فرصتی برای بازنگری مسئولیت‌ها باشد؛ به‌تنهایی حکم قطعی دربارهٔ طراحی نیست.
+اگر تعداد ورودی‌های constructor زیاد شد، پیش از پنهان‌کردن آن‌ها نقش کلاس را دوباره بررسی کنید. این نشانه می‌تواند فرصتی برای بازنگری مسئولیت‌ها باشد؛ به‌تنهایی حکم قطعی دربارهٔ طراحی نیست.
 
 </SourceBlock>
 
@@ -304,7 +307,7 @@ import * as examples from '../../../data/fixtures/gpt-examples';
 
 در این تکمیلِ نمایشی، مرز بین کلاس معمولی و [Bean](/concepts/bean/) را مرور می‌کنیم: Bean شیئی است که زیر مدیریت کانتینر Spring قرار دارد. [ApplicationContext](/concepts/application-context/) پیکربندی را می‌خواند و مدیریت Beanها را هماهنگ می‌کند.
 
-مثالِ سازندهٔ بالا فقط Dependency Injection را نشان می‌دهد؛ برای سپردن ساخت و اتصال اشیا به Spring باید آن‌ها را به کانتینر معرفی کنیم. [مرجع رسمی Spring](https://docs.spring.io/spring-framework/reference/core/beans/introduction.html) این ارتباط را توضیح می‌دهد.
+مثالِ constructor بالا فقط Dependency Injection را نشان می‌دهد؛ برای سپردن ساخت و اتصال اشیا به Spring باید آن‌ها را به کانتینر معرفی کنیم. [مرجع رسمی Spring](https://docs.spring.io/spring-framework/reference/core/beans/introduction.html) این ارتباط را توضیح می‌دهد.
 
 </SourceBlock>
 

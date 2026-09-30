@@ -1,6 +1,6 @@
 ---
 title: 'جلسهٔ سوم پنج‌شنبه — از نیازمندی‌ها تا فهم کانتینر'
-description: مرور مستقل حیدری دربارهٔ نیازمندی‌های غیرعملکردی، سرعت تحویل، coupling، تزریق وابستگی و خواندن کانتینر دستی.
+description: مرور مستقل حیدری دربارهٔ نیازمندی‌های غیرعملکردی، سرعت تحویل، coupling، Dependency Injection و خواندن کانتینر دستی.
 sidebar:
   label: جلسهٔ ۳ — مرور DI و کانتینر
   order: 3
@@ -11,7 +11,7 @@ kb:
   status: complete
   demo: false
   createdAt: '2026-09-28'
-  updatedAt: '2026-09-28'
+  updatedAt: '2026-09-30'
   sources:
     heydari:
       recordings:
@@ -75,7 +75,7 @@ kb:
       recording: heydari-03-thursday1
       start: '24:00'
       approximate: true
-    - topic: Service Locator در برابر دریافت وابستگی از سازنده
+    - topic: Service Locator در برابر دریافت وابستگی از constructor
       source: heydari
       recording: heydari-03-thursday1
       start: '28:40'
@@ -122,6 +122,9 @@ kb:
     - date: '2026-09-28'
       type: correction
       summary: روشن‌کردن ترتیب ساخت و استفاده در IoC و تفاوت Field.set با setter پس از بازبینی صوت و کد.
+    - date: '2026-09-30'
+      type: content-update
+      summary: یکدست‌سازی نام‌های فنی انگلیسی در توضیح فارسی، بدون تغییر محتوای آموزشی.
 ---
 
 import SourceBlock from '../../../components/source/SourceBlock.astro';
@@ -197,7 +200,7 @@ import ChangeLog from '../../../components/documentation/ChangeLog.astro';
 
 <GptNote id="gpt-dependency-timing" context="heydari-dependency">
 
-برای پیدا کردن وابستگی فقط به سازنده نگاه نکنید. در مثال همین دوره، `BankClient` ساخته می‌شود و سپس فیلدش مقدار می‌گیرد؛ نیاز واقعی هنگام استفاده از سرویس همچنان وجود دارد. سؤال درست این است که شیء برای انجام مسئولیت خود به چه چیزی نیاز دارد و چه زمانی باید آن را دریافت کرده باشد. [DI در Spring](https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html)
+برای پیدا کردن وابستگی فقط به constructor نگاه نکنید. در مثال همین دوره، `BankClient` ساخته می‌شود و سپس فیلدش مقدار می‌گیرد؛ نیاز واقعی هنگام استفاده از سرویس همچنان وجود دارد. سؤال درست این است که شیء برای انجام مسئولیت خود به چه چیزی نیاز دارد و چه زمانی باید آن را دریافت کرده باشد. [DI در Spring](https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html)
 
 </GptNote>
 
@@ -207,7 +210,7 @@ import ChangeLog from '../../../components/documentation/ChangeLog.astro';
 
 </SourceBlock>
 
-<TechnicalCorrection id="correction-ioc-order" corrects="heydari-ioc-order" statement="وارونگی کنترل یعنی اول از شیء استفاده کنیم و بعد آن را بسازیم." correction="IoC مسئولیت و جهت کنترل را جابه‌جا می‌کند، نه ترتیب لازم برای استفاده از یک نمونهٔ واقعی را. نمونه باید پیش از اجرای رفتار موردنیاز روی آن آماده باشد؛ مصرف‌کننده لزوماً سازندهٔ آن نیست." reason="وگرنه ممکن است IoC با استفاده از مرجع null یا استفاده از شیئی که هنوز وجود ندارد اشتباه گرفته شود.">
+<TechnicalCorrection id="correction-ioc-order" corrects="heydari-ioc-order" statement="وارونگی کنترل یعنی اول از شیء استفاده کنیم و بعد آن را بسازیم." correction="IoC مسئولیت و جهت کنترل را جابه‌جا می‌کند، نه ترتیب لازم برای استفاده از یک نمونهٔ واقعی را. نمونه باید پیش از اجرای رفتار موردنیاز روی آن آماده باشد؛ مصرف‌کننده لزوماً constructor آن نیست." reason="وگرنه ممکن است IoC با استفاده از مرجع null یا استفاده از شیئی که هنوز وجود ندارد اشتباه گرفته شود.">
 
 در مثال بانک نیز ابتدا سرویس ساخته و در مصرف‌کننده قرار داده می‌شود و سپس متد انتقال از آن استفاده می‌کند. می‌توان کد مصرف‌کننده را مستقل از جزئیات ساخت نوشت؛ این استقلال با اجرای متد پیش از وجود نمونه فرق دارد. [توضیح مسئولیت ساخت و DI](https://martinfowler.com/articles/injection.html)
 
@@ -215,13 +218,13 @@ import ChangeLog from '../../../components/documentation/ChangeLog.astro';
 
 ## ۵. DI و Service Locator؛ چه کسی درخواست می‌دهد؟ [#service-locator]
 
-<SourceBlock id="heydari-service-locator" source="heydari" recording="heydari-03-thursday1" timestamp="28:40" summary="در مثال سازنده، CustomerService از بیرون تحویل داده می‌شود؛ در مثال Service Locator، مصرف‌کننده خودش هنگام نیاز آن را از context درخواست می‌کند.">
+<SourceBlock id="heydari-service-locator" source="heydari" recording="heydari-03-thursday1" timestamp="28:40" summary="در مثال constructor، CustomerService از بیرون تحویل داده می‌شود؛ در مثال Service Locator، مصرف‌کننده خودش هنگام نیاز آن را از context درخواست می‌کند.">
 
-برای مقایسه، وابستگی‌ای مانند `CustomerService` را در نظر می‌گیرند. در نسخهٔ تزریق از سازنده، نیاز در امضای سازنده دیده می‌شود و بخش بیرونی آن را تحویل می‌دهد. در نسخهٔ Service Locator، مصرف‌کننده یک context یا locator در اختیار دارد و داخل مسیر استفاده، سرویس موردنظر را از آن درخواست می‌کند.
+برای مقایسه، وابستگی‌ای مانند `CustomerService` را در نظر می‌گیرند. در نسخهٔ تزریق از طریق constructor، نیاز در امضای constructor دیده می‌شود و بخش بیرونی آن را تحویل می‌دهد. در نسخهٔ Service Locator، مصرف‌کننده یک context یا locator در اختیار دارد و داخل مسیر استفاده، سرویس موردنظر را از آن درخواست می‌کند.
 
 بحث بعدی صوت روی دو زمان متفاوت مکث می‌کند: **چه وقت شیء ساخته شده است؟** و **چه وقت مصرف‌کننده آن را دریافت می‌کند؟** ممکن است سرویس از قبل در کانتینر موجود باشد ولی مصرف‌کننده تازه آن را درخواست کند. پس دیرتر دریافت‌کردن، به‌تنهایی نشانهٔ دیرتر ساخته‌شدن نیست.
 
-حیدری یکی از هزینه‌های Service Locator را پنهان‌ترشدن نیازهای کلاس می‌داند: از روی سازنده‌ای که فقط context می‌گیرد، معلوم نیست مصرف‌کننده در ادامه دقیقاً چه سرویس‌هایی لازم دارد. این با سازنده‌ای که `CustomerService` را صریح دریافت می‌کند فرق دارد.
+حیدری یکی از هزینه‌های Service Locator را پنهان‌ترشدن نیازهای کلاس می‌داند: از روی constructor‌ای که فقط context می‌گیرد، معلوم نیست مصرف‌کننده در ادامه دقیقاً چه سرویس‌هایی لازم دارد. این با constructor‌ای که `CustomerService` را صریح دریافت می‌کند فرق دارد.
 
 </SourceBlock>
 

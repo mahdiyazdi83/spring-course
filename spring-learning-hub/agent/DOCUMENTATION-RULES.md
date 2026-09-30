@@ -1,5 +1,9 @@
 # Educational documentation rules
 
+- Follow `TERMINOLOGY.md`: retain standard English technical names (for example,
+  abstract class, interface and constructor) within readable Persian explanations.
+  Explain unfamiliar terms briefly; do not translate every ordinary Persian word.
+
 - Preserve actual class topic order separately from the main pedagogical body. Reorder
   the body to establish prerequisites first; do not blindly transcribe the teacher.
 - Keep Tuesday teacher material and Heydari follow-up in the same Tuesday unit, with

@@ -1,6 +1,6 @@
 ---
 title: 'جلسهٔ دوم — Lambda، Stream و مقدمهٔ Maven'
-description: درس مستند جلسهٔ دوم از Lambda و رابط‌های تابعی تا Optional، Stream و Maven، همراه کد استاد، خط زمانی و اصلاح‌های فنی.
+description: درس مستند جلسهٔ دوم از Lambda و functional interfaceها تا Optional، Stream و Maven، همراه کد استاد، خط زمانی و اصلاح‌های فنی.
 sidebar:
   label: جلسهٔ ۲ — برنامه‌نویسی تابعی
   order: 2
@@ -11,7 +11,7 @@ kb:
   status: complete
   demo: false
   createdAt: '2026-09-26'
-  updatedAt: '2026-09-28'
+  updatedAt: '2026-09-30'
   sources:
     teacher:
       recordings:
@@ -66,7 +66,7 @@ kb:
       recording: teacher-02-video
       start: '28:17'
       approximate: true
-    - topic: کلاس بی‌نام و تغییر شرط به توانایی مستندسازی
+    - topic: anonymous class و تغییر شرط به توانایی مستندسازی
       source: teacher
       recording: teacher-02-video
       start: '36:00'
@@ -86,12 +86,12 @@ kb:
       recording: teacher-02-video
       start: '01:06:30'
       approximate: true
-    - topic: رابط‌های آماده، Supplier و نقش generics
+    - topic: interfaceهای آماده، Supplier و نقش generics
       source: teacher
       recording: teacher-02-video
       start: '01:09:00'
       approximate: true
-    - topic: Consumer و چاپ با ارجاع متد
+    - topic: Consumer و چاپ با method reference
       source: teacher
       recording: teacher-02-video
       start: '01:16:00'
@@ -121,7 +121,7 @@ kb:
       recording: teacher-02-video
       start: '01:37:00'
       approximate: true
-    - topic: رابط‌های primitive و تکلیف مطالعهٔ متدهای ترکیبی
+    - topic: interfaceهای primitive و تکلیف مطالعهٔ متدهای ترکیبی
       source: teacher
       recording: teacher-02-video
       start: '01:43:40'
@@ -249,6 +249,9 @@ kb:
     - date: '2026-09-28'
       type: content-update
       summary: نهایی‌سازی پوشش منابع و اتصال به مستند مستقل پنج‌شنبهٔ دوم.
+    - date: '2026-09-30'
+      type: content-update
+      summary: یکدست‌سازی نام‌های فنی انگلیسی در توضیح فارسی، بدون تغییر محتوای آموزشی.
 ---
 
 import SourceBlock from '../../../components/source/SourceBlock.astro';
@@ -283,18 +286,18 @@ import * as examples from '../../../data/course/session2';
 
 <ScrollableTable label="نقشهٔ پوشه‌ها و مثال‌های جلسهٔ دوم">
 
-| مسیر                                                 | موضوع و نقش فایل‌ها                                                                                     |
-| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `functional/src/p01lambdaExpression`                 | قرارداد `C01CheckProgrammer`، رکورد `C02Programmer`، پیاده‌سازی نام‌دار، کلاس بی‌نام و نمونه‌های Lambda |
-| `functional/src/p02basic`                            | قراردادهای Human، کلاس SupperHuman، ارجاع به متد و سازنده؛ نمونهٔ کامنت‌شدهٔ مرتب‌سازی آرایه            |
-| `functional/src/p03BuildInFunctionalInterfaces`      | کلاس Human و مثال‌های رابط‌های آماده از Supplier تا Operator و BooleanSupplier                          |
-| `functional/src/p04stream/p01optional`               | محاسبهٔ میانگین با نتیجهٔ اختیاری                                                                       |
-| `functional/src/p04stream/p02source`                 | ساخت Stream از مقادیر، Collection و تولیدکننده‌ها                                                       |
-| `functional/src/p04stream/p03TerminalOperations`     | نمونه‌های عملیات نهایی و جمع‌آوری نتیجه                                                                 |
-| `functional/src/p04stream/p04intermediateOperations` | فیلتر، تبدیل، محدودسازی و مشاهدهٔ مراحل جریان                                                           |
-| `functional/src/p04stream/p05cars`                   | کلاس Car و تمرین ترکیبی انتخاب، مرتب‌سازی و جمع قیمت                                                    |
-| `functional/src/p04stream/Test.java`                 | ترتیب limit و sorted در منبع نامتناهی                                                                   |
-| `maven_demo`                                         | POM، برنامهٔ Hello World و فایل آزمون AppTest                                                           |
+| مسیر                                                 | موضوع و نقش فایل‌ها                                                                                         |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `functional/src/p01lambdaExpression`                 | قرارداد `C01CheckProgrammer`، رکورد `C02Programmer`، پیاده‌سازی نام‌دار، anonymous class و نمونه‌های Lambda |
+| `functional/src/p02basic`                            | قراردادهای Human، کلاس SupperHuman، ارجاع به متد و constructor؛ نمونهٔ کامنت‌شدهٔ مرتب‌سازی آرایه           |
+| `functional/src/p03BuildInFunctionalInterfaces`      | کلاس Human و مثال‌های interfaceهای آماده از Supplier تا Operator و BooleanSupplier                          |
+| `functional/src/p04stream/p01optional`               | محاسبهٔ میانگین با نتیجهٔ اختیاری                                                                           |
+| `functional/src/p04stream/p02source`                 | ساخت Stream از مقادیر، Collection و تولیدکننده‌ها                                                           |
+| `functional/src/p04stream/p03TerminalOperations`     | نمونه‌های عملیات نهایی و جمع‌آوری نتیجه                                                                     |
+| `functional/src/p04stream/p04intermediateOperations` | فیلتر، تبدیل، محدودسازی و مشاهدهٔ مراحل جریان                                                               |
+| `functional/src/p04stream/p05cars`                   | کلاس Car و تمرین ترکیبی انتخاب، مرتب‌سازی و جمع قیمت                                                        |
+| `functional/src/p04stream/Test.java`                 | ترتیب limit و sorted در منبع نامتناهی                                                                       |
+| `maven_demo`                                         | POM، برنامهٔ Hello World و فایل آزمون AppTest                                                               |
 
 </ScrollableTable>
 
@@ -312,13 +315,13 @@ import * as examples from '../../../data/course/session2';
 
 در آغاز ضبط، استاد پس از مرور کوتاه بحث framework، رویکرد برنامه‌نویسی را از ابزارهای نوشتن کد جدا می‌کند: پارادایم بر نگاه ما به مسئله و سازمان‌دهی راه‌حل اثر می‌گذارد. سپس مسئلهٔ ارسال رفتار به یک متد را در برابر ارسال صرفِ داده مطرح می‌کند.
 
-مسیر آموزشی اعلام‌شده دو گام دارد: ابتدا خواندن و نوشتن Lambda، سپس استفاده از این قرارداد در Streamها. تأکید جلسه بر این است که برنامه‌نویس ابتدا رابط، متد abstract و پیاده‌سازی آن را بفهمد؛ کوتاه‌شدن کد بدون فهم این قرارداد کافی نیست. این متن بازنویسی آموزشی بخش آغازین ضبط است، نه رونوشت کلمه‌به‌کلمه.
+مسیر آموزشی اعلام‌شده دو گام دارد: ابتدا خواندن و نوشتن Lambda، سپس استفاده از این قرارداد در Streamها. تأکید جلسه بر این است که برنامه‌نویس ابتدا interface، متد abstract و پیاده‌سازی آن را بفهمد؛ کوتاه‌شدن کد بدون فهم این قرارداد کافی نیست. این متن بازنویسی آموزشی بخش آغازین ضبط است، نه رونوشت کلمه‌به‌کلمه.
 
 </SourceBlock>
 
 <GptNote id="gpt-behavior-parameter">
 
-«ارسال رفتار» در Java به معنای عبور دادن یک متد مستقل به‌عنوان مقدار نیست. Lambda و Method Reference در زمینهٔ یک نوع مقصد، معمولاً رابط تابعی، معنا پیدا می‌کنند. قبل از Java 8 نیز می‌شد رفتار را با شیء پیاده‌ساز رابط یا کلاس بی‌نام منتقل کرد؛ مثال‌های بعدی جلسه همین مسیر را نشان می‌دهند. [قرارداد زبان برای Lambda](https://docs.oracle.com/javase/specs/jls/se21/html/jls-15.html#jls-15.27)
+«ارسال رفتار» در Java به معنای عبور دادن یک متد مستقل به‌عنوان مقدار نیست. Lambda و Method Reference در زمینهٔ یک نوع مقصد، معمولاً functional interface، معنا پیدا می‌کنند. قبل از Java 8 نیز می‌شد رفتار را با شیء پیاده‌ساز interface یا anonymous class منتقل کرد؛ مثال‌های بعدی جلسه همین مسیر را نشان می‌دهند. [قرارداد زبان برای Lambda](https://docs.oracle.com/javase/specs/jls/se21/html/jls-15.html#jls-15.27)
 
 </GptNote>
 
@@ -330,9 +333,9 @@ import * as examples from '../../../data/course/session2';
 
 <SourceBlock id="teacher-sam-lesson" source="teacher" recording="teacher-02-video" timestamp="19:09">
 
-نقطهٔ شروع استاد، **SAM یا Single Abstract Method** است. سؤال کلاس این است: آیا اضافه‌کردن دو متد default، رابط را از حالت تابعی خارج می‌کند؟ خیر؛ شمارش مربوط به متد abstract است. در ادامه، annotationِ `@FunctionalInterface` با افزودن یک متد abstract دیگر آزمایش می‌شود تا خطای کامپایل، نقض قرارداد را نشان دهد.
+نقطهٔ شروع استاد، **SAM یا Single Abstract Method** است. سؤال کلاس این است: آیا اضافه‌کردن دو متد default، interface را از حالت تابعی خارج می‌کند؟ خیر؛ شمارش مربوط به متد abstract است. در ادامه، annotationِ `@FunctionalInterface` با افزودن یک متد abstract دیگر آزمایش می‌شود تا خطای کامپایل، نقض قرارداد را نشان دهد.
 
-در مثال برنامه‌نویسان، یک‌بار شرط «توانایی تست» و بار دیگر شرط «توانایی مستندسازی» انتخاب می‌شود. حلقهٔ نمایش ثابت می‌ماند و تصمیم‌گیری به پیاده‌سازی رابط سپرده می‌شود. استاد سپس از هزینهٔ ساخت یک کلاس جدا برای رفتاری که فقط در همان نقطه استفاده می‌شود می‌پرسد؛ این پرسش زمینهٔ ورود به کلاس بی‌نام و بعد لامبداست.
+در مثال برنامه‌نویسان، یک‌بار شرط «توانایی تست» و بار دیگر شرط «توانایی مستندسازی» انتخاب می‌شود. حلقهٔ نمایش ثابت می‌ماند و تصمیم‌گیری به پیاده‌سازی interface سپرده می‌شود. استاد سپس از هزینهٔ ساخت یک کلاس جدا برای رفتاری که فقط در همان نقطه استفاده می‌شود می‌پرسد؛ این پرسش زمینهٔ ورود به anonymous class و بعد لامبداست.
 
 </SourceBlock>
 
@@ -340,9 +343,9 @@ import * as examples from '../../../data/course/session2';
 
 **خوانش کدهای استاد، نه نقل‌قول از ضبط:** در بستهٔ `p01lambdaExpression`، رکورد `C02Programmer` نام و دو ویژگی بولی دارد. متد `show` روی فهرست حرکت می‌کند و فقط برنامه‌نویسی را چاپ می‌کند که `checker.test(programmer)` برایش درست باشد.
 
-مسیر مثال‌ها از کلاس `C03CkeckIfTester` و نمونه‌سازی آن در `C04Test1` شروع می‌شود؛ `C04Test2` همان قرارداد را با کلاس بی‌نام پیاده می‌کند؛ `C06Test3` شرط `canDoc()` را به شکل لامبدا می‌فرستد. در `C07Test4` شرط معکوس شده است: `!programmer.canDoc()`؛ پس خروجی آن الزاماً با مثال قبلی یکسان نیست.
+مسیر مثال‌ها از کلاس `C03CkeckIfTester` و نمونه‌سازی آن در `C04Test1` شروع می‌شود؛ `C04Test2` همان قرارداد را با anonymous class پیاده می‌کند؛ `C06Test3` شرط `canDoc()` را به شکل لامبدا می‌فرستد. در `C07Test4` شرط معکوس شده است: `!programmer.canDoc()`؛ پس خروجی آن الزاماً با مثال قبلی یکسان نیست.
 
-رابط `C01CheckProgrammer` یک متد abstract به نام `test` و دو متد default دارد. خواننده باید قرارداد ورودی و خروجی را از این رابط بگیرد: دریافت یک برنامه‌نویس و بازگرداندن `boolean`.
+interface `C01CheckProgrammer` یک متد abstract به نام `test` و دو متد default دارد. خواننده باید قرارداد ورودی و خروجی را از این interface بگیرد: دریافت یک برنامه‌نویس و بازگرداندن `boolean`.
 
 </SourceBlock>
 
@@ -368,15 +371,15 @@ import * as examples from '../../../data/course/session2';
 
 <GptNote id="gpt-lambda-contract" context="teacher-lambda-reading">
 
-لامبدا رفتار موردنیاز یک رابط تابعی را فراهم می‌کند. در این مثال، تغییر شرط نیازمند تغییر حلقهٔ `show` نیست. تعریف لامبدا به‌تنهایی بدنهٔ آن را اجرا نمی‌کند؛ اجرا هنگامی رخ می‌دهد که حلقه، `test` را صدا بزند. برای مرور قراردادها به [رابط تابعی](/concepts/functional-interface/) مراجعه کنید.
+لامبدا رفتار موردنیاز یک functional interface را فراهم می‌کند. در این مثال، تغییر شرط نیازمند تغییر حلقهٔ `show` نیست. تعریف لامبدا به‌تنهایی بدنهٔ آن را اجرا نمی‌کند؛ اجرا هنگامی رخ می‌دهد که حلقه، `test` را صدا بزند. برای مرور قراردادها به [functional interface](/concepts/functional-interface/) مراجعه کنید.
 
 </GptNote>
 
 <SourceBlock id="teacher-lambda-practice" source="teacher" recording="teacher-02-video" timestamp="41:30">
 
-در تبدیل کلاس بی‌نام به لامبدا، قرارداد رابط از قبل مشخص است؛ نام کلاس بی‌نام و نام متد تکرار نمی‌شود، پارامترها می‌مانند و `->` آن‌ها را به بدنه وصل می‌کند. نمونهٔ بعدی بدنهٔ بلوکی را به یک عبارت کوتاه تبدیل می‌کند و با `!` شرط را معکوس می‌کند.
+در تبدیل anonymous class به لامبدا، قرارداد interface از قبل مشخص است؛ نام anonymous class و نام متد تکرار نمی‌شود، پارامترها می‌مانند و `->` آن‌ها را به بدنه وصل می‌کند. نمونهٔ بعدی بدنهٔ بلوکی را به یک عبارت کوتاه تبدیل می‌کند و با `!` شرط را معکوس می‌کند.
 
-تمرین پیشنهادی کلاس، بازنویسی کد است: یک نمونهٔ قدیمی با کلاس پیاده‌ساز پیدا کنید، آن را به کلاس بی‌نام و سپس، در صورت وجود قرارداد تابعی، به لامبدا تبدیل کنید. فقط خواندن شکل نهایی جای تمرین تبدیل و بررسی خروجی را نمی‌گیرد.
+تمرین پیشنهادی کلاس، بازنویسی کد است: یک نمونهٔ قدیمی با کلاس پیاده‌ساز پیدا کنید، آن را به anonymous class و سپس، در صورت وجود قرارداد تابعی، به لامبدا تبدیل کنید. فقط خواندن شکل نهایی جای تمرین تبدیل و بررسی خروجی را نمی‌گیرد.
 
 </SourceBlock>
 
@@ -388,7 +391,7 @@ import * as examples from '../../../data/course/session2';
 
 <SourceBlock id="teacher-reference-lesson" source="teacher" recording="teacher-02-video" timestamp="54:00">
 
-برای معرفی `::`، استاد کلاسی خارج از سلسله‌مراتب رابط `Human` می‌سازد. این کلاس رفتار آماده‌ای مثل `harfzadan` دارد. به‌جای نوشتن دوبارهٔ بدنه، ارجاع همان رفتار با قرارداد رابط سازگار می‌شود؛ نام متد آماده لازم نیست `speak` باشد.
+برای معرفی `::`، استاد کلاسی خارج از سلسله‌مراتب interface `Human` می‌سازد. این کلاس رفتار آماده‌ای مثل `harfzadan` دارد. به‌جای نوشتن دوبارهٔ بدنه، ارجاع همان رفتار با قرارداد interface سازگار می‌شود؛ نام متد آماده لازم نیست `speak` باشد.
 
 در حالت متد نمونه، ابتدا شیء `supperHuman` ساخته می‌شود. در حالت static، نام کلاس کافی است. سپس مثال `String::toUpperCase` تفاوت مهمی را نشان می‌دهد: رشتهٔ ورودی نقش گیرندهٔ متد را دارد. بنابراین دیدن نام کلاس قبل از `::` به‌تنهایی به معنی staticبودن متد نیست.
 
@@ -396,7 +399,7 @@ import * as examples from '../../../data/course/session2';
 
 <SourceBlock id="teacher-method-reading" source="teacher">
 
-در `p02basic`، رابط `C01Human` متد بدون ورودی و خروجی `speak()` دارد و `C03NewHuman` رشته می‌گیرد و رشته برمی‌گرداند. فایل `C02Test` چهار شکل ارجاع را کنار هم دارد: متد یک شیء با `supperHuman::harfzadan`، متد static با `C04SupperHuman::speak3`، متد نمونه از طریق نوع با `String::toUpperCase` و سازنده با `C04SupperHuman::new`.
+در `p02basic`، interface `C01Human` متد بدون ورودی و خروجی `speak()` دارد و `C03NewHuman` رشته می‌گیرد و رشته برمی‌گرداند. فایل `C02Test` چهار شکل ارجاع را کنار هم دارد: متد یک شیء با `supperHuman::harfzadan`، متد static با `C04SupperHuman::speak3`، متد نمونه از طریق نوع با `String::toUpperCase` و constructor با `C04SupperHuman::new`.
 
 در همان فایل، `human4.speak()` اجرا می‌شود. نتیجهٔ `human5.speak("DDDD")` و `human6.speak("dddddd")` ذخیره یا چاپ نشده است. برای `human7` صرفاً ارجاع ساخته شده و هیچ `speak()`ای روی آن فراخوانی نشده است. `C05Test` فقط یک فراخوانی کامنت‌شدهٔ `Arrays.sort()` دارد و تمرین کامل مرتب‌سازی نیست.
 
@@ -409,12 +412,12 @@ import * as examples from '../../../data/course/session2';
   filename="C02Test.java"
   repositoryPath="session2/functional/src/p02basic/C02Test.java"
   code={examples.references}
-  caption="ارجاع‌های متد و سازنده از C02Test؛ نام‌گذاری اصلی فایل حفظ شده است."
+  caption="ارجاع‌های متد و constructor از C02Test؛ نام‌گذاری اصلی فایل حفظ شده است."
 />
 
 <GptNote id="gpt-reference-result">
 
-در `String::toUpperCase` ورودی رابط، همان رشته‌ای است که متد روی آن اجرا می‌شود. در ارجاع سازندهٔ این مثال، قرارداد خروجی رابط `void` است؛ هنگام فراخوانی، شیء ساخته می‌شود اما به فراخواننده بازگردانده نمی‌شود. خود سازنده نوع بازگشتی ندارد؛ این را با `void` بودن متد رابط یکی نگیرید. [مرجع Method Reference](/concepts/method-reference/) تفاوت تعریف ارجاع و اجرای آن را جمع‌بندی می‌کند.
+در `String::toUpperCase` ورودی interface، همان رشته‌ای است که متد روی آن اجرا می‌شود. در constructor referenceٔ این مثال، قرارداد خروجی interface `void` است؛ هنگام فراخوانی، شیء ساخته می‌شود اما به فراخواننده بازگردانده نمی‌شود. خود constructor نوع بازگشتی ندارد؛ این را با `void` بودن متد interface یکی نگیرید. [مرجع Method Reference](/concepts/method-reference/) تفاوت تعریف ارجاع و اجرای آن را جمع‌بندی می‌کند.
 
 </GptNote>
 
@@ -422,11 +425,11 @@ import * as examples from '../../../data/course/session2';
 
 <section data-source-group>
 
-## رابط‌های آمادهٔ java.util.function [#functional-interfaces]
+## interfaceهای آمادهٔ java.util.function [#functional-interfaces]
 
 <SourceBlock id="teacher-builtins-lesson" source="teacher" recording="teacher-02-video" timestamp="01:09:00">
 
-پس از اشاره به `Comparator` و متد `compare`، استاد سراغ بستهٔ `java.util.function` می‌رود. روش خواندن هر رابط ثابت است: ابتدا امضای متد abstract و نوع‌های generic را پیدا کنید، سپس بدنه یا متد آمادهٔ سازگار را انتخاب کنید. هدف حفظ‌کردن شکل ظاهری مثال‌ها نیست؛ باید از روی قرارداد بفهمید چه ورودی‌ای می‌گیرید و چه نتیجه‌ای می‌دهید.
+پس از اشاره به `Comparator` و متد `compare`، استاد سراغ بستهٔ `java.util.function` می‌رود. روش خواندن هر interface ثابت است: ابتدا امضای متد abstract و نوع‌های generic را پیدا کنید، سپس بدنه یا متد آمادهٔ سازگار را انتخاب کنید. هدف حفظ‌کردن شکل ظاهری مثال‌ها نیست؛ باید از روی قرارداد بفهمید چه ورودی‌ای می‌گیرید و چه نتیجه‌ای می‌دهید.
 
 در مثال `Supplier`، تولید رشته با لامبدا، تاریخ با `LocalDate::now` و فهرست با `ArrayList::new` مقایسه می‌شوند. `Consumer` یک `Human` می‌گیرد و چاپ می‌کند؛ ارجاع `System.out::println` همان نقش را کوتاه‌تر بیان می‌کند. `BiConsumer` با دو ورودی به مثال زوج کلید و مقدار در `Map` می‌رسد. در `Predicate`، سؤال از حالت کلیِ مصرف‌کردن شیء به یک تصمیم بولی، مثل سن بیشتر از ۱۸، تغییر می‌کند.
 
@@ -436,9 +439,9 @@ import * as examples from '../../../data/course/session2';
 
 بستهٔ `p03BuildInFunctionalInterfaces` ده مثال دارد. جدول زیر قرارداد و کاربرد موجود در همان فایل‌ها را خلاصه می‌کند؛ بعضی متغیرها فقط تعریف شده‌اند و متدشان در `main` فراخوانی نمی‌شود.
 
-<ScrollableTable label="قرارداد رابط‌های تابعی در کد جلسهٔ دوم">
+<ScrollableTable label="قرارداد functional interfaceها در کد جلسهٔ دوم">
 
-| رابط                | متد اصلی                 | مثال موجود                                      |
+| interface           | متد اصلی                 | مثال موجود                                      |
 | ------------------- | ------------------------ | ----------------------------------------------- |
 | `Supplier<T>`       | `T get()`                | رشتهٔ ثابت، `LocalDate::now` و `ArrayList::new` |
 | `Consumer<T>`       | `void accept(T)`         | چاپ `Human`                                     |
@@ -453,7 +456,7 @@ import * as examples from '../../../data/course/session2';
 
 </ScrollableTable>
 
-برای انتخاب رابط، ابتدا تعداد ورودی‌ها و نوع نتیجه را مشخص کنید. نمونهٔ `Human` یک کلاس با `age`، `name`، سازنده و `toString` است؛ در این بسته از رکورد برنامه‌نویس استفاده نشده است.
+برای انتخاب interface، ابتدا تعداد ورودی‌ها و نوع نتیجه را مشخص کنید. نمونهٔ `Human` یک کلاس با `age`، `name`، constructor و `toString` است؛ در این بسته از رکورد برنامه‌نویس استفاده نشده است.
 
 </SourceBlock>
 
@@ -461,15 +464,15 @@ import * as examples from '../../../data/course/session2';
 
 با رسیدن به `Function`، نوع generic اول ورودی و دومی خروجی است. مثال ساده یک نام می‌گیرد و رشتهٔ سلام را برمی‌گرداند. `BiFunction` دو ورودی و یک نتیجه دارد؛ در مثال اتصال رشته‌ها، یکی از ورودی‌ها گیرندهٔ `concat` و دیگری آرگومان آن است.
 
-سپس استاد تعریف خود `UnaryOperator` را باز می‌کند: این رابط از `Function<T,T>` ارث می‌برد و متد abstract مؤثرش از همان‌جا می‌آید. نتیجه لزوماً همان شیء ورودی نیست؛ باید از همان نوع باشد. در `BinaryOperator` نیز دو ورودی و خروجی هم‌نوع‌اند. این تمایز برای فهم تابع کاهش در مثال‌های Stream بعدی لازم است.
+سپس استاد تعریف خود `UnaryOperator` را باز می‌کند: این interface از `Function<T,T>` ارث می‌برد و متد abstract مؤثرش از همان‌جا می‌آید. نتیجه لزوماً همان شیء ورودی نیست؛ باید از همان نوع باشد. در `BinaryOperator` نیز دو ورودی و خروجی هم‌نوع‌اند. این تمایز برای فهم تابع کاهش در مثال‌های Stream بعدی لازم است.
 
 </SourceBlock>
 
 <SourceBlock id="teacher-builtins-practice" source="teacher" recording="teacher-02-video" timestamp="01:43:40">
 
-بخش پایانی معرفی رابط‌ها به گونه‌های primitive، مانند `BooleanSupplier`، اختصاص دارد. در کد این نمونه، متد `getAsBoolean()` نتیجهٔ `boolean` می‌دهد و رابط پارامتر generic ندارد.
+بخش پایانی معرفی interfaceها به گونه‌های primitive، مانند `BooleanSupplier`، اختصاص دارد. در کد این نمونه، متد `getAsBoolean()` نتیجهٔ `boolean` می‌دهد و interface پارامتر generic ندارد.
 
-تکلیف مطالعهٔ اعلام‌شده، بررسی خانواده‌های `Int`، `Long` و `Double` و متدهای کمکی رابط‌هاست. در نمایش `Function` به `andThen` و `identity` اشاره می‌شود؛ همهٔ این متدها در پروژهٔ نمونه پیاده یا آزمایش نشده‌اند. برای تمرین، علاوه بر نام متد، قرارداد ورودی، خروجی و ترتیب اجرای تبدیل‌ها را بخوانید.
+تکلیف مطالعهٔ اعلام‌شده، بررسی خانواده‌های `Int`، `Long` و `Double` و متدهای کمکی interfaceهاست. در نمایش `Function` به `andThen` و `identity` اشاره می‌شود؛ همهٔ این متدها در پروژهٔ نمونه پیاده یا آزمایش نشده‌اند. برای تمرین، علاوه بر نام متد، قرارداد ورودی، خروجی و ترتیب اجرای تبدیل‌ها را بخوانید.
 
 </SourceBlock>
 
@@ -567,7 +570,7 @@ Stream در ضبط با خط تولید کارخانه مقایسه می‌شو�
 
 <GptNote id="gpt-stream-model">
 
-برای خواندن [خط لولهٔ Stream](/concepts/stream-pipeline/)، منبع، تبدیل‌ها و عملیات نهایی را جدا کنید. `filter` عناصر را انتخاب می‌کند و `map` مقدار هر عنصر را تبدیل می‌کند. `peek` را جایگزین منطق ضروری برنامه نکنید؛ اجرای عوارض جانبی مراحل میانی در همهٔ مسیرهای بهینه‌سازی تضمین عمومی ندارد.
+برای خواندن [Stream pipeline](/concepts/stream-pipeline/)، منبع، تبدیل‌ها و عملیات نهایی را جدا کنید. `filter` عناصر را انتخاب می‌کند و `map` مقدار هر عنصر را تبدیل می‌کند. `peek` را جایگزین منطق ضروری برنامه نکنید؛ اجرای عوارض جانبی مراحل میانی در همهٔ مسیرهای بهینه‌سازی تضمین عمومی ندارد.
 
 </GptNote>
 
@@ -736,7 +739,7 @@ Stream در ضبط با خط تولید کارخانه مقایسه می‌شو�
 
 </SourceBlock>
 
-<TechnicalCorrection id="gpt-primitive-stream-type" corrects="teacher-primitive-stream-claim" statement="IntStream مانند Stream با generic از نوع Integer معرفی می‌شود." correction="IntStream یک رابط تخصصی برای عناصر primitive از نوع int است؛ همان Stream<Integer> نیست و از آن ارث نمی‌برد." reason="API، نوع عنصر و عملیات عددی آن متفاوت‌اند. برای رفتن به Stream<Integer> می‌توان boxed() و برای تبدیل یک Stream شیء به IntStream می‌توان mapToInt(...) را به‌کار برد.">
+<TechnicalCorrection id="gpt-primitive-stream-type" corrects="teacher-primitive-stream-claim" statement="IntStream مانند Stream با generic از نوع Integer معرفی می‌شود." correction="IntStream یک interface تخصصی برای عناصر primitive از نوع int است؛ همان Stream<Integer> نیست و از آن ارث نمی‌برد." reason="API، نوع عنصر و عملیات عددی آن متفاوت‌اند. برای رفتن به Stream<Integer> می‌توان boxed() و برای تبدیل یک Stream شیء به IntStream می‌توان mapToInt(...) را به‌کار برد.">
 
 [تعریف رسمی IntStream و متد boxed](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/IntStream.html)
 
@@ -850,8 +853,8 @@ Maven و Gradle به‌عنوان Build Tool معرفی می‌شوند. در پ
 
 تمرین‌ها و موضوع‌های مطالعاتی مطرح‌شده در طول جلسه:
 
-- پیاده‌سازی یک رفتار با کلاس نام‌دار، کلاس بی‌نام و Lambda و توضیح رابطهٔ هر سه با رابط تابعی.
-- مطالعهٔ گونه‌های primitive و متدهای کمکی رابط‌های آماده، از جمله ترکیب Functionها.
+- پیاده‌سازی یک رفتار با کلاس نام‌دار، anonymous class و Lambda و توضیح رابطهٔ هر سه با functional interface.
+- مطالعهٔ گونه‌های primitive و متدهای کمکی interfaceهای آماده، از جمله ترکیب Functionها.
 - مقایسهٔ روش‌های یافتن عنصر و خانوادهٔ match در Stream.
 - بررسی تفاوت `map` و `flatMap` و مطالعهٔ اتصال دو Stream.
 - تمرین فیلتر، مرتب‌سازی و محاسبهٔ قیمت روی فهرست خودروها و ثبت تمرین‌ها در Git.

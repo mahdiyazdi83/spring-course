@@ -9,7 +9,7 @@ kb:
   status: complete
   demo: false
   createdAt: '2026-09-26'
-  updatedAt: '2026-09-28'
+  updatedAt: '2026-09-30'
   sources:
     teacher:
       repository:
@@ -30,6 +30,9 @@ kb:
     - date: '2026-09-28'
       type: concept-update
       summary: جایگزینی محتوای نمایشی با مرجع مرتبط با کد واقعی جلسهٔ سوم و مستندات رسمی.
+    - date: '2026-09-30'
+      type: content-update
+      summary: یکدست‌سازی نام‌های فنی انگلیسی در توضیح فارسی، بدون تغییر محتوای آموزشی.
 ---
 
 import SourceBlock from '../../../components/source/SourceBlock.astro';
@@ -73,7 +76,7 @@ import ChangeLog from '../../../components/documentation/ChangeLog.astro';
 
 <SourceBlock id="application-context-pitfalls" source="gpt">
 
-Bean شیء مدیریت‌شده است؛ ApplicationContext محیط مدیریت آن است. دریافت Bean با `getBean` در نقطهٔ شروع برنامه قابل فهم است، اما لازم نیست هر سرویس کانتینر را نگه دارد و همکارهایش را از آن پیدا کند؛ [تزریق وابستگی](/concepts/dependency-injection/#java-example) این نیازها را صریح‌تر می‌کند.
+Bean شیء مدیریت‌شده است؛ ApplicationContext محیط مدیریت آن است. دریافت Bean با `getBean` در نقطهٔ شروع برنامه قابل فهم است، اما لازم نیست هر سرویس کانتینر را نگه دارد و همکارهایش را از آن پیدا کند؛ [Dependency Injection](/concepts/dependency-injection/#java-example) این نیازها را صریح‌تر می‌کند.
 
 </SourceBlock>
 

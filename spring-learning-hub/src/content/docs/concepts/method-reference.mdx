@@ -1,12 +1,12 @@
 ---
 title: 'Method Reference — استفاده از رفتار آماده'
-description: خواندن علامت دو دونقطه و تشخیص گیرنده، متد static و ارجاع سازنده در Java.
+description: خواندن علامت دو دونقطه و تشخیص گیرنده، متد static و constructor reference در Java.
 kb:
   type: concept
   id: method-reference
   status: complete
   createdAt: '2026-09-26'
-  updatedAt: '2026-09-26'
+  updatedAt: '2026-09-30'
   sources:
     gpt:
       references:
@@ -17,6 +17,9 @@ kb:
     - date: '2026-09-26'
       type: initial
       summary: جمع‌بندی چهار شکل ارجاع در کد و توضیحات جلسهٔ دوم.
+    - date: '2026-09-30'
+      type: content-update
+      summary: یکدست‌سازی نام‌های فنی انگلیسی در توضیح فارسی، بدون تغییر محتوای آموزشی.
 ---
 
 import SourceBlock from '../../../components/source/SourceBlock.astro';
@@ -32,9 +35,9 @@ import ChangeLog from '../../../components/documentation/ChangeLog.astro';
 
 <SourceBlock id="gpt-reference-target" source="gpt">
 
-وقتی رفتار موردنیاز از قبل در یک متد یا سازنده وجود دارد، `::` می‌تواند آن را با رابط تابعی مقصد سازگار کند. نام متدها لازم نیست یکسان باشد؛ نوع ورودی‌ها، نتیجه و شکل فراخوانی اهمیت دارند.
+وقتی رفتار موردنیاز از قبل در یک متد یا constructor وجود دارد، `::` می‌تواند آن را با functional interface مقصد سازگار کند. نام متدها لازم نیست یکسان باشد؛ نوع ورودی‌ها، نتیجه و شکل فراخوانی اهمیت دارند.
 
-در مثال جلسه، `supperHuman::harfzadan` رفتار یک شیء مشخص را به قرارداد بدون ورودی `speak()` متصل می‌کند. `C04SupperHuman::speak3` ارجاع به متد static است؛ `String::toUpperCase` متد نمونه است و رشتهٔ ورودی نقش گیرنده را می‌گیرد. `C04SupperHuman::new` به سازنده ارجاع می‌دهد.
+در مثال جلسه، `supperHuman::harfzadan` رفتار یک شیء مشخص را به قرارداد بدون ورودی `speak()` متصل می‌کند. `C04SupperHuman::speak3` ارجاع به متد static است؛ `String::toUpperCase` متد نمونه است و رشتهٔ ورودی نقش گیرنده را می‌گیرد. `C04SupperHuman::new` به constructor ارجاع می‌دهد.
 
 </SourceBlock>
 
@@ -42,7 +45,7 @@ import ChangeLog from '../../../components/documentation/ChangeLog.astro';
 
 <SourceBlock id="gpt-reference-invocation" source="gpt">
 
-نوشتن ارجاع به معنای اجرای فوری متد یا سازنده نیست. در فایل جلسه، ارجاع سازنده در `human7` ذخیره شده ولی متد رابط روی آن فراخوانی نشده است. بنابراین از آن خط به‌تنهایی نباید انتظار اجرای سازنده داشت.
+نوشتن ارجاع به معنای اجرای فوری متد یا constructor نیست. در فایل جلسه، constructor reference در `human7` ذخیره شده ولی متد interface روی آن فراخوانی نشده است. بنابراین از آن خط به‌تنهایی نباید انتظار اجرای constructor داشت.
 
 همچنین وجود نام کلاس پیش از `::` اثبات نمی‌کند که متد static است؛ مثال `String::toUpperCase` خلاف این برداشت است. [قرارداد رسمی Method Reference](https://docs.oracle.com/javase/specs/jls/se21/html/jls-15.html#jls-15.13)
 

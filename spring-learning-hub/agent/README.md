@@ -1,5 +1,8 @@
 # Agent entry point
 
+Follow [TERMINOLOGY.md](TERMINOLOGY.md) for balanced Persian prose and standard
+English technical names in every educational edit.
+
 This folder is operational memory for maintaining the Spring knowledge base.
 Current scope: the Phase 5 template plus user-authorized documentation of sessions 2, 3 and 4.
 Session 4 has two Tuesday videos and no supplied Heydari/Thursday recording. Its
